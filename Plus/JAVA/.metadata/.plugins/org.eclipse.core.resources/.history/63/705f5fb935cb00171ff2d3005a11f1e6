@@ -1,0 +1,7 @@
+package tp;
+
+public class hanyu {
+public static void main(String[] arg) {
+	System.out.println("\u59D3\u540");
+}
+}

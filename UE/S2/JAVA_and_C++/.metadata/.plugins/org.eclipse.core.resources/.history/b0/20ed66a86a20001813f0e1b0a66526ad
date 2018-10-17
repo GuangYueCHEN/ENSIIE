@@ -1,0 +1,169 @@
+package listes;
+
+import java.util.Iterator;
+
+public class Liste<E> implements IListe<E> {
+	
+	
+	protected Maillon<E> tete = null;
+	//un constructeur par défault
+	public Liste (){
+		tete = null;
+	}
+	public Liste(Liste<E> l)
+	{
+		this();
+		for(E elt:l)
+		{
+			add(elt);
+		}
+	}
+	
+	//public void finalize(){}
+	
+
+	@Override
+	public void add(E elt) throws NullPointerException {
+		// TODO Auto-generated method stub
+		if(elt != null)
+		{
+			if(tete == null)
+				{
+				tete = new Maillon<E> (elt);
+				}
+			else {
+				Maillon <E> p;
+				for(p = tete;p.next!=null;p = p.next)
+				{
+					p.next = new Maillon<E>(elt);
+				}
+			}
+		
+		}
+		else
+		{
+			throw new NullPointerException("liste:add(null)");
+		}
+	}
+
+	@Override
+	public void insert(E elt) throws NullPointerException {
+		// TODO Auto-generated method stub
+		if(elt != null){
+			Maillon<E> p = new Maillon<E> (elt);
+			p.next = tete;
+			tete = p;
+			
+		}
+		else {
+			throw new NullPointerException("Liste:insert(null)");
+		}
+
+	}
+
+	@Override
+	public boolean insert(E elt, int index) {
+		// TODO Auto-generated method stub
+		if(elt == null) return false;
+		if(index == 0)
+		{
+			insert(elt);
+			return true;
+		}
+		
+			Maillon<E> p = tete;
+			for(int i = 0; i< index && p!=null;p = p.next)
+			{
+				p = p.next;
+			}
+			if(p == null) return false;
+			Maillon<E> nouveau = new Maillon<E> (elt);
+			nouveau.next = p.next;
+			p.next = nouveau;
+			return true;
+		
+	}
+	
+
+	public boolean empty(){
+		return tete == null;
+	}
+	
+	@Override
+	public Iterator<E> iterator() {
+		// TODO Auto-generated method stub
+		
+		return new ListeIterator();
+		
+	}
+
+	private static class Maillon<E>
+	{
+		public E data;
+		public Maillon<E> next;
+		public Maillon(E e){
+			data = e;
+			next = null;
+		}
+		
+		
+		
+	}
+	
+	private class ListeIterator<F> implements Iterator<F>
+	{
+ 
+		public Maillon<F> current = null;
+		public F element;
+		public boolean nextCalled;
+		public Maillon<F> last = null;
+		public Maillon<F> penultimate = null;
+		
+		
+		
+		public ListeIterator(){
+			current = (Maillon<F>) tete;//
+			element = null;
+			nextCalled = false;
+			last = null;
+			penultimate = null;
+			
+		}
+		@Override
+		public void remove() {
+			// TODO Auto-generated method stub
+			Iterator.super.remove();
+		}
+		
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			
+			
+			
+			return false;
+		}
+
+		@Override
+		public F next() throws NullPointerException{
+			// TODO Auto-generated method stub
+			
+			if(current == null)
+			{
+				throw new NullPointerException("Liste: ListeIterator:next()");
+				
+			}
+			
+			penultimate = last;
+			last = current;
+			element = last.data;
+			current = current.next;
+			nextCalled = true;
+			return element;
+			
+		}
+		
+		
+		
+	}
+}

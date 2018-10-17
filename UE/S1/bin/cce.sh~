@@ -1,0 +1,6 @@
+function cce (){
+    gcc -x c -$1
+    sed -e 1d s1
+    $$ >/tmp/N.a.out
+    rm /tmp/N.a.out
+    }

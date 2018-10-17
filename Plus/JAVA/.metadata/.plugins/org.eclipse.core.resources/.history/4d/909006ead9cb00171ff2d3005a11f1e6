@@ -1,0 +1,303 @@
+package myMain;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+import javax.swing.JScrollPane;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import mysqlUtil.dbUtil;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class getGrade extends JFrame {
+
+	/**
+	 * 查询学生成绩
+	 */
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField textFieldClass;
+	private JTextField textFieldCourse;
+	private JTable table;
+	private String courseID = null;private String score = null;
+	private int rows = 0;
+	private String studentNumber = null;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void mainGetGrade() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					getGrade frame = new getGrade();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public getGrade() {
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 471, 477);
+		contentPane = new JPanel();
+		contentPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new LineBorder(new Color(130, 135, 144)));
+		scrollPane.setBounds(34, 145, 387, 216);
+		contentPane.add(scrollPane);
+
+		table = new JTable();
+		table.setModel(new DefaultTableModel(new Object[0][3],
+				new String[] { "  \u59D3\u540D", "   \u5B66\u53F7", "   \u6210\u7EE9" }));
+		table.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane.setViewportView(table);
+
+		JLabel label = new JLabel("\u5B66\u53F7");//xuehao
+		label.setBounds(157, 22, 54, 15);
+		contentPane.add(label);
+
+		textFieldClass = new JTextField();//xuehao shuru
+		textFieldClass.setBounds(221, 19, 103, 21);
+		contentPane.add(textFieldClass);
+		textFieldClass.setColumns(10);
+
+		JLabel label_1 = new JLabel("\u8BFE\u7A0B");//kecheng
+		label_1.setBounds(157, 53, 54, 15);
+		contentPane.add(label_1);
+
+		textFieldCourse = new JTextField();//kecheng shuru
+		textFieldCourse.setBounds(221, 50, 103, 21);
+		contentPane.add(textFieldCourse);
+		textFieldCourse.setColumns(10);
+
+		JButton button = new JButton("\u68C0\u6D4B");
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (textFieldClass.getText().length() > 0 && textFieldCourse.getText().length() > 0) {
+
+					scrollPane.remove(table);
+					dbUtil util = new dbUtil();
+					Connection connection = null;
+					PreparedStatement preparedStatement = null;
+					ResultSet resultSet = null;
+					String sql = null;
+					try {
+						connection = util.getCon();
+						//sql = "select count(*) from student_course join student join course on student_id=sid AND course_id=cid where student_id = ? and course_id = ? ";
+						//preparedStatement = connection.prepareStatement(sql);
+						//preparedStatement.setString(1, textFieldCourse.getText());
+						//preparedStatement.setString(2, textFieldClass.getText());
+						//resultSet = preparedStatement.executeQuery();
+						//System.out.println(resultSet);
+						//if (resultSet.next()) {
+						//	rows = resultSet.getInt(1);
+						//	System.out.println(rows);
+						//}
+						//表格
+						//System.out.println("建立表格");
+						table.setModel(new DefaultTableModel(new Object[2][4],
+								new String[] {  "   \u5B66\u53F7","  \u59D3\u540D","\u8BFE\u7A0B" , "   \u6210\u7EE9","--"}));
+						table.setBorder(new LineBorder(new Color(0, 0, 0, 0)));
+						sql = "select sid,sname,course_id,score from student_course join student join course on student_id=sid AND course_id=cid where student_id = ? and course_id = ? ";
+						
+						preparedStatement = connection.prepareStatement(sql);
+						//System.out.println("查询语句");
+						preparedStatement.setString(2, textFieldCourse.getText());
+						preparedStatement.setString(1, textFieldClass.getText());
+						resultSet = preparedStatement.executeQuery();
+						//System.out.println("查询语句");
+						for (int i = 0; resultSet.next(); i++) {
+							//System.out.println(i);
+							table.setValueAt(resultSet.getString(1), i, 0);
+							table.setValueAt(resultSet.getString(2), i, 1);
+							table.setValueAt(resultSet.getString(3), i, 2);
+						
+							score = resultSet.getString(4);
+						}
+						System.out.println(score);
+						scrollPane.setViewportView(table);
+						preparedStatement.close();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
+			}
+		});
+		button.setBounds(180, 93, 93, 23);
+		contentPane.add(button);
+
+		JButton button_1 = new JButton("\u786E\u5B9A");
+		button_1.addMouseListener(new MouseAdapter() {
+			@SuppressWarnings("resource")
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (textFieldClass.getText().length() > 0 && textFieldCourse.getText().length() > 0) {
+
+					dbUtil util = new dbUtil();
+					Connection connection = null;
+					PreparedStatement preparedStatement = null;
+					ResultSet resultSet = null;
+					String sql = null;
+
+					try {
+						connection = util.getCon();
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					String temp =  null;
+					for (int i = 0; i < 1; i++) {
+						try {
+							temp = (String) table.getValueAt(i,0 );
+							courseID = (String) table.getValueAt(i,2 );
+							sql = "update student_course set score = ? where student_id = ? and course_id = ? ";
+							preparedStatement = connection.prepareStatement(sql);
+							int grade = Integer.parseInt((String) table.getValueAt(i, 3));
+							System.out.println(grade);
+							System.out.println(temp);
+							System.out.println(courseID);
+							preparedStatement.setInt(1, grade);
+							preparedStatement.setString(2, temp);
+							preparedStatement.setString(3, courseID);
+							preparedStatement.executeUpdate();
+							if (grade < 60) {
+								sql = "select term from student where  sid = " + temp;
+								String term = null;
+								String plan = null;
+								String courseType = null;
+								String scoreLostType;
+								int creditTemp = 0;
+								preparedStatement = connection.prepareStatement(sql);
+								ResultSet resultSet2 = preparedStatement.executeQuery();
+								if (resultSet2.next()) {
+									term = resultSet2.getString(1);
+								}
+								//if (term.equals("01") || term.equals("02")) {
+								//	plan = "majortrainingplan"; 方向相关
+								//} else {
+								//	plan = "majorDirectionPlan";
+								//}
+								sql = "select property,credit from course join student_course on cid = course_id where course_id = " + courseID +"student_id ="+ temp;
+								preparedStatement = connection.prepareStatement(sql);
+								resultSet2 = preparedStatement.executeQuery();
+								if (resultSet2.next()) {
+									courseType = resultSet2.getString(1);
+									creditTemp = resultSet2.getInt(2);
+								}
+								if (courseType.equals("必修")) {
+									scoreLostType = "requiredCourse";
+								} else {
+									scoreLostType = "optionalCourse";
+								}
+
+								sql = "select count(*) from failedstudent where studentNumber = " + temp;
+								preparedStatement = connection.prepareStatement(sql);
+								resultSet2 = preparedStatement.executeQuery();
+								if (resultSet2.next()) {
+									if (resultSet2.getInt(1) == 1) {
+										if (courseType.equals("必修")) {
+											sql = "update failedstudent set " + scoreLostType + " = " + scoreLostType
+													+ "+ " + String.valueOf(creditTemp)
+													+ ", totalcourse = totalcourse + " + String.valueOf(creditTemp)
+													+ " where failedstudent.studentNumber = " + temp;
+										} else {
+											sql = "update failedstudent set optionalCourse = optionalCourse + "
+													+ String.valueOf(creditTemp) + " where studentNumber = " + temp;
+										}
+										preparedStatement = connection.prepareStatement(sql);
+									} else {
+										sql = "insert into failedstudent values(?,?,?,?)";
+										preparedStatement = connection.prepareStatement(sql);
+										preparedStatement.setString(1, temp);
+										if (courseType.equals("必修")) {
+											preparedStatement.setInt(2, creditTemp);
+											preparedStatement.setInt(3, 0);
+										} else {
+											preparedStatement.setInt(2, 0);
+											preparedStatement.setInt(3, creditTemp);
+										}
+										preparedStatement.setInt(4, creditTemp);
+									}
+
+								}
+
+								if (preparedStatement.executeUpdate() != 1) {
+
+									ErrorTipMistake.mainErrorTipMistake();
+								}
+
+								sql = "select requiredCourse,optionalCourse from failedstudent where studentNumber = "
+										+ temp;
+								preparedStatement = connection.prepareStatement(sql);
+								resultSet2 = preparedStatement.executeQuery();
+								if (resultSet2.next()) {
+									int require = resultSet2.getInt(1);
+									int optional = resultSet2.getInt(2);
+									//int total = resultSet2.getInt(3);
+									if ((require >= 12&& require < 15) || (optional >= 18 && optional < 20)
+											) {
+										sql = "update student set term = ?  where sid = " + temp;
+										preparedStatement = connection.prepareStatement(sql);
+										preparedStatement.setString(1, "almost fire");
+									} else if (require >= 15 || optional >= 20 ) {
+										sql = "update student set term = ? where sid = " + temp;
+										preparedStatement = connection.prepareStatement(sql);
+										preparedStatement.setString(1, "already fire");
+									} else {
+										sql = "update student set term  = ? where sid = " + temp;
+										preparedStatement = connection.prepareStatement(sql);
+										preparedStatement.setString(1, "nolmal");
+									}
+									preparedStatement.executeUpdate();
+								}
+							}
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+
+				}
+			}
+		});
+		button_1.setBounds(87, 382, 93, 23);
+		contentPane.add(button_1);
+
+		JButton button_2 = new JButton("\u53D6\u6D88");
+		button_2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+			}
+		});
+		button_2.setBounds(294, 382, 93, 23);
+		contentPane.add(button_2);
+	}
+}

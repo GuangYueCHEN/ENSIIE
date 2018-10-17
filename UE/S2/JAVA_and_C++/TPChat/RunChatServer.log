@@ -1,0 +1,82 @@
+5月 20, 2018 11:09:16 下午 logger.LoggerFactory getLogger
+信息: log file created
+5月 20, 2018 11:09:16 下午 logger.LoggerFactory getLogger
+信息: Logger ready
+5月 20, 2018 11:09:16 下午 RunChatServer launch
+信息: Creating server on port 1394 with timeout 5000 ms and verbose off
+5月 20, 2018 11:09:16 下午 logger.LoggerFactory getLogger
+信息: Logger ready
+5月 20, 2018 11:09:16 下午 chat.server.ChatServer <init>
+信息: ChatServer::ChatServer(port = 1394, timeout = 5000, quit = true)
+5月 20, 2018 11:09:16 下午 RunChatServer launch
+信息: Waiting for server to terminate ... 
+5月 20, 2018 11:09:22 下午 chat.server.ChatServer run
+信息: ChatServer: Creatingc client input stream to get client's name ... 
+5月 20, 2018 11:09:22 下午 chat.server.ChatServer run
+信息: ChatServer: reading client's name: 
+5月 20, 2018 11:09:22 下午 chat.server.ChatServer run
+信息: ChatServer: client name Zebulon
+5月 20, 2018 11:09:22 下午 logger.LoggerFactory getLogger
+信息: Logger ready
+5月 20, 2018 11:09:22 下午 chat.server.InputClient <init>
+信息: InputClient: Creating Input Stream ... 
+5月 20, 2018 11:09:22 下午 chat.server.InputOutputClient <init>
+信息: Client: Creating Output Stream ... 
+5月 20, 2018 11:09:22 下午 logger.LoggerFactory getLogger
+信息: Logger ready
+5月 20, 2018 11:09:23 下午 chat.server.ChatServer run
+信息: ChatServer: Creatingc client input stream to get client's name ... 
+5月 20, 2018 11:09:23 下午 chat.server.ChatServer run
+信息: ChatServer: reading client's name: 
+5月 20, 2018 11:09:23 下午 chat.server.ChatServer run
+信息: ChatServer: client name Ténéphore
+5月 20, 2018 11:09:23 下午 logger.LoggerFactory getLogger
+信息: Logger ready
+5月 20, 2018 11:09:23 下午 chat.server.InputClient <init>
+信息: InputClient: Creating Input Stream ... 
+5月 20, 2018 11:09:23 下午 chat.server.InputOutputClient <init>
+信息: Client: Creating Output Stream ... 
+5月 20, 2018 11:09:23 下午 logger.LoggerFactory getLogger
+信息: Logger ready
+5月 20, 2018 11:09:23 下午 chat.server.ChatServer run
+信息: ChatServer: Creatingc client input stream to get client's name ... 
+5月 20, 2018 11:09:23 下午 chat.server.ChatServer run
+信息: ChatServer: reading client's name: 
+5月 20, 2018 11:09:23 下午 chat.server.ChatServer run
+信息: ChatServer: client name Anatole
+5月 20, 2018 11:09:23 下午 logger.LoggerFactory getLogger
+信息: Logger ready
+5月 20, 2018 11:09:23 下午 chat.server.InputClient <init>
+信息: InputClient: Creating Input Stream ... 
+5月 20, 2018 11:09:23 下午 chat.server.InputOutputClient <init>
+信息: Client: Creating Output Stream ... 
+5月 20, 2018 11:09:23 下午 logger.LoggerFactory getLogger
+信息: Logger ready
+5月 20, 2018 11:10:09 下午 chat.server.InputOutputClient cleanup
+信息: Client::cleanup: closing output stream ... 
+5月 20, 2018 11:10:09 下午 chat.server.InputClient cleanup
+信息: MainClient::cleanup: closing input stream ... 
+5月 20, 2018 11:10:09 下午 chat.server.InputClient cleanup
+信息: MainClient::cleanup: closing client socket ... 
+5月 20, 2018 11:10:09 下午 chat.server.ChatServer cleanup
+信息: ChatServer::run: still 2 threads remaining ...
+5月 20, 2018 11:10:12 下午 chat.server.InputOutputClient cleanup
+信息: Client::cleanup: closing output stream ... 
+5月 20, 2018 11:10:12 下午 chat.server.InputClient cleanup
+信息: MainClient::cleanup: closing input stream ... 
+5月 20, 2018 11:10:12 下午 chat.server.InputClient cleanup
+信息: MainClient::cleanup: closing client socket ... 
+5月 20, 2018 11:10:12 下午 chat.server.ChatServer cleanup
+信息: ChatServer::run: still 1 threads remaining ...
+5月 20, 2018 11:10:13 下午 chat.server.InputOutputClient cleanup
+信息: Client::cleanup: closing output stream ... 
+5月 20, 2018 11:10:13 下午 chat.server.InputClient cleanup
+信息: MainClient::cleanup: closing input stream ... 
+5月 20, 2018 11:10:13 下午 chat.server.InputClient cleanup
+信息: MainClient::cleanup: closing client socket ... 
+5月 20, 2018 11:10:13 下午 chat.server.ChatServer cleanup
+信息: ChatServer::run: no more threads.
+5月 20, 2018 11:10:13 下午 chat.server.ChatServer run
+信息: ChatServer::run: all client handlers terminated
+5月 20, 2018 11:10:13 下午 chat.server.ChatServer run
+信息: ChatServer::run: Closing server socket ... 

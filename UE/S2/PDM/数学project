@@ -1,0 +1,30 @@
+数学project
+
+project的要求
+- N组合作中复制或完成的作品将相关组的笔记除以N.
+- 数学项目由问题的数学解析及其计算机实现组成。 因此，所期望的是一份报告，其中包含：
+- 对所研究问题及其数学解决方案进行形式化和清晰的表述，
+- 所实施解决方案的算法描述（采用伪代码），
+- 一个实现在Python中实现其方法的程序。
+- 提供的程序将被评论，变量将具有明确的名称，或至少是明确的。
+
+
+目的：modéliser un marché financier    ；； déterminer le prix   ；；la couverture dèoptions d'europe
+
+建立的市场模型由两个资产actifs构成，可以交易échanger
+- actif sans risque , 在t时的价格是St0，初始为0
+- actif risqué , 其价格St是一个v.a随机变量
+
+最开始时候购买一个期权option，所以在时间T时候就可以得到价值f(ST)，其中f是R到R的方程得到actif risqué。用概率来确定一开始时候需要向卖家支付的金额，也想知道被卖方藏起来的风险分布couverture。couverture是卖方如何动态的投资他最初所获的资金。在T时刻卖家卖掉所由的asr和ar时候得到f(ST).
+首先建模：maniere discrete avec uneprogress,首先用Cox-Ross-Rubinstein模型中的树进展以离散的方式对价格演化进行建模
+第二步：我们将用Black-Scholes模型持续模拟价格演变。
+第三，我们将研究Cox-Ross-Rubinstein模型给出的价格与Black-Scholes模型给出的价格的收敛性。
+
+
+3 Modèle de Cox-Ross-Rubinstein 
+假设两种actifs通过离散的方式演变直到ti时刻才改变，t0=0,tN=T. δ=T/N=ti+1−ti ;
+无风险资产：S(0)ti = (1+rN)i,rN无风险指数
+风险资产：S(N)0=s》0,S(N)ti = T(N)i  * S(N)ti−1 , T(N)i是一个变量 soit la valeur 1 + hN                    s                                                              soit la valeur 1 +  bN avec bN < rN < hN
+le prix actualisé de 风险资产，S ̃(N)ti := S(N)ti/S（0）ti
+
+

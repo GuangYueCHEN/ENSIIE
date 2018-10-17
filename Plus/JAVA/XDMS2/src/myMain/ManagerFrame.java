@@ -1,0 +1,147 @@
+package myMain;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class ManagerFrame extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+
+	//建立界面
+	public static void mainManager() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ManagerFrame frame = new ManagerFrame();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * 建立主界面的方法
+	 */
+	public ManagerFrame() {
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 457);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		//建立不同功能按钮等
+		JButton buttonSelect = new JButton("\u67E5\u8BE2\u5B66\u751F\u4FE1\u606F");
+		//
+		buttonSelect.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Select.select();
+				//调用选择
+			}
+		});
+		buttonSelect.setBounds(150, 89, 124, 23);
+		contentPane.add(buttonSelect);
+
+		//JButton buttonUpdate = new JButton("\u7BA1\u7406\u5B66\u751F\u4FE1\u606F");
+		//
+		//buttonUpdate.addMouseListener(new MouseAdapter() {
+			//@Override
+			//public void mouseClicked(MouseEvent e) {
+			//	Update.mainUpdate();
+				//调用更新
+			//}
+		//});
+		//buttonUpdate.setBounds(150, 132, 124, 23);
+		//contentPane.add(buttonUpdate);
+
+		//JButton buttonDelete = new JButton("\u5220\u9664\u5B66\u751F\u4FE1\u606F");
+		//监听鼠标点击按钮
+		//buttonDelete.addMouseListener(new MouseAdapter() {
+		//	@Override
+		//	public void mouseClicked(MouseEvent e) {
+		//		Delete.delete();
+				//调用删除
+		//	}
+		//});
+		//buttonDelete.setBounds(152, 219, 122, 23);
+		//contentPane.add(buttonDelete);
+
+		JButton buttonAdd = new JButton("\u5F55\u5165\u5B66\u751F\u4FE1\u606F");
+
+		// 插入
+		buttonAdd.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Insert.AddStudent();
+			}
+		});
+		buttonAdd.setBounds(152, 176, 122, 23);
+		contentPane.add(buttonAdd);
+
+		JButton buttonGrade = new JButton("\u5F55\u5165\u5B66\u751F\u6210\u7EE9");
+		//录入学生成绩
+		buttonGrade.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				getGrade.mainGetGrade();
+			}
+		});
+		buttonGrade.setBounds(152, 263, 122, 23);
+		contentPane.add(buttonGrade);
+		//状态
+		JButton buttonState = new JButton("\u67E5\u8BE2\u5B66\u751F\u72B6\u6001");
+		buttonState.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				getState.state();
+			}
+		});
+		buttonState.setBounds(152, 219, 122, 23);
+		contentPane.add(buttonState);
+
+		JLabel labelMain = new JLabel(
+				"\u897F\u5B89\u7535\u5B50\u79D1\u6280\u5927\u5B66\u5B66\u7C4D\u7BA1\u7406\u7CFB\u7EDF");
+		labelMain.setBounds(134, 25, 228, 15);
+		contentPane.add(labelMain);
+		//教师
+		JButton buttonTeacher = new JButton("\u67E5\u8BE2\u5bfc\u5e08\u548c\u5747\u5206");
+		buttonTeacher.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				selectTeacher.getTeacher();
+			}
+		});
+		buttonTeacher.setBounds(150, 132, 124, 23);
+		contentPane.add(buttonTeacher);
+
+		//JButton button = new JButton("\u67E5\u8BE2\u5B66\u751F\u6210\u7EE9");
+		//button.addMouseListener(new MouseAdapter() {
+		//	@Override
+		//	public void mouseClicked(MouseEvent e) {
+
+		//	}
+		//});
+	//	button.setBounds(150, 382, 124, 23);
+		//contentPane.add(button);
+	}
+}

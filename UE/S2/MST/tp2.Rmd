@@ -1,0 +1,497 @@
+---
+title: "TPSTAT2_XU_Ruitong_GROUPE_2.1"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# 1 Echantillon, Théorèm Central Limite; Esti,ation ?onte Carlo
+
+## 1.1 Loi de Gaussien
+
+
+```{r , include=TRUE}
+ # la taille = 5
+  avgGau5 <-vector(length = 1000)
+  varGau5 <-vector(length = 1000)
+  uGau5 <- vector(length = 1000)
+  for (i in 1:1000) {
+    Gau = rnorm(5,1,2)
+    avgG = mean(Gau)
+    varG = var(Gau)
+    avgGau5[i] <- c(avgG)
+    varGau5[i] <-c(varG)
+    uGau5[i] <- (avgGau5[i]-1)/(2/sqrt(5));
+    
+  }
+  hist(avgGau5,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 5"))
+  hist(varGau5,freq = F,main = paste ("Histogramme des variances empiriques de la taille 5"))
+   hist(uGau5,freq = F,main = paste ("Histogramme des U empiriques de la taille 5"))
+  
+ 
+```
+
+```{r, include = TRUE}
+# la taille = 30
+ 
+  avgGau30 <-vector(length = 1000)
+  varGau30 <-vector(length = 1000)
+  uGau30 <- vector(length = 1000)
+  for (i in 1:1000) {
+    Gau = rnorm(30,1,2)
+    avgG = mean(Gau)
+    varG = var(Gau)
+    avgGau30[i] <- c(avgG)
+    varGau30[i] <-c(varG)
+    uGau30[i] <- (avgGau30[i]-1)/(2/sqrt(30));
+    
+  }
+  hist(avgGau30,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 30"))
+  hist(varGau30,freq = F,main = paste ("Histogramme des variances empiriques de la taille 30"))
+   hist(uGau30,freq = F,main = paste ("Histogramme des U empiriques de la taille 30"))
+```
+
+```{r, include=TRUE}
+# la taille = 100
+ 
+  avgGau100 <-vector(length = 1000)
+  varGau100 <-vector(length = 1000)
+  uGau100 <- vector(length = 1000)
+  for (i in 1:1000) {
+    Gau = rnorm(100,1,2)
+    avgG = mean(Gau)
+    varG = var(Gau)
+    avgGau100[i] <- c(avgG)
+    varGau100[i] <-c(varG)
+    uGau100[i] <- (avgGau100[i]-1)/(2/sqrt(100));
+    
+  }
+  hist(avgGau100,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 100"))
+  hist(varGau100,freq = F,main = paste ("Histogramme des variances empiriques de la taille 100"))
+   hist(uGau100,freq = F,main = paste ("Histogramme des U empiriques de la taille 100"))
+```
+```{r, include= TRUE}
+plot(seq(-3, 3), dnorm(seq(-3, 3), mean=0, sd=1), main = paste("Distribution théorique pour la loi gaussienne N(1,2)") )
+```
+
+## 1.2 Loi de Pareto
+```{r, include=TRUE}
+library(actuar)
+ 
+ # la taille = 5
+  avgP5 <-vector(length = 1000)
+  varP5 <-vector(length = 1000)
+  uP5 <- vector(length = 1000)
+  
+  E <- 3 * 3 / (3 - 1)
+  V <- 3 * 3 * 3 / (((3 - 1) ** 2 ) * (3 - 2))
+  for (i in 1:1000) {
+    P = rpareto(5,3,3)
+    avgP = mean(P)
+    varP = var(P)
+    avgP5[i] <- c(avgP)
+    varP5[i] <-c(varP)
+    uP5[i] <- (avgP5[i]-E)/(V/sqrt(5));
+    
+  }
+ 
+   hist(avgP5,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 5"))
+  hist(varP5,freq = F,main = paste ("Histogramme des variances empiriques de la taille 5"))
+   hist(uP5,freq = F,main = paste ("Histogramme des U empiriques de la taille 5"))
+
+```
+
+```{r, include=TRUE}
+ 
+ # la taille = 30
+  avgP30 <-vector(length = 1000)
+  varP30 <-vector(length = 1000)
+  uP30 <- vector(length = 1000)
+  
+  E <- 3 * 3 / (3 - 1)
+  V <- 3 * 3 * 3 / (((3 - 1) ** 2 ) * (3 - 2))
+  for (i in 1:1000) {
+    P = rpareto(30,3,3)
+    avgP = mean(P)
+    varP = var(P)
+    avgP30[i] <- c(avgP)
+    varP30[i] <-c(varP)
+    uP30[i] <- (avgP30[i]-E)/(V/sqrt(30));
+    
+  }
+ 
+   hist(avgP30,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 30"))
+  hist(varP30,freq = F,main = paste ("Histogramme des variances empiriques de la taille 30"))
+   hist(uP30,freq = F,main = paste ("Histogramme des U empiriques de la taille 30"))
+
+```
+
+```{r, include=TRUE}
+ 
+ # la taille = 100
+  avgP100 <-vector(length = 1000)
+  varP100 <-vector(length = 1000)
+  uP100 <- vector(length = 1000)
+  
+  E <- 3 * 3 / (3 - 1)
+  V <- 3 * 3 * 3 / (((3 - 1) ** 2 ) * (3 - 2))
+  for (i in 1:1000) {
+    P = rpareto(100,3,3)
+    avgP = mean(P)
+    varP = var(P)
+    avgP100[i] <- c(avgP)
+    varP100[i] <-c(varP)
+    uP100[i] <- (avgP100[i]-E)/(V/sqrt(100));
+    
+  }
+ 
+   hist(avgP100,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 100"))
+  hist(varP100,freq = F,main = paste ("Histogramme des variances empiriques de la taille 100"))
+   hist(uP100,freq = F,main = paste ("Histogramme des U empiriques de la taille 100"))
+
+```
+```{r, include=TRUE}
+plot(seq(3, 9), dpareto(seq(3,9), 3,3), main = paste("Distribution théorique pour la loi Pareto (3,3)") )
+
+```
+
+## 1.3 la loi de Poission
+```{r , include=TRUE}
+ # la taille = 5
+  avgPoi5 <-vector(length = 1000)
+  varPoi5 <-vector(length = 1000)
+  uPoi5 <- vector(length = 1000)
+  
+  lam <- 1
+  E <- 1
+  V <- 1
+  
+  for (i in 1:1000) {
+    Poi = rpois(5,1)
+    avgPoi = mean(Poi)
+    varPoi = var(Poi)
+    avgPoi5[i] <- c(avgPoi)
+    varPoi5[i] <-c(varPoi)
+    uPoi5[i] <- (avgPoi5[i]-E)/(V/sqrt(5));
+    
+  }
+  hist(avgPoi5,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 5"))
+  hist(varPoi5,freq = F,main = paste ("Histogramme des variances empiriques de la taille 5"))
+   hist(uPoi5,freq = F,main = paste ("Histogramme des U empiriques de la taille 5"))
+  
+ 
+```
+
+
+```{r , include=TRUE}
+ # la taille = 30
+  avgPoi30 <-vector(length = 1000)
+  varPoi30 <-vector(length = 1000)
+  uPoi30 <- vector(length = 1000)
+  
+  lam <- 1
+  E <- 1
+  V <- 1
+  
+  for (i in 1:1000) {
+    Poi = rpois(30,1)
+    avgPoi = mean(Poi)
+    varPoi = var(Poi)
+    avgPoi30[i] <- c(avgPoi)
+    varPoi30[i] <-c(varPoi)
+    uPoi30[i] <- (avgPoi30[i]-E)/(V/sqrt(30));
+    
+  }
+  hist(avgPoi30,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 30"))
+  hist(varPoi30,freq = F,main = paste ("Histogramme des variances empiriques de la taille 30"))
+   hist(uPoi30,freq = F,main = paste ("Histogramme des U empiriques de la taille 30"))
+  
+ 
+```
+
+
+```{r , include=TRUE}
+ # la taille = 100
+  avgPoi100 <-vector(length = 1000)
+  varPoi100 <-vector(length = 1000)
+  uPoi100 <- vector(length = 1000)
+  
+  lam <- 1
+  E <- 1
+  V <- 1
+  
+  for (i in 1:1000) {
+    Poi = rpois(100,1)
+    avgPoi = mean(Poi)
+    varPoi = var(Poi)
+    avgPoi100[i] <- c(avgPoi)
+    varPoi100[i] <-c(varPoi)
+    uPoi100[i] <- (avgPoi100[i]-E)/(V/sqrt(100));
+    
+  }
+  hist(avgPoi100,freq = F,main = paste ("Histogramme des moyennes empiriques de la taille 100"))
+  hist(varPoi100,freq = F,main = paste ("Histogramme des variances empiriques de la taille 100"))
+   hist(uPoi100,freq = F,main = paste ("Histogramme des U empiriques de la taille 100"))
+  
+ 
+```
+
+```{r, include=TRUE}
+plot(seq(-3,3), dpois(seq(-3,3), 1), main = paste("Distribution théorique pour la loi Poisson (1)") )
+```
+##1.4
+  Comme déduit en théorème centrale limité, si les variables aléatoires suivent une loi normale d’espérance (ou moyenne) μ : on imagine bien que la somme de n variables puisse suivre une loi normale de paramètre nμ. Dans le cas de variables ne suivant pas une loi normale, le théorème peut sembler étonnant au premier abord. Nous allons donc en faire une illustration ne nécessitant pas de connaissance particulière en statistiques, mais uniquement du dénombrement. Considérons le jeu de pile ou face et mettons des valeurs sur les faces de la pièce, par exemple 0 pour pile et 1 pour face ; on s’intéresse à la somme de n tirages. La pièce est équilibrée, chaque face a une chance sur deux d’être tirée. Si l’on fait un seul tirage, nous avons donc le tirage n°1 (et aucun autre), et son résultat peut être 0 ou 1 ; nous faisons la somme d’une seule valeur.
+
+# Moyenne et dispersion
+## 2.1
+\[
+P
+\begin{pmatrix}
+\begin{vmatrix}
+   X - E
+   \begin{pmatrix}
+   X
+   \end{pmatrix}
+  \end{vmatrix}
+ \geqslant
+ b
+\end{pmatrix}
+\leq
+\frac{Var\begin{pmatrix}X\end{pmatrix}}{b^2}
+
+\]
+
+## 2.2-a
+\[ \mathbb{P}(|X - \mu| \geq \delta) = \mathbb{E[Z]}\]
+
+##2.2-b,c
+```{r,include=TRUE}
+
+
+estimation <- function(flag,tab){
+ 
+  avg = mean(tab)
+  for(i in 1:1000)
+  {
+    if(abs(tab[i]-avg) >= flag)
+      tab[i] = 1
+    else
+      tab[i]=0
+  }  
+   val = mean(tab)
+   return(val)
+}
+
+```
+
+
+```{r, include=TRUE}
+
+#GAUSS
+
+gaussien <- function(flag,si)
+{
+  
+gau   <-rnorm(1000,0,si)
+p     <-estimation(flag,gau)
+borne <- (si / flag) ** 2 
+cat(" $GAUSSIEN ~ N(0,",si,")\n")
+cat(" $moyenne = ", p, "\n")
+cat(" $borne   = ", borne)
+}
+
+gaussien(2,1)
+cat("\n \n")
+gaussien(2,2)
+cat("\n \n")
+gaussien(2,3)
+
+```
+
+```{r, include=TRUE}
+#PARETO
+
+pareto <- function(flag,a,b)
+{
+  
+paret   <-rpareto(1000,a,b)
+p     <-estimation(flag,paret)
+
+ si = ((a*b)/(a-1))*sqrt(b/(b-2))
+ esp = ((a*b)/(b-1))
+borne <- (si / flag) ** 2 
+cat(" $PARETO ~ (",a,",",b,")\n")
+cat(" $moyenne = ", p, "\n")
+cat(" $borne   = ", borne)
+}
+
+pareto(4,3,3)
+cat("\n \n")
+pareto(4,3,4)
+cat("\n \n")
+pareto(4,3,4)
+
+```
+
+
+```{r, include=TRUE}
+#POISSION
+
+poi <- function(flag,l)
+{
+  
+poi   <-rpois(1000,l)
+p     <-estimation(flag,poi)
+
+si = sqrt(l)
+borne <- (si / flag) ** 2 
+cat(" $POISSION ~ (",l,")\n")
+cat(" $moyenne = ", p, "\n")
+cat(" $borne   = ", borne)
+}
+
+poi(1,1)
+cat("\n \n")
+poi(1,2)
+cat("\n \n")
+poi(2,3)
+
+
+```
+
+## 2.2-d
+
+Pour le cas Gaussien
+\[P\begin{pmatrix} X \geq t\end{pmatrix}\leq exp\begin{pmatrix}-\frac{t^2}{2\sigma^2}\end{pmatrix}\]
+```{r, include=TRUE}
+gaussien <- function(flag,si)
+{
+  
+gau   <-rnorm(1000,0,si)
+p     <-estimation(flag,gau)
+
+
+BorneChernoff <- exp(- flag**2/(2*(si**2)))
+cat(" $GAUSSIEN ~ N(0,",si,")\n")
+cat(" $Estimation de Monte-Carlo du terme = ", p, "\n")
+cat(" $Borne de Chernoff                  = ", BorneChernoff,"\n")
+cat(" $Comparation                        = ", BorneChernoff - p)
+}
+
+gaussien(2,1)
+cat("\n \n")
+gaussien(2,2)
+cat("\n \n")
+gaussien(2,3)
+
+```
+
+Pour le cas Poisson
+\[P\begin{pmatrix} X \geq t\end{pmatrix}\leq exp\begin{pmatrix}-\mu h\begin{pmatrix}\frac{t}{\mu}\end{pmatrix}\end{pmatrix}\]
+
+```{r, include=TRUE}
+#POISSION
+
+poi <- function(flag,l)
+{
+  
+poi   <-rpois(1000,l)
+p     <-estimation(flag,poi)
+
+si = sqrt(l)
+BorneChernoff <- exp(-l*((1 + (flag / l))*log(1 + (flag / l)) - (flag / l)))
+cat(" $POISSION ~ (",l,")\n")
+cat(" $Estimation de Monte-Carlo du terme = ", p, "\n")
+cat(" $Borne de Chernoff                  = ", BorneChernoff,"\n")
+cat(" $Comparation                        = ", BorneChernoff - p)
+
+}
+
+poi(1,1)
+cat("\n \n")
+poi(1,2)
+cat("\n \n")
+poi(2,3)
+
+#La borne obtenue par Chernoff est plus précis que celle de Bienaymé Chebychev
+```
+##2.3-a
+
+```{r, include=TRUE}
+gaussien2 <- function(n,flag,mu,si)
+{
+  
+gau <-rnorm(n,mu,si)
+
+BorneChernoff <- exp(- flag**2/(2*(si**2)))
+cat(" $GAUSSIEN ~ N(",mu,",",si,")\n")
+cat(" $n                 = ",n, "\n")
+cat(" $Borne de Chernoff = ", BorneChernoff,"\n")
+}
+
+gaussien2(20,2,0,1)
+cat("\n \n")
+gaussien2(100,2,0,1)
+cat("\n \n")
+gaussien2(1000,2,0,1)
+```
+
+```{r, include=TRUE}
+#POISSION
+
+poi <- function(n,flag,l)
+{
+  
+poi   <-rpois(n,l)
+
+si = sqrt(l)
+BorneChernoff <- exp(-l*((1 + (flag / l))*log(1 + (flag / l)) - (flag / l)))
+cat(" $POISSION ~ (",l,")\n")
+cat(" $n                 = ", n, "\n")
+cat(" $Borne de Chernoff = ", BorneChernoff,"\n")
+
+
+}
+
+poi(20,1,1)
+cat("\n \n")
+poi(100,1,2)
+cat("\n \n")
+poi(1000,2,3)
+
+
+```
+
+##2.4-a
+```{r,include=TRUE}
+#Cauchy la taille = 20, 100, 1000,10000
+  Cau = rcauchy(20,0,1)
+  cat("\n $Moyenne Empirique de Cauchy 20 =", mean(Cau))
+  Cau = rcauchy(100,0,1)
+  cat("\n $Moyenne Empirique de Cauchy 100 =", mean(Cau))
+  Cau = rcauchy(1000,0,1)
+  cat("\n $Moyenne Empirique de Cauchy 1000 =", mean(Cau))
+  Cau = rcauchy(10000,0,1)
+  cat("\n $Moyenne Empirique de Cauchy 10000 =", mean(Cau))
+  
+```
+##2.4-b
+
+##2.4-c
+```{r, include=TRUE}
+m <- vector(length = 1000)
+mediane <- function(n){
+  for(i in 1:1000){
+    l <- rcauchy(n,0,1)
+    med = median(l)
+    m[i] <- c(med)
+  }
+  
+  cat("mediane = ",mean(m))
+  cat("\n")
+}
+
+mediane(20)
+mediane(100)
+mediane(1000)
+```

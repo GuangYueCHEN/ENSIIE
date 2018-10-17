@@ -1,0 +1,40 @@
+package listes;
+
+import java.util.Iterator;
+
+public class Liste<E> implements IListe<E> {
+
+	@Override
+	public void add(E elt) throws NullPointerException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void insert(E elt) throws NullPointerException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean insert(E elt, int index) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private static class  Maillon<E> {
+		
+	}
+	
+	private abstract class ListeIterator<E> implements Iterator<E>{
+
+		
+	}
+
+}

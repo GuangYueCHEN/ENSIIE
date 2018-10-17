@@ -1,0 +1,105 @@
+h1{
+  text-align: center;
+
+  color:#0000FF;
+  font-size:30px;
+   width:100%;
+   background-color:lightblue;
+     text-align:center;
+}
+
+p.erreur{
+  color: red;
+} 
+
+a:active{
+background-color:#0000FF;
+text-decoration:none;
+}
+legend{
+
+     font-size:25px;
+    font-weight: bold;
+}
+
+ a:link,  a:visited{
+    color:green;
+
+    padding:4px;
+     box-sizing: border-box;
+    margin: 5px 25px;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    border: none;
+    border-radius: 2px;
+    background-color: #fff;
+
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+	     }
+
+ a:hover{
+ background-color: #FF4081; color: #fff;
+}
+/* le lien avec les coleur differents pendant les statues defferent*/
+
+
+
+
+   body{
+       background-color:AliceBlue;
+           font-size: 20px;
+
+   }
+   
+
+   /*copier coller*/
+input[type=submit] {
+    float: right;
+    transition: background-color ease-in-out 0.15s, color ease-in-out 0.15s;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin: 5px 25px;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    border: none;
+    border-radius: 2px;
+    background-color: #fff;
+    padding: 10px 25px;
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+}
+input[type=submit]:hover { background-color: #FF4081; color: #fff; }
+
+
+
+input[type=radio] {  }
+input[type=radio] + label {
+    display: inline;
+    float: left;
+    transition: background-color ease-in-out 0.15s, color ease-in-out 0.15s;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin: 5px 5px 15px;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    border: none;
+    border-radius: 2px;
+    background-color: #fff;
+    padding: 10px 25px;
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+}
+input[type=radio] + label:hover,
+input[type=radio]:checked + label { background-color: #FF4081; color: #fff; }
+
+ 
+   

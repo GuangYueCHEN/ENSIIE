@@ -1,0 +1,289 @@
+---
+title: "tp4"
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+###1
+```{r, include=TRUE}
+echans<-rnorm(20,1,sqrt(2))
+mu0<-1
+mu1<-1.5
+alpha<-0.05
+
+```
+#(a) definition de α
+  On remarque que  α est l'erreur de première espèce ,  il s'appelle aussi niveau de significativité.  α =  P[accepter H1 ;alors que H0 vraie] , est la probabilité de rejeter à tort l’hypothèse nulle ;
+  
+
+#(b) Donner la forme de la zone de rejet W
+La région critique optimale W est définie: \[W = {\Lambda_n > K_{\alpha}} \quad , \quad \Lambda_n = \frac{\sqrt{n}(\bar{X_n} - \mu_0)}{S_n}\] et on a \[\quad K_{\alpha} =F_{T_{n-1}}^{-1}(1 - \alpha)\] où $$F_{T_{n-1}}$$désigne la fonction de répartition de \[T_{n-1}\]
+
+
+
+#(c)Programmer la regle de decision associé δ(Sn, α, μ0, μ1) ( ecrire une fonction R parametrée par les moyennes, α, et Sn).
+
+```{r, include=TRUE}
+
+delta <- function(Sn, alpha, mu0, mu1){
+  n<-length(Sn)
+  
+    means<-mean(Sn)
+ 
+    sum<-0
+    for (i in 1:n ) {
+      sum= sum + (Sn[i]-means)*(Sn[i]-means)
+    }
+    Sn_2<-1.0/(n-1)*sum
+    lambda_n<-sqrt(n/Sn_2)*(means-mu0)
+    K<-qt(1-alpha,n-1)
+  
+   return(lambda_n>K)
+
+}
+test<-delta(echans,alpha,mu0,mu1)
+if(test) {
+  cat("\n On rejette donc l’hypothèse H0 :μ = ",mu1)
+}else{
+  cat("\nOn rejette donc l’hypothèse H1  :μ = ",mu0)
+}
+
+
+
+
+```
+
+
+###2
+```{r, include=TRUE}
+echans_n<-matrix(rnorm(20*100, 1,sqrt(2)),nrow = 20)
+
+```
+#(a)Appliquer la règle de decision
+```{r, include=TRUE}
+app<-function(echans_n,alpha,mu0,mu1){
+n<-length(echans_n[1,])
+result=vector(length=n)
+
+for (i in 1:n) {
+  test<-delta(echans_n[,i],alpha,mu0,mu1)
+
+if(test) {
+  result[i]=mu1
+}else{
+  result[i]=mu0
+}
+
+}
+
+return(result)
+}
+
+print(app(echans_n,0.05,mu0,mu1))
+
+```
+On remarque on rejette plus H1 , le majorité de resultat est mu0
+
+#(b)Faire varier α = 0.2, 0.1, 0.05, 0.01
+On remarque que quand alpha est plus petit , le nombre de mu0 est plus grand , on rejette plus de fois H1 . La zone de rejet s'agrandir.
+
+#(c) appliquer Pourα=0.2,0.1,0.05,0.01
+```{r, include=TRUE}
+#la probabilite on choisit Hx 
+P<-function(res,x){
+  n=length(res)
+  occ=0.0
+  for (i in 1:n ){
+    if (res[i]==x) {
+      occ=occ+1.0
+    }
+  }
+  return(occ/n)
+ 
+}
+nombre<-function(res,x){
+  n=length(res)
+  occ=0.0
+  for (i in 1:n ){
+    if (res[i]==x) {
+      occ=occ+1.0
+    }
+  }
+  return(occ)
+ 
+}
+NB<-vector(length=4)
+cat("les alphas et les probabilite on choisit le H1")
+cat("\nalpha= 0.2",1-P(app(echans_n,0.2,mu0,mu1),1))
+NB[1]<-nombre(app(echans_n,0.2,mu0,mu1),1)
+
+
+
+cat("\nalpha= 0.1",1-P(app(echans_n,0.1,mu0,mu1),1))
+NB[2]<-nombre(app(echans_n,0.1,mu0,mu1),1)
+
+
+cat("\nalpha= 0.05",1-P(app(echans_n,0.05,mu0,mu1),1))
+NB[3]<-nombre(app(echans_n,0.05,mu0,mu1),1)
+
+
+
+cat("\nalpha= 0.01",1-P(app(echans_n,0.01,mu0,mu1),1))
+NB[4]<-nombre(app(echans_n,0.01,mu0,mu1),1)
+
+
+plot(x=c(0.2,0.1,0.05,0.01),NB)
+
+
+```
+
+
+###3 On va simuler N = 100  ́echantillons 
+```{r, include=TRUE}
+
+echans_n2<-matrix(rnorm(20*100, 1.5,sqrt(2)),nrow = 20)
+
+```
+#(a)Appliquer la règle de decision,Qu’observez vous?
+```{r, include=TRUE}
+
+
+print(app(echans_n2,0.05,mu0,mu1))
+cat("la probabilité que on choisit mu0",P(app(echans_n2,0.05,mu0,mu1),1))
+
+
+```
+On trouve  que la probabilité que on rejette H0  est autant que on rejette H1 , pour ce cas μ=1.5=μ1 , mais la fonction R suppose H0 est vrai.
+
+
+#(b) Rappeler la d ́efinition et calculer th ́eoriquement la puissance du test β, en fonction de α, μ0, μ1.
+\[\quad \beta = 1- F_{T_{n-1}}(F_{T_{n-1}}^{-1}(1 - \alpha) + \frac{\sqrt{n}(\bar{X_n} - \mu_0)}{S_n}）\]
+```{r, include=TRUE}
+Puissance_de_beda<-function(Sn,alpha,mu0,mu1){
+   n<-length(Sn)
+  
+    means<-mean(Sn)
+
+ 
+    sum<-0
+    for (j in 1:n ) {
+      sum= sum + (Sn[j]-means)*(Sn[j]-means)
+    }
+    Sn_2<-1.0/(n-1)*sum
+
+    K<-qt(1-alpha,n-1)
+    result=1-pt(sqrt(n/Sn_2)*(mu0-mu1)+K,n-1)
+
+
+
+return(result)
+}
+
+Puissance_de_beda(echans_n2[,1],0.05,mu0,mu1)
+
+```
+
+
+#(c) On fixe α = 0.05, et on fait varier l’hypoth`ese alternative H1 : μ = μ . Simuler N = 100  ́echantillons S′1, . . . , S′N en faisant varier la 1nn moyenne μ = μ1 ∈ {1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0} et appliquer la regle de d ́ecision δ(S′i,α,μ ,μ ), i = 1,...,N. Tracer en fonction n01 de μ1 le pourcentage de bonne d ́ecision et comparer avec les r ́esultats de la question pr ́ec edente.
+```{r, include=TRUE}
+res<-vector(length=9)
+for (i in seq(1.2,2.0,0.1)){
+ echans_n2<-matrix(rnorm(20*100, i,sqrt(2)),nrow = 20)
+res[i*10-11]<-1-P(app(echans_n2,0.05,1,i),1)
+
+}
+
+
+plot(seq(1.2,2.0,0.1),res,xlab="mu1",ylab="proba on choisit H1")
+```
+
+###4  On va utiliser la fonction R t.test qui permet de faire le test d’une hy- pothese simple H0 : μ = μ0, contre une hypoth`ese multiple (ou composite) H1 :μ>μ0 (ouμ̸=μ0).
+#(a) t.test 
+```{r, include=TRUE}
+echans_n<-matrix(rnorm(20*100, 1,sqrt(2)),nrow = 20)
+t.test(echans_n[,1],mu=mu0, alternative=c("greater"))
+
+```
+Test bilatéral
+```{r, include=TRUE}
+t.test(echans_n[,1],mu=mu0)
+```
+t est la value de la statistique Student
+df est le degré de liberté pour  la statistique Student.
+
+#(b)
+\[\quad Pvalue = 1- F_{T_{n-1}}(t)\]
+\[t=F_{T_{n-1}}^{-1}(1-Pvalue)\]
+\[\quad W = \{ { t>F_{T_{n-1}}^{-1}(1-\alpha) } \}\]
+parce que le caractere monotone de fonction est Incrémental 
+si \[1-Pvalue>1-\alpha\] \[Pvalue<\alpha\],on rejette H0, sinon on choisit H1
+
+#(c)
+```{r, include=TRUE}
+apply2<-function(echans_n,alpha,mu0,mu1){
+n<-length(echans_n[1,])
+result=vector(length=n)
+
+for (i in 1:n) {
+  p <- t.test(echans_n[,i], mu=mu0, alternative=c("greater"))$p.value
+
+if(p<alpha) {
+  result[i]=mu1
+}else{
+  result[i]=mu0
+}
+
+}
+return(result)
+}
+
+NB<-vector(length=4)
+cat("les alphas et les probabilite on choisit le H1")
+cat("\nalpha= 0.2",1-P(apply2(echans_n,0.2,mu0,mu1),1))
+NB[1]<-nombre(apply2(echans_n,0.2,mu0,mu1),1)
+
+
+
+cat("\nalpha= 0.1",1-P(apply2(echans_n,0.1,mu0,mu1),1))
+NB[2]<-nombre(apply2(echans_n,0.1,mu0,mu1),1)
+
+
+cat("\nalpha= 0.05",1-P(apply2(echans_n,0.05,mu0,mu1),1))
+NB[3]<-nombre(apply2(echans_n,0.05,mu0,mu1),1)
+
+
+
+cat("\nalpha= 0.01",1-P(apply2(echans_n,0.01,mu0,mu1),1))
+NB[4]<-nombre(apply2(echans_n,0.01,mu0,mu1),1)
+
+
+plot(x=c(0.2,0.1,0.05,0.01),NB)
+
+```
+
+#(d)Est ce normal ?
+
+Oui , c'est normal , ici je crée un fonction P pour calcule la probablité de on rejette H0 , donc ilest égal à 1 − α environ(1-p égal à α environ ).  Et le nombre de cas 1 est égal à le cas que on utilise Pvalue;
+```{r, include=TRUE}
+
+
+print(nombre(app(echans_n,0.2,mu0,mu1),1))
+print(nombre(apply2(echans_n,0.2,mu0,mu1),1))
+
+print(nombre(app(echans_n,0.1,mu0,mu1),1))
+print(nombre(apply2(echans_n,0.1,mu0,mu1),1))
+
+print(nombre(app(echans_n,0.05,mu0,mu1),1))
+print(nombre(apply2(echans_n,0.05,mu0,mu1),1))
+
+print(nombre(apply2(echans_n,0.01,mu0,mu1),1))
+print(nombre(apply2(echans_n,0.01,mu0,mu1),1))
+
+
+```

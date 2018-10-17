@@ -1,0 +1,5 @@
+INDEX VERSION 1.4+/Users/pingguo/WTF/test/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
+3235188478.index
+883664602.index
+3830866261.index
+692090177.index

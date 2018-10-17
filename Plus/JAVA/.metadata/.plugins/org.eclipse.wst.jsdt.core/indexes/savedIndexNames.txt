@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+/Users/pingguo/WTF/JAVA/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
+2546417297.index
+3619856826.index
+4283952758.index
+4111327114.index
+590518891.index
+4124551218.index

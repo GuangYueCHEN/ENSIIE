@@ -1,0 +1,8 @@
+contextsDir=/Library/Tomcat//conf/Catalina/localhost
+eclipse.preferences.version=1
+managerUrl=http\://localhost\:8080/manager
+projectsInSourcePath=iiens;tp;tpp;
+tomcatConfigFile=/Library/Tomcat//conf/server.xml
+tomcatDir=/Library/Tomcat/
+tomcatJRE=com.oracle.java.9.0.1.jdk
+tomcatVersion=tomcatV9

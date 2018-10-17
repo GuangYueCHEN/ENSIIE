@@ -1,0 +1,24 @@
+#include<stdio.h>
+#include<string.h>
+#include<unistd.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<errno.h>
+
+int main(int argc ,char *argv[]){
+ int fsrc;
+ 
+ if(argc !=2){
+ fprintf(stderr,"%s:Fatal:%d mauvais nb\n",argv[0],argc);
+ return 1;
+ }
+
+
+//for (;;){
+  
+
+return 0;
+}
+
+

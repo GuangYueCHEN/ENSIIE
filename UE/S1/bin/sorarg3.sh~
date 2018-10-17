@@ -1,0 +1,17 @@
+i=0
+a="$@"
+petit=
+for test i lt #a[@] ;do
+    petit=${a[i]}
+    j=i
+    for j lt #a[@] ;do
+	if test petit le ${a[j]};then
+	    o=$petit
+	    petit=${a[j]}
+	    a[j]=$o
+	fi
+	j++
+    done
+	i++
+    done
+	

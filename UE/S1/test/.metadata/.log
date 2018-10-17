@@ -1,0 +1,22 @@
+!SESSION 2017-11-11 17:55:58.560 -----------------------------------------------
+eclipse.buildId=4.7.1.M20171009-0410
+java.version=9.0.1
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=zh_CN
+Framework arguments:  -product org.eclipse.epp.package.jee.product -keyring /Users/pingguo/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.jee.product -keyring /Users/pingguo/.eclipse_keyring
+
+!ENTRY org.eclipse.core.net 1 0 2017-11-11 17:56:37.638
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.jface.text 2 0 2017-11-11 17:59:14.452
+!MESSAGE Duplicate template id: 'org.eclipse.wst.xslt.templates.xpath.number'
+
+!ENTRY org.eclipse.jface.text 2 0 2017-11-11 17:59:14.458
+!MESSAGE Duplicate template id: 'org.eclipse.wst.xslt.templates.xpath.round'
+
+!ENTRY org.eclipse.jface.text 2 0 2017-11-11 17:59:14.545
+!MESSAGE Duplicate template id: 'org.eclipse.wst.xslt.templates.xpath.number'
+
+!ENTRY org.eclipse.jface.text 2 0 2017-11-11 17:59:14.546
+!MESSAGE Duplicate template id: 'org.eclipse.wst.xslt.templates.xpath.round'

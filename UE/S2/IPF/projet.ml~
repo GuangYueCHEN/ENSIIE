@@ -1,0 +1,88 @@
+(*Question 1*)
+(*Ecrire une fonction sum: int list -> int qui, sur la donne ́e d’une liste d’entiers l, calcule la somme des elements de l.*)
+
+
+let sum l=List.fold_right ( function x-> function acc -> x+acc) l 0 ;;
+
+
+
+
+(*Question 2
+Ecrire une fonction powerset: ’a list -> (’a list) list qui, sur la donnee d’une liste l, retourne la liste de toutes les sous-listes que l’on peut extraire de l*)
+
+let rec merge x l = match l with 
+  |[]->[]
+  |a::r->(x::a)::(merge x r);;
+
+let rec powerset1 l = match l with 
+  |[]->[]
+  |a::r->([a]::(powerset1 r))@(merge a (powerset1 r));;
+
+let powerset l= let ml =powerset1 l in ([])::ml;;
+
+(*Question 3*)
+(*Utiliser les deux questions precedentes pour definir une fonction subset_sum_0: int list -> int -> int repondant au probleme SUBSET-SUM-OPT*)
+
+let subset_sum_0 l s = List.fold_right (function l-> function max->let sum = sum l in 
+if sum>max&&sum<=s then sum else max)
+ (poweset l) 0
+;;
+
+
+(*Question 4*)
+(* Ecrire une fonction get all sums: int list -> int list reposant sur l’algorithme precedent. 
+L’utilisation de fonctions auxiliaires est recommande ́.*)
+
+(*Question 5*)
+(* E crire une fonction subset sum 1: int list -> int -> int repondant au proble`me 
+SUBSET-SUM- OPT a` l’aide de la fonction precedente. *)
+
+(*Question 6*)
+(* Ecrireunefonctioncleanup:intlist->int->float->intlistreposantsurl’algorithme3. 
+Testez la fonction avec s = 90, δ = 0.1 et la liste des entiers de 1 a` 100, 
+et essayez d’expliquer ce qu’elle fait dans votre rapport. *)
+
+
+(*Question 7*)
+(* E ́crireunefonctionsubset sum 2: float -> int list -> int -> int
+qui utilise la fonction precedente pour re ́pondre au proble`me SUBSET-SUM-OPT.
+ L’argument de type float correspond a` la pre ́cision δ utilise ́e lors du nettoyage.
+Dans un premier temps, on pourra faire des tests avec δ = 0.01. N’he ́sitez pas ensuite a`
+ essayer des valeurs de plus en plus petites pour δ *)
+
+
+
+
+(*Question 8*)
+(*  Question 8
+E ́crire une fonction is feasible: int -> int list -> int list -> bool qui, sur la donnee d’un entier cible s,
+ d’une liste l1 d’entiers croissants et d’une liste l2 d’entiers de ́croissants, retourne true si s s’ecrit 
+comme la somme d’un e ́le ́ment de l1 et d’un e ́le ́ment de l2, et false sinon*)
+
+
+
+
+
+(*Question 9*)
+(* En s’inspirant de la question pre ́ce ́dente, e ́crire une fonction best feasible: int -> int list -> int list 
+-> int qui, sur la donne ́e d’un entier cible s, d’une liste l1 d’entiers croissants et une liste l2 d’entiers 
+de ́croissants, retourne le plus grand entier s′ ≤ s tel que s′ = u + v avec u dans l1 et v dans l2 *)
+
+(*Question 10*)
+(* Proposer une fonction subset sum 3: int list -> int -> int re ́pondant au proble`me SUBSET-SUM- OPT  *)
+
+(*Question 11*)
+(* E ́crire une fonction gen random: int -> int -> int list qui, sur la donne ́e de deux entiers naturels n et m,
+ retourne un ensemble fini a` n e ́le ́ments contenant des entiers entre 0 et m − 1 inclus *)
+
+(*Question 12*)
+(* Profitez de cette fonction gen random pour tester davantage vos diffe ́rentes approches.
+Pre ́sentez dans votre rapport les avantages et les inconve ́nients de chacune des approches que 
+vous avez implantees. *)
+
+
+(*Question 13*)
+(*  Jusqu’a` pre ́sent, les diffe ́rentes approches retournent uniquement un entier s′. Modifiez vos codes 
+afin de retourner aussi un sous-ensemble dont la somme des e ́le ́ments vaut s′.
+Le type de retour des fonctions passe donc de int a`int * int list *)
+

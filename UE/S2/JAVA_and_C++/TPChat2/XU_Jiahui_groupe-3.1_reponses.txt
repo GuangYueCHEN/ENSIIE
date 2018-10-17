@@ -1,0 +1,39 @@
+Réponses aux question de la partie UML : 
+
+- A quoi sert la classe AbstractRunChat ?
+
+	C'est une classe abstraite, il contient les chouses importantes pour "RunChatClient" et 	"RunChatServer"
+
+- Expliquez la relation ChatServer / InputOutputClient concrétisée par l’attribut « clients ».
+	
+	"clients" est un vecteur de "InputOutputClient", "handlers" est un vecteur de "ClientHandler", 
+	c'est à dire que un serveur peut s'occuper plusieurs, Clients. S'il y a un nouvelle connexion 
+	d'un client, le "Chatserver" ajoute cet client dans "clients", et ajoute aussi un nouveau "hanlder"
+	dans "hanlders".
+	
+- Expliquez la relation ClientHandler / InputClient concrétisée par l’attribut « mainClient ».
+   
+	"mainClient" c'est la personne qui parle, le "ClientHandler" envoie ce qu'il a dit aux autres 		Client. 
+
+- Expliquez la relation ClientHandler / InputOutputClient concrétisée par l’attribut « allClients ».
+
+	Chaque "ClientHandler" s'occupe les messages de "Client" en le même temp sur le chat d'un "client"
+
+- Combien de threads tournent sur un serveur dans le scénario présenté par la Figure 1 (page 1) ? 
+  Détaillez votre réponse en précisant qui lance qui.
+
+	Il y a deux threads, un pour s'occuper le Client 1, l'autre pour s'occuper le Client 2.
+
+- Combien de threads tournent dans le Client 1 du scénario présenté par la Figure 1 (page 1) ?
+  Détaillez votre réponse en précisant qui lance qui.
+
+	Il y a deux threads, un pour s'occuper "ServerHandle", l'autre pour s'occuper "UserHandle". 
+
+- A quoi sert le threads[i].join() à la fin du run de ChatClient ?
+	
+	Il y a deux threads dans "threads", cette méthode permet de mettre en attend l'autre thread jusqu'a
+	le thread courant se termine.
+	
+- Que représente la classe ChatClient dans le cadre d’une architecture MVC ?
+
+	La partie de Contrôleur.

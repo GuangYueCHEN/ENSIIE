@@ -1,0 +1,19 @@
+   a:visited{
+color:#C0C0C0;
+text-decoration:none;
+}
+   a:hover{
+color:#FFFF00;
+text-decoration:none;
+}
+   h{
+    color:#0000FF;
+   }
+   table{
+   border-collapse:collapse;
+   }
+   table,th,td{
+   border:1px solid grey;
+   }
+
+   *.bold{color=#FF0000;}

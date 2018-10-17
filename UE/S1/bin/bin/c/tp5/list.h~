@@ -1,0 +1,21 @@
+#ifndef LIST_H
+#define LIST_H
+
+typedef struct node* list;
+
+
+list list_create();
+int list_isEmpty(list l);
+list list_vAdd(double value, list l);
+void list_eAdd(list* pl, double value);
+void list_print(list l);
+int list_count(list l);
+int list_sum(list l, double* ret);
+void list_reverse(list* pl);
+int list_find(list l, double value, double* ret);
+int list_elementAt(list l, int index, double* ret);
+int list_remove(list* pl, double value);
+int list_removeAll(list* pl, double value);
+void list_sort(list* pl);
+
+#endif

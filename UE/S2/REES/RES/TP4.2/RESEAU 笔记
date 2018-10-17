@@ -1,0 +1,17 @@
+RESEAU 笔记
+
+4.2
+问题 回答 challenge 协议》？
+
+1、 taile de PDU "H O F" 两字节
+2、 taile de PUD "C R Q" 三字节 nc 频率  
+3、 taile de PUD M8 十字节
+
+
+
+4、 服务器向clt 发送 C 时，发送NC  N随机生成  nc = n nor cle码
+5、 clt 收到C 后，产生包含M的PDU，用MD解译方式 Mnor cle码
+    并且向服务器回复PDU R ， 此PDU包含MD+1
+6、 服务器收到R后，载录 M‘ ，
+  ----如果M'不等于N+1，clt不是可靠的或准许的
+  ----如果M'等于N+1，则clt是可靠的并且执行剩余的会话

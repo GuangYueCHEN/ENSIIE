@@ -1,0 +1,32 @@
+May 12, 2018 9:40:45 PM logger.LoggerFactory getLogger
+信息: log file created
+May 12, 2018 9:40:45 PM logger.LoggerFactory getLogger
+信息: Logger ready
+May 12, 2018 9:40:45 PM RunChatServer launch
+信息: Creating server on port 1394 with timeout 5000 ms and verbose off
+May 12, 2018 9:40:45 PM logger.LoggerFactory getLogger
+信息: Logger ready
+May 12, 2018 9:40:45 PM chat.server.ChatServer <init>
+信息: ChatServer::ChatServer(port = 1394, timeout = 5000, quit = true)
+May 12, 2018 9:40:45 PM RunChatServer launch
+信息: Waiting for server to terminate ... 
+May 12, 2018 9:41:24 PM chat.server.ChatServer run
+信息: ChatServer: Creatingc client input stream to get client's name ... 
+May 12, 2018 9:41:24 PM chat.server.ChatServer run
+信息: ChatServer: reading client's name: 
+May 12, 2018 9:41:24 PM chat.server.ChatServer run
+信息: ChatServer: client name xujiahui
+May 12, 2018 9:41:24 PM logger.LoggerFactory getLogger
+信息: Logger ready
+May 12, 2018 9:41:24 PM chat.server.InputClient <init>
+信息: InputClient: Creating Input Stream ... 
+May 12, 2018 9:41:24 PM chat.server.InputOutputClient <init>
+信息: Client: Creating Output Stream ... 
+May 12, 2018 9:41:24 PM logger.LoggerFactory getLogger
+信息: Logger ready
+May 12, 2018 9:41:44 PM chat.server.ChatServer run
+信息: ChatServer: Creatingc client input stream to get client's name ... 
+May 12, 2018 9:41:44 PM chat.server.ChatServer run
+信息: ChatServer: reading client's name: 
+May 12, 2018 9:41:44 PM chat.server.ChatServer run
+信息: ChatServer: client name xujiahui

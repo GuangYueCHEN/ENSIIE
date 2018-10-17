@@ -1,0 +1,3 @@
+pour le cas "the password is wrong " , j'ai corrige le code dans 'db.php', la fonction "db_connect()"
+
+apres finir le tp , j'ai change un peu le fishier "tpStyle.css"

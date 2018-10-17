@@ -1,0 +1,240 @@
+---
+title: "MMR_TP1"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Guangyue CHEN
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+graphics.off()
+```
+
+
+###Application:Facebook data set
+```{r, include=TRUE}
+rm(list=ls())
+tab<-read.table("/Users/pingguo/WTF/UE/S3/MMR/facebookdata.txt",sep = ";",header= TRUE)
+dim(tab)
+modreg=lm(users~.,tab)
+summary(modreg)
+
+```
+
+With the function of R, we find that for the numbers of users, mouthes do have the influence. And the coefficients estimated is 8.584 with the intercept -170.695. With the t-test, we find that for each coefficients, we refuse the Hypothesis which is that the coefficients can be 0. And the coefficient of the mouths is not 0 only has the risk 0.001. And then, the value of R-squred is 0.7453 which is high, so the regression equation fits the observations very well. For the F-test, wu refuse both of the coefficients is 0.
+
+```{r, include=TRUE}
+Y_esti<-predict(modreg,tab)
+Y<-tab$users
+plot(x=tab$mois,y=Y,ylim = c(-200,1000),ylab="mois",xlab="users")
+par(new=TRUE)
+plot(x=tab$mois,y=Y_esti,col="red",ylim = c(-200,1000),ylab="mois",xlab="users")
+
+grid(nx=NA,ny=8,col="lightgray")
+abline(coef = coef(modreg),col="blue")
+
+```
+And then we plot the predictive values and the real values do have the deviations, with the help of function "summary", the residual standard error is 115.
+
+The second methode, we compute the results by ourselves. First on compute the coefficients.
+```{r, include=TRUE}
+coefs<-function(table,n,p){
+  Y<-table$users
+  x<-as.matrix(table[,c(seq(1,p-1))])
+  un<-matrix(1,nrow=n,ncol=1)
+  X<-cbind(un,x)
+  belta<-solve(t(X)%*%X)%*%t(X)%*%Y
+  return(belta)
+}
+d=dim(tab)
+coefs(tab,d[1],d[2])
+```
+they are same as the results of "lm" function. Than we compute the predictive values and the RMSE
+```{r, include=TRUE}
+Y_estimate<-function(table,n,p){
+  Y<-table$users
+  x<-as.matrix(table[,c(seq(1,p-1))])
+  un<-matrix(1,nrow=n,ncol=1)
+  X<-cbind(un,x)
+  belta<-solve(t(X)%*%X)%*%t(X)%*%Y
+  return(X%*%belta)
+}
+Y_esti=Y_estimate(tab,d[1],d[2])
+print(Y_esti)
+
+plot(x=tab$mois,y=Y,ylim = c(-200,1000),ylab="mois",xlab="users")
+par(new=TRUE)
+plot(x=tab$mois,y=Y_esti,col="red",ylim = c(-200,1000),ylab="mois",xlab="users")
+
+grid(nx=NA,ny=8,col="lightgray")
+abline(coef = coef(modreg),col="blue")
+
+
+
+```
+```{r, include=TRUE}
+RMSE<-function(Y,Y_esti){
+sum=0
+
+err<-vector(length=length(Y))
+for(i in seq(1,length(Y))){
+  sum<-sum+(Y_esti[i]-Y[i])^2
+  
+  err[i]=Y[i]-Y_esti[i]
+}
+RMSE<- sqrt(sum/length(Y))
+
+return(RMSE)
+}
+RMSE(Y,Y_esti)
+```
+The results are same as the residual standard error that we got before. 
+
+
+```{r, include=TRUE}
+residual<-function(Y,Y_esti){
+
+err<-vector(length=length(Y))
+for(i in seq(1,length(Y))){
+
+  err[i]=Y[i]-Y_esti[i]
+}
+
+return(err)
+}
+err<-residual(Y,Y_esti)
+qqnorm(err)
+qqline(err)
+shapiro.test(err)
+```
+Although there are some bias, the points are almostly a line, so the residual is with the distribution of Normality.
+
+And then we can test the model with the new set.
+```{r, include=TRUE}
+random_partitioning<-function(table){
+smp1<-sample(nrow(table), nrow(table)*0.75)
+train_data=tab[smp1,]
+test_data=tab[-smp1,]
+model=lm(users~.,train_data)
+
+Y_esti=predict(model,train_data)
+Y=train_data$users
+train<-RMSE(Y,Y_esti)
+Y_test<-predict(model,newdata=test_data)
+Y=test_data$users
+test<-RMSE(Y,Y_test)
+return(c(train,test))
+}
+train<-vector(length = 10)
+test<-vector(length = 10)
+for(i in seq(1,10)){
+  res=random_partitioning(tab)
+  train[i]=res[1]
+  test[i]=res[2]
+}
+boxplot(data.frame(train,test))
+
+```
+With the result we find that the test data set has a higher root mean squred error, but it doesn't have a big difference with the train data set. So we can say that this model fit the new data very well. And the limit is that the data set is a little small so it has high error, with more data we suppose the error will be lower. And with the plot of the real numbers of users, it's not really a stright line, so the Nonlinear regression perhaps will have a better model. 
+
+#Boston housing data 
+```{r, include=TRUE}
+rm(list=ls())
+library(mlbench)
+data(BostonHousing)
+```
+so first, we build the trainning data set and the test data set, and get the linear model.
+```{r, include=TRUE}
+
+smp1<-sample(nrow(BostonHousing), nrow(BostonHousing)*0.75)
+train_data=BostonHousing[smp1,]
+test_data=BostonHousing[-smp1,]
+model=lm(medv~.,train_data)
+summary(model)
+```
+As the result, we find that we can accept that the coefficient of "indus","chas1" and "age" can be 0(we dont refuse the Hypothesis that coefficient is 0 ).  so we can choose the other 10 variables and the Intercept. This model is  with a high R-Squared and it pass the F-test, so we can use it to predict our results.
+
+```{r, include=TRUE}
+Y_esti<-predict(model,newdata=test_data,level = 0.999)
+Y_test<-test_data$medv
+```
+
+```{r, include=TRUE}
+plot(Y_test,ylim = c(0,100),ylab="index",xlab="medv")
+par(new=TRUE)
+plot(Y_esti,col="red",ylim = c(0,100),ylab="index",xlab="medv")
+grid(nx=100,ny=10,col="lightgray")
+
+```
+With the compare bitween predictive value of test data set and the real medv, the model fit the new data set very well. 
+ 
+```{r, include=TRUE}
+RMSE<-function(Y,Y_esti){
+sum=0
+
+err<-vector(length=length(Y))
+for(i in seq(1,length(Y))){
+  sum<-sum+(Y_esti[i]-Y[i])^2
+  
+  err[i]=Y[i]-Y_esti[i]
+}
+RMSE<- sqrt(sum/length(Y))
+
+return(RMSE)
+}
+RMSE(Y_test,Y_esti)
+```
+
+```{r, include=TRUE}
+residual<-function(Y,Y_esti){
+
+err<-vector(length=length(Y))
+for(i in seq(1,length(Y))){
+
+  err[i]=Y[i]-Y_esti[i]
+}
+
+return(err)
+}
+err<-residual(Y_test,Y_esti)
+qqnorm(err)
+qqline(err,col="blue")
+shapiro.test(err)
+```
+so we see that the Normal Q-Q Plot is almost a stright line , at last where theoretical quantiles > 2 ,there are somme differences, that's the result we most expect to see. The plots with low significance are same as the results we experct. And the plots with high significance is higher than the line blue. So we can summarize that its a good linear model.
+
+
+
+```{r, include=TRUE}
+random_partitioning<-function(table){
+smp1<-sample(nrow(table), nrow(table)*0.75)
+train_data=BostonHousing[smp1,]
+test_data=BostonHousing[-smp1,]
+model=lm(medv~.,train_data)
+
+Y_esti=predict(model,train_data)
+Y=train_data$medv
+train<-RMSE(Y,Y_esti)
+Y_test<-predict(model,newdata=test_data)
+Y=test_data$medv
+test<-RMSE(Y,Y_test)
+return(c(train,test))
+}
+train<-vector(length = 10)
+test<-vector(length = 10)
+for(i in seq(1,10)){
+  res=random_partitioning(BostonHousing)
+  train[i]=res[1]
+  test[i]=res[2]
+}
+boxplot(data.frame(train,test))
+
+```
+With the result we find that the test data set has a higher root mean squred error, but it doesn't have a big difference with the train data set. 
+
+
+

@@ -1,0 +1,118 @@
+package myMain;
+
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
+
+import mysqlUtil.dbUtil;
+
+import java.awt.Color;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class Delete extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField textFieldName;
+	private JTextField textFieldNumber;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void delete() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Delete frame = new Delete();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Delete() {
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 450, 226);
+		contentPane = new JPanel();
+		contentPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JLabel label = new JLabel("\u59D3\u540D");
+		label.setBounds(103, 74, 54, 15);
+		contentPane.add(label);
+
+		JLabel label_1 = new JLabel("\u5B66\u53F7");
+		label_1.setBounds(103, 99, 54, 15);
+		contentPane.add(label_1);
+
+		JLabel label_2 = new JLabel("\u8BF7\u8F93\u5165\u8981\u5220\u9664\u7684\u5B66\u751F\u4FE1\u606F");
+		label_2.setBounds(160, 34, 166, 15);
+		contentPane.add(label_2);
+
+		textFieldName = new JTextField();
+		textFieldName.setBounds(167, 71, 121, 21);
+		contentPane.add(textFieldName);
+		textFieldName.setColumns(10);
+
+		textFieldNumber = new JTextField();
+		textFieldNumber.setBounds(167, 99, 121, 21);
+		contentPane.add(textFieldNumber);
+		textFieldNumber.setColumns(10);
+
+		JButton button = new JButton("\u786E\u5B9A");
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (textFieldNumber.getText().length() != 0 && textFieldName.getText().length() != 0) {
+					dbUtil util = new dbUtil();
+					try {
+						Connection connection = util.getCon();
+						PreparedStatement preparedStatement = connection
+								.prepareStatement("delete from student where studentNumber = ?");
+						preparedStatement.setString(1, textFieldNumber.getText());
+						if (preparedStatement.executeUpdate() == 1) {
+							Success.getSuccess();
+						} else {
+							ErrorTipMistake.mainErrorTipMistake();
+						}
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}
+			}
+		});
+		button.setBounds(84, 141, 93, 23);
+		contentPane.add(button);
+
+		JButton button_1 = new JButton("\u53D6\u6D88");
+		button_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+			}
+
+		});
+		button_1.setBounds(251, 141, 93, 23);
+		contentPane.add(button_1);
+	}
+
+}

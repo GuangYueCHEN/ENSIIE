@@ -1,0 +1,426 @@
+---
+title: "TP2"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Guangyue CHEN
+
+Jiahui XU
+
+
+
+## R Markdown
+#1.Tests of significativity and model selection
+```{r include=TRUE}
+n <- 100
+X <- cbind(((1:n)/n)**3, ((1:n)/n)**4)
+Y <- X%*%c(1,1) + rnorm(n)/4
+res <- summary(lm(Y~X))
+print(res)
+print(res$coef[2, 4])
+```
+
+
+```{r include=TRUE}
+reg1 <- lm(Y~X[,1])
+print(summary(reg1))
+
+reg2 <- lm(Y~X[,2])
+print(summary(reg2))
+```
+
+```{r include=TRUE}
+cor(X[,1], X[,2])
+```
+The cor between X[,1] and X[,2] is almost 1, then we know that they are positive linearly related, so we dont need them two to set up the model, we only need one of them.
+
+#2.Model selecion in a linear regression framework
+
+#rmse = sqrt(mean((tab$y - modreg$fit)??2))
+
+```{r include=TRUE}
+tab <- read.table("/Users/xujiahui/S3/MMR/TD2/data/UsCrime.txt", sep = "\t", head = TRUE)
+d <- dim(tab)
+plot(tab)
+Y <- tab$R 
+corr <- cor(tab)
+```
+
+```{r include=TRUE}
+corrplot(corr)
+```
+#A.Multiple regression model
+```{r include=TRUE}
+reg <- lm("R~.", data = tab)
+summary(reg)
+```
+
+```{r include=TRUE}
+R_sq = summary(reg)$r.squared
+n = d[1]-1
+p = d[2]-1
+(n-p)*R_sq/((p-1)*(1-R_sq)) 
+qf(1-0.05, df1 = n-1, df2 = n-p)
+```
+cause not all the coef are 0, so this model has a interest.
+#c)
+
+
+
+#d)
+```{r include=TRUE}
+Y_chap <- predict(reg, tab)
+Y <- tab$R
+x = as.matrix(Y) - as.matrix(Y_chap)
+RSS = t(x) %*% x
+RSS
+```
+#B. Model selection
+```{r include=TRUE}
+regbackward = step(reg, direction = 'backward')
+summary(regbackward)
+```
+This function delete the coef who has the Minimum RSS every step unitl...
+
+#b)
+```{r include=TRUE}
+regforward = step(lm(R~1, data = tab), list(upper = reg), direction = 'forward')
+summary(regforward)
+```
+
+```{r include=TRUE}
+AIC(regforward)
+```
+#c)
+```{r include=TRUE}
+regboth = step(reg, direction = 'both')
+summary(regboth)
+```
+#d)
+```{r include=TRUE}
+regbic = step(reg, direction = 'both', k = log(nrow(tab)))
+summary(regbic)
+```
+#e)
+```{r include=TRUE}
+reg0 = lm(formula(regbackward), data = tab)
+summary(reg0)
+reg1 = lm(formula(regforward), data = tab)
+summary(reg1)
+reg2 = lm(formula(regboth), data = tab)
+summary(reg2)
+reg3 = lm(formula(regbic), data = tab)
+summary(reg3)
+```
+
+#3.RIDGE adn LASSO penalized regression
+#A. Simulated data. Illustration
+#a)
+```{r include=TRUE}
+rm(list = ls())
+n = 10000
+p = 5
+X = matrix(rnorm(n*(p)), nrow = n, ncol = p)
+X = scale(X) * sqrt(n/(n-1))
+beta = matrix(10 * rev(1:p), nrow = p, ncol = 1)
+
+print(beta)
+epsi = rnorm(n, 1/n**2)
+Y = X %*% beta + epsi
+Z = cbind(Y, data.frame(X))
+Z = data.frame(Z)
+```
+#b)
+```{r include=TRUE}
+lm(Y~.,Z)
+t(X)%*%Y/n
+```
+#c)
+```{r include=TRUE}
+modlasso = lars(X, Y, type = "lasso")
+attributes(modlasso)
+```
+
+```{r include=TRUE}
+modlasso$meanx
+modlasso$normx
+```
+#d)
+```{r include=TRUE}
+par(mfrow = c(1,2))
+plot(modlasso)
+plot(c(modlasso$lambda, 0), pch = 16, type = "b", col = "blue")
+grid()
+```
+#e)
+```{r include=TRUE}
+print(coef(modlasso))
+coef = predict.lars(modlasso, X, type = "coefficients", mode = "lambda", s = 2500)
+coeflasso = coef$coefficients
+par(mfrow = c(1, 1))
+barplot(coeflasso, main = 'lasso, l = 1', col = 'cyan')
+```
+
+
+###RIDGE
+#(a)
+```{r include=TRUE}
+library(MASS)
+tab<-read.table("/Users/pingguo/WTF/UE/S3/MMR/tp2/usa_indicators.txt",sep = ";",header = TRUE)
+```
+#(b)different lambda
+```{r include=TRUE}
+
+modridge0<-lm.ridge(tab$EN.ATM.CO2E.KT~.,data=subset(tab, select = -Year ),lambda=0)
+modridge100<-lm.ridge(tab$EN.ATM.CO2E.KT~.,data=subset(tab, select = -Year ),lambda=100)
+coef(modridge0)
+
+```
+
+```{r include=TRUE}
+coef(modridge100)
+print("*************")
+modridge100$coef
+```
+there isnt the incept in resridge$coef
+
+
+#(c)
+
+
+
+
+```{r include=TRUE}
+tab<-subset(tab, select = -Year )
+modridge<-lm.ridge(EN.ATM.CO2E.KT~.,data=tab,lambda=seq(0,10,0.01))
+plot(modridge)
+modridge$lambda[which.min(modridge$GCV)]
+
+
+plot(modridge$GCV)
+
+
+modridge<-lm.ridge(EN.ATM.CO2E.KT~.,data=tab,lambda=modridge$lambda[which.min(modridge$GCV)])
+
+
+coef<-coef(modridge)
+
+```
+with the graphe we can see that the cofficients are stable，when lambda equal 0.01 who is near 0, the GCV is the smallest.
+so we choose the model with the lambda 0.01, because if lambda is os big tha the quadratic erro will be also big.
+#(d)
+```{r include=TRUE}
+
+Yridge=as.matrix(tab)%*%as.vector(coef)
+data.frame(Yridge,tab$EN.ATM.CO2E.KT)
+```
+
+###LASSO
+#(a)
+```{r include=TRUE}
+Y=as.matrix(tab$EN.ATM.CO2E.KT)
+X=as.matrix(subset(tab,select=-EN.ATM.CO2E.KT))
+modlasso=lars(x=X,y=Y,type="lasso")
+plot(modlasso)
+plot(modlasso$lambda)
+
+```
+
+#(b)
+```{r include=TRUE}
+coef=predict.lars(modlasso,X,type="coefficients",mode="lambda",s=0)
+```
+
+#(c)
+```{r include=TRUE}
+coef2=predict.lars(modlasso,X,type="coefficients",mode="lambda",s=100)
+```
+
+#(d)
+```{r include=TRUE}
+pY=predict.lars(modlasso,X,type="fit",mode="lambda",s=0.06)
+```
+
+#(e)
+```{r include=TRUE}
+
+modlasso=lars(x=X,y=Y,type="lasso")
+
+modlasso$lambda[which.min(modlasso$RSS)]
+min(modlasso$lambda)
+```
+so the ridge regression doesn't change the result
+
+
+###Application THE Boston housing data set
+#(a)upload the data
+```{r include=TRUE}
+rm(list=ls())
+library(mlbench)
+data(BostonHousing)
+```
+
+the first step, we try to use linear regression.
+```{r include=TRUE}
+modreg<-lm(medv~.,BostonHousing)
+summary(modreg)
+
+```
+This linear model has the residual stadard error which is 4.745. But with the high R-squared and the small p-value of F-test, we don't refuse this mod. So we use the different ways to select our linear model:
+```{r include=FALSE}
+regbackward = step(modreg, direction = 'backward')
+regforward = step(lm(medv~1, data = BostonHousing), list(upper = modreg), direction = 'forward')
+regbic = step(modreg, direction = 'both', k = log(nrow(BostonHousing)))
+regboth = step(modreg, direction = 'both')
+
+```
+Their aics are the same, we can choose no matter which one.
+```{r include=TRUE}
+AIC(regforward)
+AIC(regbackward)
+AIC(regbic)
+AIC(regboth)
+```
+
+```{r include=TRUE}
+reg = lm(formula(regbackward), data = BostonHousing)
+summary(reg)
+Y_esti<-predict(reg,BostonHousing)
+Y<-BostonHousing$medv
+Non_biased_residual<-function(Y,Y_esti,p){
+sum=0
+
+for(i in seq(1,length(Y))){
+  sum<-sum+(Y_esti[i]-Y[i])^2
+
+}
+NBR<- sqrt(sum/(length(Y)-p+1))
+
+return(NBR)
+}
+Non_biased_residual(Y,Y_esti,13)
+```
+So that we obtain the model after the selection, with the function "predict" we can gain the estimation.
+
+#LASSO
+
+The next step, we try the Lasso regression:
+```{r include=TRUE}
+library(lars)
+Y<-as.matrix(BostonHousing$medv)
+X<-apply(as.matrix(subset(BostonHousing,select=-medv)),2,as.numeric)
+modlasso=lars(x=X,y=Y,type="lasso")
+plot(modlasso)
+plot(modlasso$lambda)
+
+```
+From these two graphs, we can see the evolution of the values of the coefficients for different values of the penalized coefficient. And after the beta bigger than 13, the coefficients become more stable.
+```{r include=TRUE}
+modlasso$lambda[which.min(modlasso$RSS)-1]
+```
+
+With the help of criteria RSS, we choose the 16th lambda which is 0.0996448. And we found that the residual standard error is less than the Previous method but the difference is small.
+
+```{r include=TRUE}
+coef<-predict.lars(modlasso,X,type="coefficient",mode="lambda",s=0.0996448)
+coef$coefficients
+Y_esti<-predict.lars(modlasso,X,type="fit",mode="lambda",s=0.0996448)
+Y_esti<-Y_esti$fit
+#data.frame(Y_esti,Y)
+print("residual standard error")
+Non_biased_residual(Y,Y_esti,13)
+```
+
+#RIDGE
+```{r include=TRUE}
+library(MASS)
+modridge<-lm.ridge(medv~.,data=BostonHousing,lambda=seq(0,10,0.01))
+plot(modridge)
+lambda<-modridge$lambda[which.min(modridge$GCV)]
+
+abline(v=lambda)
+
+plot(x=seq(0,10,0.01),modridge$GCV,xlab = "lambda")
+abline(v=lambda)
+
+```
+
+For the ridge regression, with the smallest GCV, wo choose the lambda which is 4.26. So we can use the regression model whose lambda equals 4.26.
+```{r include=TRUE}
+modridge<-lm.ridge(medv~.,data=BostonHousing,lambda=lambda)
+
+coef<-coef(modridge)
+coef
+un<-matrix(1,nrow=length(Y),ncol=1)
+Y_esti<-cbind(un,X)%*%as.vector(coef)
+Non_biased_residual(Y,Y_esti,13)
+```
+So we obtain the result.
+
+What's more, I think about how about it with the new data.
+```{r, include=TRUE}
+
+smp1<-sample(nrow(BostonHousing), nrow(BostonHousing)*0.75)
+train_data=BostonHousing[smp1,]
+test_data=BostonHousing[-smp1,]
+
+```
+
+
+With linear regression
+```{r, include=FALSE}
+modreg<-lm(medv~.,train_data)
+regbackward = step(modreg, direction = 'backward')
+reg = lm(formula(regbackward), data = train_data)
+
+```
+
+```{r, include=TRUE}
+Y_esti<-predict(reg,newdata=test_data)
+Y_test<-test_data$medv
+Non_biased_residual(Y_test,Y_esti,13)
+```
+#LASSO
+
+```{r include=TRUE}
+Y<-as.matrix(train_data$medv)
+X<-apply(as.matrix(subset(train_data,select=-medv)),2,as.numeric)
+modlasso=lars(x=X,y=Y,type="lasso")
+X_test<-apply(as.matrix(subset(test_data,select=-medv)),2,as.numeric)
+Y_esti<-predict.lars(modlasso,X_test,type="fit",mode="lambda",s=modlasso$lambda[which.min(modlasso$RSS)-1])
+Y_esti<-Y_esti$fit
+Y_test<-test_data$medv
+Non_biased_residual(Y_test,Y_esti,13)
+```
+
+#Ridge
+```{r include=TRUE}
+
+modridge<-lm.ridge(medv~.,data=train_data,lambda=seq(0,10,0.01))
+lambda<-modridge$lambda[which.min(modridge$GCV)]
+
+```
+
+For the ridge regression, with the smallest GCV, wo choose the lambda which is 4.26. So we can use the regression model whose lambda equals 4.26.
+```{r include=TRUE}
+modridge<-lm.ridge(medv~.,data=train_data,lambda=lambda)
+X_test<-apply(as.matrix(subset(test_data,select=-medv)),2,as.numeric)
+coef<-coef(modridge)
+Y_test<-test_data$medv
+un<-matrix(1,nrow=length(Y_test),ncol=1)
+Y_esti<-cbind(un,X_test)%*%as.vector(coef)
+Non_biased_residual(Y_test,Y_esti,13)
+```
+That's all. I find that for these new data, the linear regression and the ridge regression is better than Lasso regression. in general, ridge regression fit the new data better than linear regression. So I predict if the numbers of data is bigger, ridge regression will have the residual standard error.
+
+
+
+
+

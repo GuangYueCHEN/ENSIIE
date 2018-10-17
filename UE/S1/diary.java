@@ -1,0 +1,330 @@
+
+public class ActivityMain extends ListActivity { 
+	private static final int ACTIVITY_CREATE = 0;
+	private static final int ACTIVITY_EDIT = 1;
+
+	private static final int INSERT_ID = Menu.FIRST;
+	private static final int DELETE_ID = Menu.FIRST + 1;
+
+	private DiaryDbAdapter mDbHelper;
+	private Cursor mDiaryCursor;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.diary_list);
+        mDbHelper = new DiaryDbAdapter(this);
+		mDbHelper.open();
+		renderListView();
+    }   
+    
+    //呈现ListView
+private void renderListView() {
+	mDiaryCursor = mDbHelper.getAllNotes();
+	startManagingCursor(mDiaryCursor);
+	String[] from = new String[] { DiaryDbAdapter.KEY_TITLE,
+	DiaryDbAdapter.KEY_CREATED };
+
+	int[] to = new int[] { R.id.text1, R.id.created };
+	SimpleCursorAdapter notes = new SimpleCursorAdapter(this,
+	R.layout.diary_row, mDiaryCursor, from, to);
+	setListAdapter(notes);
+}
+    
+	@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+	super.onCreateOptionsMenu(menu);
+	menu.add(0, INSERT_ID, 0, R.string.menu_insert);
+	menu.add(0, DELETE_ID, 0, R.string.menu_delete); 
+	return true;
+}
+
+	@Override
+public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	switch (item.getItemId()) {
+		case INSERT_ID:
+		createDiary();
+	return true;
+	case DELETE_ID:
+	mDbHelper.deleteDiary(getListView().getSelectedItemId());
+	renderListView();
+	return true;
+}
+	return super.onMenuItemSelected(featureId, item);
+}
+
+private void createDiary() {
+	Intent i = new Intent(this, ActivityDiaryEdit.class);
+	startActivityForResult(i, ACTIVITY_CREATE);
+}
+
+// 需要对position和id进行一个很好的区分
+// position指的是点击的这个ViewItem在当前ListView中的位置
+// 每一个和ViewItem绑定的数据，肯定都有一个id，通过这个id可以找到那条数据。
+	@Override
+protected void onListItemClick(ListView l, View v, int position, long id) {
+	super.onListItemClick(l, v, position, id);
+	Cursor c = mDiaryCursor;
+	c.moveToPosition(position);
+	Intent i = new Intent(this, ActivityDiaryEdit.class);
+	i.putExtra(DiaryDbAdapter.KEY_ROWID, id);
+	i.putExtra(DiaryDbAdapter.KEY_TITLE, c.getString(c
+	.getColumnIndexOrThrow(DiaryDbAdapter.KEY_TITLE)));
+	i.putExtra(DiaryDbAdapter.KEY_BODY, c.getString(c
+	.getColumnIndexOrThrow(DiaryDbAdapter.KEY_BODY)));
+	startActivityForResult(i, ACTIVITY_EDIT);
+}
+
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode,
+	Intent intent) {
+	super.onActivityResult(requestCode, resultCode, intent);
+	renderListView();
+}
+}
+
+-----------------------------------------ActivityDiaryEdit .java
+
+public class ActivityDiaryEdit extends Activity {
+
+
+private EditText mTitleText;
+private EditText mBodyText;
+private Long mRowId;
+private DiaryDbAdapter mDbHelper;
+
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	mDbHelper = new DiaryDbAdapter(this);
+	mDbHelper.open();
+	setContentView(R.layout.diary_edit);
+
+
+	mTitleText = (EditText) findViewById(R.id.title);
+	mBodyText = (EditText) findViewById(R.id.body);
+
+
+	Button confirmButton = (Button) findViewById(R.id.confirm);
+
+
+	mRowId = null;
+	// 每一个intent都会带一个Bundle型的extras数据。
+	Bundle extras = getIntent().getExtras();
+	if (extras != null) {
+	String title = extras.getString(DiaryDbAdapter.KEY_TITLE);
+	String body = extras.getString(DiaryDbAdapter.KEY_BODY);
+	mRowId = extras.getLong(DiaryDbAdapter.KEY_ROWID);
+
+
+	if (title != null) {
+	mTitleText.setText(title);
+	}
+	if (body != null) {
+	mBodyText.setText(body);
+}
+}
+
+
+confirmButton.setOnClickListener(new View.OnClickListener() {
+	public void onClick(View view) {
+	String title = mTitleText.getText().toString();
+	String body = mBodyText.getText().toString();
+	if (mRowId != null) {
+	mDbHelper.updateDiary(mRowId, title, body);
+	} else
+	mDbHelper.createDiary(title, body);
+	Intent mIntent = new Intent();
+	setResult(RESULT_OK, mIntent);
+	finish();
+}
+
+
+});
+}
+}
+
+---------------------------------------------DiaryDbAdapter .java
+public class DiaryDbAdapter {
+
+private final Context mCtx;
+
+private static final String DATABASE_NAME = "database" ;
+private static final String DATABASE_TABLE = "diary" ;
+private static final int DATABASE_VERSION = 1 ;
+
+private static final String DATABASE_CREATE = "create table diary (_id integer primary key autoincrement, "
++ "title text not null, body text not null, created text not null);";
+
+private static class DatabaseHelper extends SQLiteOpenHelper {
+
+
+	DatabaseHelper(Context context) {
+	super(context, DATABASE_NAME, null, DATABASE_VERSION);
+}
+
+
+//创建名为：database的数据库
+@Override
+public void onCreate(SQLiteDatabase db) {
+	db.execSQL(DATABASE_CREATE);
+}
+
+@Override
+public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	db.execSQL("DROP TABLE IF EXISTS diary");
+	onCreate(db);
+}
+
+}
+
+//创建一个数据库助手对象
+private DatabaseHelper mDbHelper;
+private SQLiteDatabase mDb;
+
+public static final String KEY_TITLE = "title";
+public static final String KEY_BODY = "body";
+public static final String KEY_ROWID = "_id";
+public static final String KEY_CREATED = "created";
+
+//在初始化这个对象时，传递一个上下文对象
+public DiaryDbAdapter(Context ctx) {
+	this.mCtx = ctx;
+}
+
+//获得适配器对象，并在适配器对象内初始化中初始化数据库对象
+public DiaryDbAdapter open() throws SQLException {
+	mDbHelper = new DatabaseHelper(mCtx);
+	mDb = mDbHelper.getWritableDatabase();
+	return this;
+}
+
+//数据库对象最后一定要关闭
+public void closeclose() {
+	mDbHelper.close();
+}
+
+//创建日志
+public long createDiary(String title, String body) {
+	ContentValues initialValues = new ContentValues();
+	initialValues.put(KEY_TITLE, title);
+	initialValues.put(KEY_BODY, body);
+	Calendar calendar = Calendar.getInstance();
+	String created = calendar.get(Calendar.YEAR) + "年"
+	+ calendar.get(Calendar.MONTH) + "月"
+	+ calendar.get(Calendar.DAY_OF_MONTH) + "日"
+	+ calendar.get(Calendar.HOUR_OF_DAY) + "时"
+	+ calendar.get(Calendar.MINUTE) + "分";
+	initialValues.put(KEY_CREATED, created);
+	return mDb.insert(DATABASE_TABLE, null, initialValues);
+}
+
+//删除日志
+public boolean deleteDiary(long rowId) {
+	return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
+}
+
+//获得全部日志
+public Cursor getAllNotes() {
+	return mDb.query(DATABASE_TABLE, new String[] { KEY_ROWID, KEY_TITLE,
+	KEY_BODY, KEY_CREATED }, null, null, null, null, null);
+}
+
+//获得、指定ID的日志
+public Cursor getDiary(long rowId) throws SQLException {
+
+
+	Cursor mCursor = 
+	mDb.query(true, DATABASE_TABLE, new String[] { KEY_ROWID, KEY_TITLE,
+	KEY_BODY, KEY_CREATED }, KEY_ROWID + "=" + rowId, null, null,
+	null, null, null);
+
+	if (mCursor != null) {
+	mCursor.moveToFirst();
+	}
+	return mCursor;
+}
+
+public boolean updateDiary(long rowId, String title, String body) {
+	ContentValues args = new ContentValues();
+	args.put(KEY_TITLE, title);
+	args.put(KEY_BODY, body);
+	Calendar calendar = Calendar.getInstance();
+	String created = calendar.get(Calendar.YEAR) + "年"
+	+ calendar.get(Calendar.MONTH) + "月"
+	+ calendar.get(Calendar.DAY_OF_MONTH) + "日"
+	+ calendar.get(Calendar.HOUR_OF_DAY) + "时"
+	+ calendar.get(Calendar.MINUTE) + "分";
+	args.put(KEY_CREATED, created);
+	return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+}
+}
+
+-------------------------------------------------------布局文件
+diary_list.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content">
+<ListView android:id="@+id/android:list"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content" />
+<TextView android:id="@+id/android:empty"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content" android:text="您还没有开始写日记呢!点击下边的Menu按钮开始写日记吧:)" />
+</LinearLayout>
+
+diary_now.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/row"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent">
+<TextView android:id="@+id/text1"
+android:layout_width="wrap_content" android:layout_height="30px"
+android:maxWidth="200dip" 
+android:textSize="22sp"
+android:layout_marginTop="10dip"
+android:text="第一组第一项" />
+<TextView android:id="@+id/created" android:layout_width="wrap_content"
+android:layout_height="35px" android:layout_alignParentRight="true"
+android:layout_marginLeft="10dip" 
+android:layout_marginTop="10dip"
+android:text="1999年12月3号" />
+</RelativeLayout>
+
+diary_edit.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical" android:layout_width="fill_parent"
+android:layout_height="fill_parent">
+
+
+<LinearLayout android:orientation="vertical"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content">
+
+
+<TextView android:layout_width="wrap_content"
+android:layout_height="wrap_content" android:text="@string/title"
+android:padding="2px" />
+<EditText android:id="@+id/title"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content" android:layout_weight="1" />
+</LinearLayout>
+
+
+<TextView android:layout_width="wrap_content"
+android:layout_height="wrap_content" android:text="@string/body" />
+<EditText android:id="@+id/body" android:layout_width="fill_parent"
+android:layout_height="fill_parent" android:layout_weight="1"
+android:scrollbars="vertical" android:gravity="top" />
+
+
+<Button android:id="@+id/confirm" android:text="@string/confirm"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content" />
+</LinearLayout>
+ 

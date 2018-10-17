@@ -1,0 +1,29 @@
+Réponses aux question de la partie UML : 
+
+- A quoi sert la classe AbstractRunChat ?
+	C'est une classe abstraite qui est  implémenté par  RunChatClient et RunChatServer . il ne peut pas etre instancié, mais il a de commun entre les deux.Il permet de définir des méthodes dont l'implémentation  se fait dans les classes filles.
+
+- Expliquez la relation ChatServer / InputOutputClient concrétisée par l’attribut « clients ».
+	ChatServer est composé d'un Vector des InputOuputClients. InputOuputClient est un classe stockant les caractéristiques d'un client .     ClientHandlercontient les deux.
+
+- Expliquez la relation ClientHandler / InputClient concrétisée par l’attribut « mainClient ».
+	ClientHandler est composée de InputClient. Chaque ClientHandler s'occupe d'un ou zero client, traite les entrées d'un client.
+
+- Expliquez la relation ClientHandler / InputOutputClient concrétisée par l’attribut « allClients ».
+	Chaque ClientHandler s'occupe de diffuser les messages sur le chat des clients (au moins un).
+
+- Combien de threads tournent sur un serveur dans le scénario présenté par la Figure 1 (page 1) ? 
+  Détaillez votre réponse en précisant qui lance qui.
+	Le serveur lance un premier thread pour traiter le client 1 et un deuxième thread pour s'occuper du client 2. 
+	
+
+- Combien de threads tournent dans le Client 1 du scénario présenté par la Figure 1 (page 1) ?
+  Détaillez votre réponse en précisant qui lance qui.
+	Le client 1 crée deux threads, un thread pour ServerHandler et un autre pour UserHandler.
+
+- A quoi sert le threads[i].join() à la fin du run de ChatClient ?
+	Cette méthode java thread join met le thread en cours en attente jusqu'à ce que le thread sur lequel il est appelé est mort. Si le thread est interrompu, il lève InterruptedException . Le threads[i].join permet de mettre en attente le thread courant jusqu'à ce que le thread threads[i] se termine.
+
+- Que représente la classe ChatClient dans le cadre d’une architecture MVC ?
+	Dans le cadre d'une architecture MVC (Modèle-vue-contrôleur),le rôle des contrôleurs est de récupérer les données utilisateurs, de les filtrer et de les contrôler, ChatClient représente une partie du Contrôleur.
+

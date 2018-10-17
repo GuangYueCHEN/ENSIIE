@@ -1,0 +1,26 @@
+May 12, 2018 9:41:24 PM logger.LoggerFactory getLogger
+信息: log file created
+May 12, 2018 9:41:24 PM logger.LoggerFactory getLogger
+信息: Logger ready
+May 12, 2018 9:41:24 PM RunChatClient launch
+信息: Creating client to xujiahuideMacBook-Pro.local at port 1394 with verbose off ... 
+May 12, 2018 9:41:24 PM logger.LoggerFactory getLogger
+信息: Logger ready
+May 12, 2018 9:41:24 PM chat.client.ChatClient <init>
+信息: ChatClient: socket created
+May 12, 2018 9:41:24 PM chat.client.ChatClient <init>
+信息: ChatClient: got client output stream to server
+May 12, 2018 9:41:24 PM chat.client.ChatClient <init>
+信息: ChatClient: sending name to server ... 
+May 12, 2018 9:41:24 PM logger.LoggerFactory getLogger
+信息: Logger ready
+May 12, 2018 9:41:24 PM chat.client.UserHandler <init>
+信息: UserHandler: creating user input buffered reader ... 
+May 12, 2018 9:41:24 PM chat.client.UserHandler <init>
+信息: UserHandler: creating server output print writer ... 
+May 12, 2018 9:41:24 PM logger.LoggerFactory getLogger
+信息: Logger ready
+May 12, 2018 9:41:24 PM chat.client.ServerHandler <init>
+信息: ServerHandler: creating server input reader ... 
+May 12, 2018 9:41:24 PM chat.client.ServerHandler <init>
+信息: ServerHandler: creating user output ... 

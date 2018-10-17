@@ -1,0 +1,10 @@
+#include <cstdio>
+
+int main(){
+	printf("hello world ");
+	int a,b,c;
+	b=1,c=2;
+	a=b+c;
+	printf("%d",a);
+	return 0;
+}

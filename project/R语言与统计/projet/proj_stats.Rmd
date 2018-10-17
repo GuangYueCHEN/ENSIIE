@@ -1,0 +1,135 @@
+---
+title: "Projet - MST"
+author: "Arnaud Kopp, Afizullah Rahmany"
+output:
+  pdf_document: default
+  html_document: default
+---
+#1) Statistiques Descriptives
+
+\paragraph{Question a :}
+```{r,include=TRUE}
+tab <- read.csv("DB_binome_56.csv",header = TRUE,sep = ",")
+n <- length(tab$Sexe)
+q_peche_h <- seq(1,n-sum(tab$Sexe))
+q_peche_f <- seq(1,sum(tab$Sexe))
+jf <- 1
+jh <- 1
+for (i in 1:n) {
+  if (tab$Sexe[i] == 1) {
+    q_peche_f[jf] <- tab$Peche[i]
+    jf <- jf+1
+  }
+  else {
+    q_peche_h[jh] <- tab$Peche[i]
+    jh <- jh+1
+  }
+}
+boxplot(q_peche_h,q_peche_f,names=c("hommes","femmes"),main="Distribution de la quantité de pêche en fonction du sexe",ylab="Quantité de pêche")
+```
+\newline
+On peut constater que le sexe n'influe pas sur la quantité de pêche. En effet, les deux diagramme montrent que dans les deux cas, les quartiles sont identiques pour les deux sexes.
+
+\paragraph{Question b :}
+```{r,include=TRUE}
+nb_jeune <- 0
+nb_adulte <- 0
+nb_vieux <- 0
+for (i in 1:n) {
+  if (tab$Age[i] == 0) {
+    nb_jeune <- nb_jeune+1
+  }
+  if (tab$Age[i] == 1) {
+    nb_adulte <- nb_adulte+1
+  }
+  if (tab$Age[i] == 2) {
+    nb_vieux <- nb_vieux+1
+  }
+}
+it_j <- 1
+it_a <- 1
+it_v <- 1
+q_peche_jeune <- seq(1,nb_jeune)
+q_peche_adulte <- seq(1,nb_adulte)
+q_peche_vieux <- seq(1,nb_vieux)
+for (i in 1:n) {
+  if (tab$Age[i] == 0) {
+    q_peche_jeune[it_j] <- tab$Peche[i]
+    it_j <- it_j+1
+  }
+  if (tab$Age[i] == 1) {
+    q_peche_adulte[it_a] <- tab$Peche[i]
+    it_a <- it_a+1
+  }
+  if (tab$Age[i] == 2) {
+    q_peche_vieux[it_v] <- tab$Peche[i]
+    it_v <- it_v+1
+  }
+}
+boxplot(q_peche_jeune,q_peche_adulte,q_peche_vieux,names=c("jeunes","adultes","vieux"),main="Distribution de la quantité de pêche en fonction de la tranche d'âge",ylab="Quantité de pêche")
+```
+\newline
+De même que pour la question précédente, on peut constater constater que l'âge n'influe pas sur la quantité de pêche.
+
+\paragraph{Question c :}
+```{r,include=TRUE}
+hist(tab$Noeuds,main="Histogramme de la vitesse du vent",freq=FALSE,xlab="Vitesse (en noeuds)")
+```
+\newline
+Graphiquement, on peut observer que la vitesse du vent semble suivre une loi de Poisson car une vitesse très élevée est un évenement rare et que cette distribution prend uniquement des valeurs discrètes.
+
+\paragraph{Question c :}
+```{r,include=TRUE}
+hist(tab$Peche,main="Histogramme de la quantité de pêche",freq=FALSE,xlab="Quantité de pêche")
+abline(v=mean(tab$Peche))
+```
+\newline
+On observe que la quantité de pêche semble suivre une loi normale car on observe une symétrie par rapport à la moyenne et on observe une décroissance de la densité lorsqu'on s'éloigne de cette moyenne.
+
+#2) Statistiques Interferentielles
+
+\paragraph{Question a :}
+Sur le graphique tracé à la question c, on peut observer que la vitesse du vent semble suivre une loi de Poisson car une vitesse très élevée est un évenement rare et que cette distribution prend uniquement des valeurs discrètes. L'intensité du vent suit donc bien une loi de poisson.
+
+\paragraph{Question b :}
+La vraisemblance théorique est : 
+\[L(x,\lambda)=\prod_{i=1}^{2000}e^{-\lambda}\frac{\lambda^{x_{i}}}{x_{i}!}\]
+D'où la log-vraisemblance :
+\[l(x,\lambda)=-2000\lambda+\ln(\lambda)\sum_{i=1}^{2000}x_{i}-\sum_{i=1}^{2000}\ln(x_{i}!)\]
+
+\paragraph{Question c :}
+On cherche le maximum de vraisemblance de $\lambda$ :
+\[\frac{\partial l(x,\lambda)}{\partial \lambda}= \frac{1}{\lambda}\sum_{i=1}^{2000}x_{i}-2000\]
+On cherche le maximum :
+\[\frac{\partial l(x,\lambda)}{\partial \lambda}=0 <=> \lambda=\frac{\sum_{i=1}^{2000}x_{i}}{2000}\]
+Et on a :
+\[\frac{\partial^{2} l(x,\lambda)}{\partial \lambda^{2}}=\frac{-1}{\lambda^{2}}\sum_{i=1}^{2000}x_{i}\]
+Donc avec $\lambda=\frac{\sum_{i=1}^{2000}x_{i}}{2000}$, on a :
+\[\frac{\partial^{2} l(x,\lambda)}{\partial \lambda^{2}}=\frac{-1}{\sum_{i=1}^{2000}x_{i}}<0\]
+Donc c'est un maximum global.
+```{r,include=TRUE}
+lambda <- 0
+for (x in tab$Noeud){
+  lambda <- lambda+x
+}
+lambda <- lambda/2000
+lambda
+```
+
+\paragraph{Question d :}
+```{r,include=TRUE}
+l_vent <- function(distrib,lambda){
+  res <- 0
+  for (x in distrib){
+    res <- res+log(dpois(x,lambda))
+  }
+  return(res)
+}
+
+plot(seq(0,10,0.1),l_vent(tab$Noeud,seq(0,10,0.1)),main="log-vraisemblance de l'intensité du vent",ylab="log-vraisemblance",xlab="")
+abline(v=lambda)
+```
+
+\paragraph{Question e :}
+La vraisemblance théorique est : 
+\[L(x,\sigma)=\prod_{i=1}^{2000}e^{-\lambda}\frac{\lambda^{x_{i}}}{x_{i}!}\]

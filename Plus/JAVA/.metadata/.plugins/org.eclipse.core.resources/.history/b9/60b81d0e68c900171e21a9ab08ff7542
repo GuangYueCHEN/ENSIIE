@@ -1,0 +1,92 @@
+package myMain;
+
+import java.awt.EventQueue;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class getState extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTable table;
+	private int rows = 0;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void state() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					getState frame = new getState();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 * 
+	 * @throws Exception
+	 */
+	public getState() throws Exception {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 528, 422);
+		contentPane = new JPanel();
+		contentPane.setRequestFocusEnabled(false);
+		contentPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JLabel label = new JLabel("\u5373\u5C06\u88AB\u5F00\u9664\u7684\u5B66\u751F");
+		label.setBounds(180, 46, 152, 15);
+		contentPane.add(label);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new LineBorder(new Color(130, 135, 144)));
+		scrollPane.setBounds(35, 83, 453, 290);
+		contentPane.add(scrollPane);
+
+		dbUtil util = new dbUtil();
+		Connection connection = util.getCon();
+		String sql = "select count(*) from student where state = 'Σ��' || state = '���Կ���' ";
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		if (resultSet.next()) {
+			rows = resultSet.getInt(1);
+		}
+		preparedStatement = connection.prepareStatement(
+				"select studentName,studentNumber,state from student where state = 'Σ��' || state = '���Կ���'");
+		resultSet = preparedStatement.executeQuery();
+		table = new JTable();
+		table.setRowHeight(24);
+		table.setModel(new DefaultTableModel(new Object[rows][3],
+				new String[] { "  \u59D3\u540D", "   \u5B66\u53F7", "   \u72B6\u6001" }));
+		table.setBorder(new LineBorder(new Color(0, 0, 0)));
+
+		for (int i = 0; resultSet.next(); i++) {
+			table.setValueAt(resultSet.getString("studentName"), i, 0);
+			table.setValueAt(resultSet.getString("studentNumber"), i, 1);
+			table.setValueAt(resultSet.getString("state"), i, 2);
+		}
+		scrollPane.setViewportView(table);
+
+	}
+
+}

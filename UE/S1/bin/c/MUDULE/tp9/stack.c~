@@ -1,0 +1,42 @@
+#include"stack.h"
+typedef struct pile{
+int value[20];
+int count;
+}pile;
+
+pile new(){
+   pile p ;
+
+   p.count = 0 ;
+   
+   return p;
+   }
+  
+
+int is_empty(pile p){
+      return p.count;
+}
+
+
+int pop(pile* p){
+    if(!is_empty) return 1;
+    p->count--;
+    return p->value[p->count];
+    
+}
+
+int push(pile* p,int x){
+    if(p->count==20) return 1;
+       p->value[p->count]=x;
+    p->count++;
+    return 0;
+}
+
+
+void print_pile(pile p){
+   while(p.count!=0){
+    p.count--;
+
+    printf("%d\n",p.value[p.count]);
+ }
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Introduction à la programmation web</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+  </head>
+  <body>
+
+    <h1>Introduction à la programmation web</h1>
+
+      <ul class="nav">
+  <li>   <a href="https://www.w3.org/">ACCUEIL</a><br></li>
+  <li>   <a href="http://pgsql/~guangyue.chen/tp1/page_test.html">TEST</a><br></li>
+      </ul>
+      
+    <p>cette page a pour objectif de faire le point du quelques information en<strong><i class="sigle"> HTML/CSS </i></strong> </p>
+
+    
+    
+<table>
+    <caption class="sigle">HTML ou CSS?</caption>
+    <tr><th></th> <th class="sigle">HTML</th> <th class="sigle"> CSS </th></tr>
+    <tr><td> titre de la page   </td><td> X    </td><td>      </td></tr>
+    <tr><td> couleur du titre   </td><td>      </td><td>  X   </td></tr>
+    <tr><td>liste numerotee     </td><td>   X  </td><td>      </td></tr>
+    <tr><td> largeur du menu    </td><td>      </td><td>   X  </td></tr>
+</table>
+
+
+<h2>Démonstration</h2>
+<p>Une petite védeo de présentation</p>
+    <video height="400" width="600" controls>
+      <source src="w3schools_tab_example.mp4" type ="video/mp4">
+	<source src="w3schools_tab_example.ogv" type ="video/ogg">
+     </video>	
+
+   <br> <a href="http://pgsql/~guangyue.chen/tp1/page_test.html">test lien ver ma page</a><br>
+
+<h3>Références</h3>
+<p>Quelque liens utiles</p>
+  
+<ul class="ref">
+  <li> <img src="w3c.png" alt="w3c"/><a href="https://www.w3.org/">la site du <span class="sigle">w3c</span></a><br></li>
+ 
+  <dd>1. <a href="https://www.w3.org/">Web Accessibility Initiative</a><br></dd>
+  <dd>2. <a href="https://www.w3.org/">Web Accessibility Initiative</a><br></dd>
+
+ <li><a href="https://www.w3.org/">Web Accessibility Initiative</a><br></li>
+  
+</ul>
+  </body>
+  
+
+
+  
+</html>

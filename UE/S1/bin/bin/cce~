@@ -1,0 +1,8 @@
+#!/bin/bash
+
+    sed -e 1d hello.c | gcc -o /tmp/$$.a.out -x c - 
+   i=0
+for i in $1 ;do      
+                         sed '1c $2' /tmp/$$.a.out
+   done
+    rm /tmp/$$.a.out

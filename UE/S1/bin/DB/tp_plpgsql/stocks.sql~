@@ -1,0 +1,109 @@
+-- ###################################################################
+-- # Application : PL/pgSQL script
+-- # Fichier     : stock.sql
+-- # Auteur      : yourself (dec 201)
+-- ###################################################################
+
+-- ###################################################################
+-- # Q1 : modification de la table vin
+-- ###################################################################
+
+
+-- ###################################################################
+-- # Q2 et Q3 : fonctions pour initialiser les stocks
+-- ###################################################################
+
+-- ***
+-- *** f_initialise_stock_vin(num_vin, qte)
+-- *** --> Donner une description de la fonction
+-- ***
+CREATE OR REPLACE FUNCTION 
+f_initialise_stock_vin(num_vin INTEGER, qte INTEGER) 
+RETURNS void AS $fisv$
+   BEGIN
+   END;
+$fisv$ LANGUAGE plpgsql;
+
+-- ***
+-- *** tests de la fonction f_initialise_stock_vin()
+-- ***
+SELECT f_initialise_stock_vin(170, 12);
+SELECT f_initialise_stock_vin(170, -666);
+
+-- ***
+-- *** f_initialise_stock()
+-- *** --> Donner une description de la fonction
+-- ***
+CREATE OR REPLACE FUNCTION f_initialise_stock() 
+RETURNS void AS $fis$
+   DECLARE 
+      -- un curseur pour parcourir la table vin
+   BEGIN
+      -- Un appel à la fonction f initialise stock vin serait bienvenu 
+      -- EXECUTE f initialise stock vin(...)
+   END;
+$fis$ LANGUAGE plpgsql;
+
+-- ***
+-- *** tests de la fonction f_initialise_stock_vin()
+-- ***
+SELECT f_initialise_stock();
+
+-- ###################################################################
+-- # Q4 et Q5 : triggers 
+-- ###################################################################
+
+-- ***
+-- *** f_verifie_stock() 
+-- *** --> Donner une description de la fonction
+-- ***
+CREATE OR REPLACE FUNCTION f_verifie_stock () RETURNS TRIGGER AS
+$fvs$
+   DECLARE
+      -- une variable pour mettre le stock disponible
+   BEGIN
+     /* ... */
+   END;
+$fvs$ LANGUAGE plpgsql;
+
+-- ***
+-- *** d_verifie_stock() 
+-- *** --> Donner une description du trigger
+-- ***
+DROP TRIGGER d_verifie_stock ON /* ... */;
+CREATE TRIGGER d_verifie_stock 
+/* ... */
+EXECUTE PROCEDURE f_verifie_stock();
+
+-- ***
+-- tests du trigger d_verifie_stock
+-- ***
+-- INSERT INTO commande
+
+-- ***
+-- *** f_diminue_stock()
+-- *** --> Donner une description de la fonction
+-- ***
+CREATE OR REPLACE FUNCTION f_diminue_stock () RETURNS TRIGGER AS
+$fds$
+   DECLARE
+      -- ...
+   BEGIN
+      -- ...
+   END;
+$fds$ LANGUAGE plpgsql;
+
+-- ***
+-- *** d_verifie_stock()
+-- *** --> Donner une description du déclencheur
+-- ***
+DROP TRIGGER d_diminue_stock ON /* ... */;
+DROP TRIGGER d_verifie_stock ON /* ... */;
+CREATE TRIGGER d_diminue_stock 
+/* ... */
+EXECUTE PROCEDURE f_diminue_stock();
+
+-- ***
+-- tests du trigger d_diminue_stock
+-- ***
+-- 

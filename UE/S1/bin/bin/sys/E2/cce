@@ -1,0 +1,13 @@
+
+#!/bin/bash
+
+    sed -e 1d hello.c | gcc -o /tmp/$$.a.out -x c - 
+i=0
+while test $i -lt $2 ;do      
+
+  /tmp/$$.a.out
+  
+    i=$[i+1]
+   
+   done
+    rm /tmp/$$.a.out

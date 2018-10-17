@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include "mysleep.h"
+int main (int argc,char* argv[])
+{
+  printf("%d\n",atoi(argv[1]));
+   
+    if (argc!=2) {
+      fprintf(stderr,"%s   %s  sec\n",argv[0],argv[0]);
+      return 1;
+    }
+
+    
+    printf("1113\n");
+    mysleep( atoi(argv[1]) );
+  printf("1113\n");
+    
+	    return 0;
+
+ }

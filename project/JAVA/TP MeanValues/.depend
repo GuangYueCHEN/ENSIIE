@@ -1,0 +1,2 @@
+MeanValue.o: MeanValue.cpp MeanValue.h
+main.o: main.cpp MeanValue.h

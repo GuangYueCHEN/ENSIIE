@@ -1,0 +1,215 @@
+package myMain;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.MatteBorder;
+import java.awt.Color;
+import javax.swing.border.TitledBorder;
+
+import mysqlUtil.dbUtil;
+
+import javax.swing.border.LineBorder;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.naming.spi.DirStateFactory.Result;
+import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Update extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField textFieldNumber;
+	private JTextField textFieldName;
+	private JTextField textFieldSex;
+	private JTextField textFieldClass;
+	private JTextField textFieldBirth;
+	private JTextField textFieldMajorDirection;
+	private JTextField textFieldSemester;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void mainUpdate() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Update frame = new Update();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Update() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 495, 481);
+		contentPane = new JPanel();
+		contentPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JLabel labelTip = new JLabel(
+				"\u8BF7\u8F93\u5165\u8981\u66F4\u6539\u4FE1\u606F\u5B66\u751F\u7684\u5B66\u53F7\uFF1A");
+		labelTip.setBounds(27, 42, 180, 15);
+		contentPane.add(labelTip);
+
+		textFieldNumber = new JTextField();
+		textFieldNumber.setBounds(199, 39, 133, 21);
+		contentPane.add(textFieldNumber);
+		textFieldNumber.setColumns(10);
+
+		JLabel labelName = new JLabel("\u59D3\u540D");
+		labelName.setBounds(122, 79, 54, 15);
+		contentPane.add(labelName);
+
+		textFieldName = new JTextField();
+		textFieldName.setBounds(199, 76, 105, 21);
+		contentPane.add(textFieldName);
+		textFieldName.setColumns(10);
+
+		JLabel labelSex = new JLabel("\u6027\u522B");
+		labelSex.setBounds(122, 115, 54, 15);
+		contentPane.add(labelSex);
+
+		textFieldSex = new JTextField();
+		textFieldSex.setBounds(199, 112, 104, 21);
+		contentPane.add(textFieldSex);
+		textFieldSex.setColumns(10);
+
+		JLabel labelClass = new JLabel("\u73ED\u7EA7");
+		labelClass.setBounds(122, 152, 54, 15);
+		contentPane.add(labelClass);
+
+		textFieldClass = new JTextField();
+		textFieldClass.setBounds(199, 152, 104, 21);
+		contentPane.add(textFieldClass);
+		textFieldClass.setColumns(10);
+
+		JLabel labelBirthday = new JLabel("\u751F\u65E5");
+		labelBirthday.setBounds(122, 191, 54, 15);
+		contentPane.add(labelBirthday);
+
+		textFieldBirth = new JTextField();
+		textFieldBirth.setBounds(199, 188, 103, 21);
+		contentPane.add(textFieldBirth);
+		textFieldBirth.setColumns(10);
+
+		JLabel labelDirection = new JLabel("\u4E13\u4E1A\u65B9\u5411");
+		labelDirection.setBounds(122, 228, 54, 15);
+		contentPane.add(labelDirection);
+
+		textFieldMajorDirection = new JTextField();
+		textFieldMajorDirection.setBounds(201, 225, 103, 21);
+		contentPane.add(textFieldMajorDirection);
+		textFieldMajorDirection.setColumns(10);
+
+		JLabel labelTerm = new JLabel("\u5B66\u671F");
+		labelTerm.setBounds(122, 266, 54, 15);
+		contentPane.add(labelTerm);
+
+		textFieldSemester = new JTextField();
+		textFieldSemester.setBounds(198, 263, 106, 21);
+		contentPane.add(textFieldSemester);
+		textFieldSemester.setColumns(10);
+
+		JLabel labelTip2 = new JLabel(
+				"               \u5B66\u751F\u5B66\u4E60\u72B6\u6001\u4FE1\u606F\u7531\u7CFB\u7EDF\u751F\u6210\uFF0C\u4E0D\u53EF\u4FEE\u6539\uFF01");
+		labelTip2.setBounds(44, 294, 399, 42);
+		contentPane.add(labelTip2);
+
+		JButton button = new JButton("\u4FDD\u5B58");
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				dbUtil util = new dbUtil();
+				Connection connection = null;
+				PreparedStatement preparedStatement = null;
+				ResultSet resultSet = null;
+				String majorDirectionNumber = null;
+				try {
+					connection = util.getCon();
+				} catch (Exception e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+
+				try {
+					if (textFieldMajorDirection.getText().length() > 0) {
+						preparedStatement = connection.prepareStatement(
+								"select majorDirectionNumber from majorDirection where majorDirectionName = ?");
+						preparedStatement.setString(1, textFieldMajorDirection.getText());
+						resultSet = preparedStatement.executeQuery();
+						if (resultSet.next()) {
+							majorDirectionNumber = resultSet.getString(1);
+						}
+					}
+
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				try {
+					preparedStatement = connection.prepareStatement(
+							"update student set studentName = ?, Sex = ?, Class = ?, Birthday = ?, MajorDirectionNumber = ?, term = ? where studentNumber = ?");
+					preparedStatement.setString(1, textFieldName.getText());
+					preparedStatement.setString(2, textFieldSex.getText());
+					preparedStatement.setString(3, textFieldClass.getText());
+					preparedStatement.setString(4, textFieldBirth.getText());
+					if (majorDirectionNumber != null) {
+						preparedStatement.setString(5, textFieldMajorDirection.getText());
+					} else {
+						preparedStatement.setString(5, null);
+					}
+					preparedStatement.setString(6, textFieldSemester.getText());
+					preparedStatement.setString(7, textFieldNumber.getText());
+					if (preparedStatement.executeUpdate() != 1) {
+						ErrorTipMistake.mainErrorTipMistake();
+						preparedStatement.close();
+						dispose();
+					} else {
+						Success.getSuccess();
+					}
+
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		button.setBounds(77, 365, 93, 23);
+		contentPane.add(button);
+
+		JButton button_1 = new JButton("\u53D6\u6D88");
+		button_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+			}
+		});
+		button_1.setBounds(289, 365, 93, 23);
+		contentPane.add(button_1);
+	}
+
+}

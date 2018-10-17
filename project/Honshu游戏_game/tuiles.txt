@@ -1,0 +1,45 @@
+11
+0
+U U
+R L
+V P
+1
+F U
+V L
+R P
+2
+P L
+L U
+F P
+3
+R V
+R P
+R F
+4
+U U
+R U
+V V
+5
+U F
+R P
+F U
+6
+V V
+V U
+V U
+7
+U U
+L U
+L F
+8
+R F
+U L
+R P
+9
+U V
+F F
+P L
+10
+U R
+U U
+V U

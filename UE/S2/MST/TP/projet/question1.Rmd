@@ -1,0 +1,94 @@
+---
+title: "projet"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###1 Statistique Descriptives
+#(a) Tracer les boîte des femmes et les hommes
+```{r, include=TRUE}
+rm(list = ls())
+
+
+  data=read.csv("DB_binome_56.csv",header = TRUE)
+
+  hommes <-subset(data,data['Sexe']==0)
+  femmes<-subset(data,data['Sexe']==1)
+  boxplot(hommes['Peche'],TRUE,main = "Homme")
+  boxplot(femmes['Peche'],TRUE,main = "Famme")
+
+
+```
+On remarque que il n'y a pasune grande defference entre les hommes et les femmes.
+
+
+#(b)Tracer la quantité de  péche en fonction de la tranche d'age 
+```{r, include=TRUE}
+rm(list = ls())
+
+
+  data=read.csv("DB_binome_56.csv",header = TRUE)
+
+
+  children<-subset(data,data['Age']==0)
+  adults<-subset(data,data['Age']==1)
+  oldmen<-subset(data,data['Age']==2)
+  boxplot(children['Peche'],TRUE,main = "Children")
+  boxplot(adults['Peche'],TRUE,main = "Adults")
+  boxplot(oldmen['Peche'],TRUE,main = "Old men")
+
+```
+On remarque que il n'y a pasune grande defference entre les gens qui ont les age defferents.
+
+#(c)Tracer l'histogramme l'intensité de vent
+```{r, include=TRUE}
+
+
+  vent<-data[,'Noeuds']
+hist(vent,freq=TRUE,xlim=c(-10,10))
+lambda=mean(vent)
+
+x=seq(-10,10)
+y<-dpois(x,lambda)
+par(new=TRUE)
+plot(x,y,type="l",xaxt="n",yaxt="n")
+
+```
+Elle suive la loi de Poisson . On le justifie par la courbe de "dpoi"
+
+#(d)Tracer l'histogramme la quantité de péche
+```{r, include=TRUE}
+
+
+  peche<-data[,'Peche']
+hist(peche,freq=TRUE,xlim=c(-60,160))
+
+mu=mean(peche)
+delta=sqrt(var(peche))
+x=seq(-60,160)
+y<-dnorm(x,mu,delta)
+par(new=TRUE)
+plot(x,y,type="l",xaxt="n",yaxt="n")
+
+```
+Elle suive la loi de Normale . On le justifie par la courbe de "dnorm"
+
+
+###2
+#(a)Verifier les observation
+```{r, include=TRUE}
+nb = length(vent)
+lambda = mean(vent)
+echant =  rpois(nb , lambda)
+ks.test(vent, echant)
+
+```
+Donc on remarque la p-value est presque 1 > 0.05 , donc il suivre la loi poisson
+
+#(b)La vraisemblance 
+$L = e^{-n\lambda}\prod_{i = 0}^n\frac{\lambda x_i}{x_i!}$
+$logL=-\lambda n+ \sum_{i=0}^n(x_ilog\lambda -logx_i)$
+$\widehat{\lambda} = \frac{1}{n}\sum_{i=0}^nx_i =\bar{x}$

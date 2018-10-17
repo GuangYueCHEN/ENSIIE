@@ -1,0 +1,15 @@
+{
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Model\\": "src/Model/",
+            "View\\": "src/View/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    }
+}

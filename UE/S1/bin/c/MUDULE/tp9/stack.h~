@@ -1,0 +1,28 @@
+typedef struct pile{
+int value[20];
+int count;
+}pile;
+
+pile new(){
+ 
+   }
+  
+
+int is_empty(pile p){
+
+}
+
+
+int pop(pile* p){
+
+}
+
+int push(pile* p,int x){
+ 
+}
+
+
+void print_pile(pile p){
+
+ }
+}

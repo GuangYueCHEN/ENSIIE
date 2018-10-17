@@ -1,0 +1,23 @@
+#include<stdio.h>
+int main(){
+  int pid=fork();
+
+  if(pid==0){
+    sleep(2);
+    printf("2s\n");
+  }else{
+      int pid2=fork();
+       if(pid2==0){
+       sleep(2);
+       printf("2s encore\n");
+        }
+     printf("hello\n");
+    }
+  return 0;
+
+
+
+
+
+
+}

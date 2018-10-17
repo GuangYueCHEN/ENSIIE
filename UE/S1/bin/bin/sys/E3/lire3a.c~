@@ -1,0 +1,9 @@
+#include "lire.h"
+
+int main(int argc , char *argv[]){
+  lire();
+  lire();
+
+  execlp("./lire",argv[1]);
+  return 0;
+    }
