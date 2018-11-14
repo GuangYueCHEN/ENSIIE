@@ -53,4 +53,10 @@ My note for data analyse with Spark
 				RDD command to control, and use collect() can get it to a list, but il will lose parallelism
 				so we can use just like first(5) take(5) to make sure or sample()随机抽样
 			-key-value RDD:
-				action: lookup():返回这个key的value list 
+				action: lookup():返回这个key的value list
+
+
+三、snow data
+			-data missing: common problem
+
+			-RMS: 我们用RMS来量化不同因素的影响。 The RMS we used to quantify the effect of different factor.

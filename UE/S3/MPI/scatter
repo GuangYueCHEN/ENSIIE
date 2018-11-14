@@ -1,0 +1,18 @@
+scatter
+不能选择不同的size pour chaque processus
+
+sctterv
+可能不连续
+可以选择不同的size pour chaque processus
+
+
+reduce—scatter
+先reduce然后scatter
+可以选择不同的size pour chaque processus
+
+
+Alltoallw
+not same size
+not contiguons
+
+
