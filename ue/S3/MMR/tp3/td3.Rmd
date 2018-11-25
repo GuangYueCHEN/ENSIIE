@@ -1,0 +1,129 @@
+---
+title: "Td3"
+output:
+  pdf_document: default
+  html_document: default
+---
+Guangyue CHEN
+Jiahui XU
+#upload Data and split it into two dataframes.
+```{r include=TRUE}
+rm(list=ls())
+library(mlbench)
+library(ROCR)
+library(gplots)
+data(BostonHousing)
+medvBin = as.numeric((BostonHousing$medv>median(BostonHousing$medv)))
+BostonHousing <- subset(BostonHousing, select = -medv)
+BostonHousing <- cbind(BostonHousing, medvBin)
+```
+
+```{r include=TRUE}
+reg = glm(formula = medvBin~., data = BostonHousing, family = binomial)
+Y = BostonHousing$medvBin
+summary(reg)
+preVelue = predict.glm(reg,newdata = BostonHousing,type="response")
+pred <- prediction(preVelue, Y)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf)
+abline(0,1)
+
+```
+we can say that this is good model, but we have too mant coefs no useful.
+#forward)
+```{r include=TRUE}
+resall <- glm(medvBin~., data = BostonHousing, family = binomial)
+res0 <- glm(medvBin~1, data = BostonHousing, family = binomial)
+resfor <- step(res0, list(upper = resall), direction = 'forward')
+preVelue = predict.glm(resfor,newdata = BostonHousing,type="response")
+pred <- prediction(preVelue, Y)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf)
+abline(0,1)
+AIC(resfor)
+```
+#.backward)
+```{r include=TRUE}
+resback = step(res0, direction = 'backward')
+preVelueB = predict.glm(resback,newdata = BostonHousing,type="response")
+predB <- prediction(preVelueB, Y)
+perfB <- performance(predB, "tpr", "fpr")
+plot(perfB)
+print(resback)
+```
+#.both)
+```{r include=TRUE}
+resstep <- step(res0, direction = 'both')
+preVelueBt = predict.glm(resstep,newdata = BostonHousing,type="response")
+predBt <- prediction(preVelueBt, Y)
+perfBt <- performance(predBt, "tpr", "fpr")
+plot(perfBt)
+print(resstep)
+```
+
+the forward model has the lowest AIC and with the graphe we can decide to choose it.
+#Ridge and Lasso
+#get the data first
+```{r include=TRUE}
+library(glmnet)
+library(MASS)
+## 80% of the sample size
+n = floor(0.80 * nrow(BostonHousing))
+
+set.seed(123)
+train_ind = sample(seq_len(nrow(BostonHousing)), size = n)
+
+train_data = BostonHousing[train_ind, ]
+test_data = BostonHousing[-train_ind, ]
+train_x = model.matrix(medvBin~.,train_data)[,-1]
+train_y = train_data$medvBin
+
+test_x = model.matrix(medvBin~.,test_data)[,-1]
+test_y = test_data$medvBin
+```
+#Ridge Regression(with lambda.min)
+```{r include=TRUE}
+Ridg = cv.glmnet(train_x, train_y, alpha=0)
+plot(Ridg)
+bestlam<-Ridg$lambda.min
+ridge.min = glmnet(train_x, train_y, family = "binomial", alpha = 0, lambda = bestlam)
+resp.min = predict(ridge.min, newx = test_x, newdata = test_data, type = "response")
+pred <- prediction(resp.min, test_data$medvBin)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf)
+abline(0,1)
+```
+#lasso regression(with lambda.min)
+```{r include=TRUE}
+Las = cv.glmnet(train_x, train_y, alpha = 1)
+plot(Las)
+bestlam<-Las$lambda.1se
+Lass.min = glmnet(train_x, train_y, family = "binomial", alpha = 1, lambda = bestlam)
+respL.min = predict(Lass.min, newx = test_x, newdata = test_data, type = "response")
+
+pred <- prediction(respL.min, test_data$medvBin)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf)
+abline(0,1)
+```
+#precision error
+```{r include=TRUE}
+predict.null <- predict(res0, newdata =  test_data, type = "response")
+predict.all <- predict(resall, newdata =  test_data, type = "response")
+predict.step <- predict(resstep, newdata =  test_data, type = "response")
+
+PE.null <- mean((predict.null -  test_y)^2)
+PE.all <- mean((predict.all -  test_y)^2)
+PE.step <- mean((predict.step -  test_y)^2)
+
+PE.ridge.min <- mean((resp.min - test_y)^2) 
+PE.lasso.min <- mean((respL.min - test_y )^2)
+PE.null
+PE.all
+PE.step
+PE.ridge.min
+PE.lasso.min
+```
+There are some difference between the results.
+For the models with Ridge and Lasso regression are accurate. And we find that ridge regress model has a lower precision error.
+For others, the model with all variables is good too.

@@ -1,0 +1,122 @@
+---
+title: "projet"
+author: "Group 9, CHEN XU"
+date: "19 novembre 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#graphique avec trop variale false
+#no code false
+#plus 2 pages false
+#graphiaue sans legende false
+#nanqe de precision false
+
+############################
+#volumetrie 
+#variable d'un pt de vue concis
+#Question metier
+#1 ou 2 graphes commentes
+#conclusion
+
+```
+Group:9
+CHEN , XU
+
+#Read The Data
+```{r , include=FALSE,echo=FALSE}
+require(corrplot)
+require(gdata)
+
+data = read.xls ("/home/guangyue.chen/S3/MRR/projet/residential/Residential-Building-Data-Set.xlsx", sheet = 1, header = TRUE)
+```
+
+The dimension of the data: 
+"observation" "variable"
+```{r , include=TRUE,echo=FALSE}
+dim(data)
+```
+
+###The Model Selection Methodology
+
+For choose the model, we can compute the BICs of the models, so we can choose the model with the lower BIC(Bayesien Information Criteria).
+
+The reason why we use BIC to choose the model is that BIC has a higher penalty. It's better for this situation that the number of variavles is big.
+
+And also, we will use cross validation, its a good way to compare the models.
+
+At first, we choose some models as candidates: baseline regression, Stepwise Regression, LASSO, RIDGE, ElasticNet. To consider the case that our dataset has a hign dimension, so it's better to use LASSO, RIDGE or ElasticNet regression. Because regression with  regularization suit the dataset, which has high dimension and multicollonearity, very well.
+
+```{r , include=TRUE,echo=FALSE}
+#for cross validation, we compute the RMSE
+RMSE<-function(y_esti,y){
+  
+  return(sqrt(t(y_esti-y)%*%(y_esti-y)/length(y))[1])
+  
+}
+
+
+```
+
+```{r , include=TRUE,echo=FALSE}
+#for cross validation, we compute the RMSE
+X<-data[c(seq(1,107,1))]
+ASP<-data[108]
+ACC<-data[109]
+
+```
+
+```{r , include=TRUE,echo=FALSE}
+reg1<-lm(ASP~X)
+summary(reg1)
+reg2<-lm(ACC~X)
+summary(reg2)
+```
+
+```{r , include=TRUE,echo=FALSE}
+y_esti<-predict.lm(reg1,data=X,level =1)
+RMSE(y_esti,ASP)
+y_esti<-predict.lm(reg2,data=X,level =1)
+RMSE(y_esti,ACC)
+regbic = step(reg1, direction = 'both', k = log(nrow(X)))
+regbic2 = step(reg2, direction = 'both', k = log(nrow(X)))
+BIC(reg1)
+BIC(reg2)
+BIC(regbic)
+BIC(regbic2)
+```
+```{r , include=TRUE,echo=FALSE}
+library(MASS)
+library(lars)
+modlasso = lars(x=X,y=ASP,type="lasso")
+Y_esti<-predict.lars(modlasso,X,type="fit",mode="lambda",s=modlasso$lambda[which.min(modlasso$RSS)-1])
+RMSE(as.matrix(Y_esti$fit),ASP)
+
+
+modridge<-lm.ridge(ASP~.,data=data[c(seq(1,108,1))],lambda=seq(0,10,0.01))
+lambda<-modridge$lambda[which.min(modridge$GCV)]
+modridge<-lm.ridge(ASP~.,data=data[c(seq(1,108,1))],lambda=lambda)
+coef<-coef(modridge)
+un<-matrix(1,nrow=length(ASP),ncol=1)
+Y_esti<-cbind(un,X)%*%as.vector(coef)
+RMSE(as.matrix(Y_esti),ASP)
+
+```
+
+```{r , include=TRUE,echo=FALSE}
+#for cross validation, slice the data into three parts, train , cross, test
+library(DAAG)
+data1<-data[c(seq(1,108,1))]
+X<-data[c(seq(1,107,1))]
+ASP<-data[108]
+
+cvResults <- suppressWarnings(
+    CVlm(data =data1, form.lm = formula(ASP ~ .), m=10, dots =FALSE, seed=29, plotit=TRUE, printit=TRUE)
+); 
+# performs the CV
+attr(cvResults, 'ms')
+which.min(cvResults$Predicted)
+```
+
+###

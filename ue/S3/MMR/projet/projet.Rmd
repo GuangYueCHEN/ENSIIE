@@ -1,0 +1,74 @@
+---
+title: "projet_2pages_detail"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Group:9
+CHEN , XU
+
+#My Dataset and the problem
+This  Data set includes construction cost, sale prices, project variables, and economic variables corresponding to real estate single-family residential apartments in Tehran, Iran.
+
+It contains 8 project physical and financial variables(which is form v1 to v8 in data set), 19 economic variables and indices in 5 time lag numbers (from v11 to v29 in data set), and two output variables that are construction costs and sale prices.
+
+Obviously, this dataset should be treated as an Linear Regression Problem, because the attributes and the goals are continuous, and we want to predict the construction costs and the the sale prices with the different physical & financial variables and the economic variables.
+```{r , include=FALSE,echo=FALSE}
+require(corrplot)
+require(gdata)
+data = read.xls ("/home/guangyue.chen/S3/MRR/projet/residential/Residential-Building-Data-Set.xlsx", sheet = 1, header = TRUE)
+```
+
+The dimension of the data: 
+"observation" "variable"
+```{r , include=TRUE,echo=FALSE}
+dim(data)
+```
+
+#The variables
+###the target variables
+The variables ASP and ACC are the target variables who is actual construction costs and sale prices.
+At first, we check the correlation bitween the target variables with others:
+
+For the others variables, there are three groups:
+
+```{r , include=TRUE,echo=FALSE,out.width='60%',fig.align='center'}
+require(corrplot)
+corr<-cor(data[,c(seq(1:4),108,109)])
+corrplot(corr,title="the correlation with time",mar = c(0,0,1,0))
+```
+
+So for this dataset, the first 4 variables are "start year", "start quarter", "complection year" and "complection quarter". These four variables describe when they build this building. And there is a relation between the variables about year and the targets. What's more, the interval between the start year and the end year maybe an important variable.
+
+
+```{r , include=TRUE,echo=FALSE,fig.align='center'}
+#library(corrplot)
+corr<-cor(data[,c(seq(5,12,1),108,109)])
+corrplot(corr,main="the correlation with phisical & financial variables",mar = c(0,0,1,0))
+```
+
+There are so many variables so I'd like to introduce the variales which has more correlation. We find that the variables zcode , EPE, PEC and BUP are more important, which are "Project locality defined in terms of zip codes", EPE: "Total preliminary estimated construction cost based on the prices at the beginning of the project", PEC :"Preliminary estimated construction cost based on the prices at the beginning of the project" and BUP:"Price of the unit at the beginning of the project per m2".
+
+###ECONOMIC VARIABLES AND INDICES
+These variables are in 5 time lag numbers, so there are almost 95 variables.
+Each 19 variables describe the economic situation of the sociaty for one instance. So perhaps they will influce the target variables, or ,which is more possible, there are many variable who are not interesting for the target variables.
+
+```{r , include=FALSE,echo=FALSE}
+
+
+
+###The Model Selection Methodology
+#For choose the model, we can compute the AICs of the models, so we can choose the model with the lower AIC, we can also use the function "anova()" which compare two models, for example anova(model_one,model_two).
+#And also, we will use cross validation, its a good way to compare the models.
+
+#At first, we choose some models as candidates: baseline regression, Stepwise Regression, LASSO, RIDGE, ElasticNet.
+
+#To consider the case that our dataset has a hign dimension, so it's better to use LASSO, RIDGE or ElasticNet regression. Because regression with  regularization suit the dataset, which has high dimension and multicollonearity, very well.
+
+```
+
+
