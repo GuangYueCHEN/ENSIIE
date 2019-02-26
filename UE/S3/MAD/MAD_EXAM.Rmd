@@ -1,0 +1,122 @@
+---
+title: "EXAM"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##E4 
+###Q3 
+A FUNCTION tu compute the distance  between $x_i$ and $\phi_k$, and takoing Z , K as input
+
+```{r setup, include=TRUE}
+distance.to.clusterK<-function(i,k,K,Z){
+  dist1<-K[i,i]
+  dist2<-0
+  dist3<-0
+  n<-nrow(k)
+  nk<-sum(Z[,k])
+  for(j in 1:n){
+    dist2<-dist2+Z[j,k]*K[i,j]
+  }
+  dist2<-dist2*(-2)/nk
+  
+  for(j in 1:n){
+    for(p in 1:n){
+      dist3<-dist3+Z[j,k]*Z[p,k]*K[j,p]
+    }
+  }
+    dist3<-dist3/(nk^2)
+  
+  return (distance=dist1+dist2+dist3)
+  
+}
+
+
+```
+##Q4.
+critere des kmeans
+$ min_{C_1,...,C_k}\sum_{k=1}^{C} \dfrac{1}{n_{C_k}} \sum_{j \in {C_k}} ||\phi(x_j) - \phi_{k}|| $
+
+##Q5
+step 1: Pour chaque individu i = 1,...,n
+-> sa distance a toutes les classes k = 1,...,c
+
+step 2: Prendre l'indice k qui verifie le critere des kmeans
+
+
+```{r setup, include=TRUE}
+distance.to.clusters<-function(K,Z){
+    n <- nrow(Z)
+  c <- ncol(Z)
+  t <- numeric(c)
+  #显示c数量个0
+  ind <- numeric(n)
+  for(i in 1:n){
+    for(k in 1:n){
+      t[k] <- distance.to.clusterK(i, k, K, Z)
+    }
+    ind[i] <- which.min(t)
+  }
+  return(ind)
+  
+}
+
+```
+###Kernel.kmeans
+step 1: choisir C centres 
+step 2: initialiser Z
+step 3: utiliser kmeans_c
+step 4: update Z
+repeter jusqu'a Z = constant
+
+```{r, include=TRUE}
+my_kemans <- function(c, K) {
+  #分成c类
+  n <- nrow(K)
+  centres <- sample(size = c, x = 1:n)
+  classe = 1:c
+  Z <- matrix(0, nrow = n, ncol = c)
+  for(k in classe){
+    j <- centres[k]
+    Z[j,k] <- 1
+  }
+  
+  cond <- TRUE
+  while(cond == TRUE){
+    clusters <- distance.to.clusters(K, Z)
+    Z.new <- matrix(0, n ,c)
+    for(i in 1:n){
+      k <- clusters[i]
+      Z.new[i, k] <- 1
+    }
+    cond = (sum(Z != Z.new)!=0)
+    Z = Z.new 
+  }
+  return(clusters)
+}
+
+```
+
+
+
+```{r setup, include=TRUE}
+kernel.kmeans<-function(K,g){
+  #1 Init , we can start kmeans no metter step 1 and step2 , in this case , init with Z matrix is easier
+  Z<-matrix(1,nrow(K),g)
+  n<-nrow(K)
+  sample(1:g,n,replace=TRUE)->cluster
+  for(i in 1:n){
+    Z[i,cluster[i]]=1
+  }
+  cluster<-distance.to.clusters(K,Z)
+    #apply(D,1,which.min)
+  for(i in 1:n){
+    Z[i,cluster[i]]=1
+  }
+  return(Z)
+
+}
+```

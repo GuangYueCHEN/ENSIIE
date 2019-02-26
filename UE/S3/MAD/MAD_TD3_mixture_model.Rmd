@@ -1,0 +1,104 @@
+---
+title: "TD3 MAD"
+output: html_document
+---
+
+```{r include=TRUE}
+
+nks<-rmultinom(1,1000,prob=c(1/3,2/3))
+means<-c(0,4)
+sds<-c(1,1/2)
+samples<-mapply(function(nk,mean,sd){rnorm(nk,mean,sd)},nks,means,sds)
+hist(x<-unlist(samples))
+
+
+curve(dnorm(x,mean=4,sd=1/2),-2,7,col="orange")
+curve(dnorm(x,mean=0,sd=1),-2,7,add=TRUE,col="red")
+
+mixture<-function(x){
+  1/3*dnorm(x,mean=0,sd=1)+
+    2/3*dnorm(x,mean=4,sd=1/2)
+  }
+curve(mixture(x), -2, 7, col="blue", add=TRUE)
+
+
+
+```
+
+```{r include=TRUE}
+res.means<-kmeans(x, 2, nstart = 10)
+list.of.cluster<-split(data.frame(x), res.means$cluster)
+res.means
+```
+
+```{r include=TRUE}
+library(mclust)
+Mclust(x)->res
+summary(res)
+
+#summary(Mclust(x,modelNames = 'E'))#????????????bic
+#summary(Mclust(x,modelNames = 'V'))#????????????bic
+```
+
+```{r include=TRUE}
+Mclust(x, 2, modelNames = "V") -> res.2V
+Mclust(x, 2, modelNames = "E") -> res.2E
+```
+###E2 Bi-dimensional mixture
+```{r include=TRUE}
+data(faithful)
+plot(faithful)
+```
+
+```{r include=TRUE}
+res_Mclust<-Mclust(faithful)
+summary(res_Mclust)
+
+```
+So the number of cluster is 3.
+```{r include=TRUE}
+#res$z  #matrice of tik
+
+res$parameters
+
+res$classification #the classification
+
+```
+
+```{r include=TRUE}
+plot(res,"BIC")
+```
+this plot discribe with different modelname , the results of BIC. We choose the k value which with the max BIC.
+```{r include=TRUE}
+plot(res,"classification")
+```
+this plot present the classification, different classes have different colors and shapes.
+```{r include=TRUE}
+plot(res,"uncertainty")
+```
+This plot show the uncertainty, same as the last on, the colors mean different classes, and if the point is bigger, this point is more uncertain.
+```{r include=TRUE}
+plot(res,"density")
+```
+this plot present the whole density of this data.
+
+#5 run the hclust
+```{r include=TRUE}
+out.dist=dist(faithful,method="euclidean")  
+res_hclust<-hclust(out.dist, method = "complete")
+```
+
+```{r include=TRUE}
+summary(res_hclust)
+```
+
+```{r include=TRUE}
+plot(res)
+```
+
+```{r include=TRUE}
+cutree(res_hclust,3)->res_hclust.cluster
+res_Mclust$classification->  res_Mclust.cluster
+table(res_hclust.cluster,res_Mclust.cluster)
+```
+

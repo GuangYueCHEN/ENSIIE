@@ -1,0 +1,134 @@
+---
+title: "TD1. MAD"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#1)
+IQ~N(100, sigma = 15)
+what is the prob of having a IQ >= 120, IQ <= 100?
+Plot a figure illustrating the answers.
+
+```{r include=TRUE}
+IQ = rnorm(1000, mean = 100, sd = 15)
+plot(IQ)
+x = 0
+y = 0
+for(i in 1:1000) {
+  if(IQ[i] >= 120){
+    x = x+1
+  }
+  if(IQ[i] <= 100){
+    y = y+1
+  }
+}
+print("大于120概率")
+x/1000
+pnorm(120,100,15, lower.tail = FALSE) #大于120概率 lower.tail: P(X<=x) ou P(X>x)
+
+print("小于100概率")
+y/1000
+pnorm(100,100,15)#小于100概率
+
+#相当于标准化后的
+1 - pnorm(4/3)
+```
+
+```{r include=TRUE}
+require("ggplot2")
+IQ.sup120 <- function(x) {
+  ifelse(x>120, dnorm(x, mean = 100, sd = 15), NA)
+}
+IQ.sup120(130)
+ggplot(data.frame(x = c(20, 180)), aes(x))+
+        stat_function(fun = dnorm, args = list(mean = 100, sd = 15))+
+         stat_function(fun = IQ.sup120, geom = "area", fill = "red")
+#mapping methode:对x做后面的操作
+```
+
+#2
+
+估计正太分布参数
+```{r include=TRUE}
+sigma = 10
+n = 10
+ns = 1000
+estimation = matrix(0, ns, 2) #一千个0分两列
+
+#估计mu和lambda
+for(i in 1:ns) {
+  x = rnorm(10)
+  estimation[i, 1] = mean((x-mean(x))**2)
+  estimation[i,1]*n/(n-1) -> estimation[i,2]
+}
+hist(estimation[,1], breaks = 50)
+abline(v = 1)
+colMeans(estimation) #列平均
+```
+#3
+复合正态分布
+```{r include=TRUE}
+require("MASS")
+mu = vector(length = 2)
+mu[1] = 0
+mu[2] = 0
+sigma = matrix(0, 2, 2)
+sigma[1,1] = 2
+sigma[1,2] = 1
+sigma[2,1] = 1
+sigma[2,2] = 0.75
+#mvrnorm(n = 1000, mu, Sigma = sigma)
+
+#mvrnorm multi norm distribution：faut vectoriser
+#corrige:
+x = mvrnorm(1000, mu = as.vector(c(0,0)),Sigma = matrix(c(2,1,1,0.75),2,2))
+plot(x)
+
+```
+
+```{r include=TRUE}
+mu = as.vector(c(0,0))  
+Sigma = matrix(c(2,1,1,0.75),2,2)
+zz = outer(X = 1:100, Y = 1:100, function(x,y){x^2 + y^2})
+persp(zz)
+```
+
+```{r include=TRUE}
+mv2Ddensity <- function(x, y){
+  mu <- as.vector(c(0,0))
+  Sigma<-matrix(c(2,1,1,0.75),2,2)
+
+  (2 + pi)**(-1)*det(sigma)**(-1/2)*exp(-1/2*(c(x,y)-mu)%*%solve(Sigma)%*%cbind(c(x,y)-mu))
+}
+mv2Ddensity <- function(x, y, mu = as.vector(c(0,0)),Sigma = matrix(c(2,1,1,0.75),2,2)){
+  (2 + pi)**(-1)*det(sigma)**(-1/2)*exp(-1/2*(c(x,y)-mu)%*%solve(Sigma)%*%cbing(c(x,y)-mu))
+}
+
+z = outer(X = 1:100, Y = 1:100, mv2Ddensity(x, y))
+persp(z)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

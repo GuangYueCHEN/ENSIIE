@@ -1,0 +1,86 @@
+---
+title: "KPCA"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=TRUE}
+library(kernlab)
+library(FactoMineR)
+library(tidyverse)
+data(spam)
+```
+
+```{r include=TRUE}
+dim(spam)
+```
+
+```{r include=TRUE}
+train <- sample(1:dim(spam)[1],400)
+kpc <- kpca(~.,data = spam[train,-58],kernel="rbfdot",kpar=list(sigma=0.001),features=2)
+kpcv <- pcv(kpc)
+plot(rotated(kpc),col=as.integer(spam[train,58]),xlab="1st Principal comp.", ylab="2nd Principal Comp.")
+
+kpc <- kpca(~.,data = spam[train,-58],kernel="polydot",kpar=list(degree=2),features=2)
+kpcv <- pcv(kpc)
+plot(rotated(kpc),col=as.integer(spam[train,58]),xlab="1st Principal comp.", ylab="2nd Principal Comp.")
+```
+
+```{r include=TRUE}
+
+```
+#EX2
+```{r include=TRUE}
+library(mlbench)
+set.seed(111)
+obj <- mlbench.spirals(100,1,0.025)
+my.data <- data.frame(4*obj$x)
+names(my.data) <- c("X1","X2")
+#plot(my.data)
+#plot(my.data,col=c("orange","bleu")[obj$classes])
+#my.data<-as.matrix(my.data)
+plot(my.data,col=c("orange","blue")[obj$classes])
+plot(my.data,col=c("orange","blue")[kmeans(my.data,2)$cluster],main="Kmeans")
+
+```
+
+```{r include=TRUE}
+dim(my.data)
+```
+#E3).2
+sigma too large K=???1??????
+too small K = ?????????
+```{r include=TRUE}
+sigma2<-1#zi ji xuan de, xiang yi ge fa zhi yi yang, xiang dang yu jue ding liang dian zhi jian de ju li
+K<-exp(-as.matrix(dist(my.data))^2/sigma2)
+#sum(K>0.1)
+
+
+#8. Perform spectral clustering using kernlab function specc
+specc(as.matrix(K),,centers=2)->cluster
+plot(my.data,col=cluster)
+```
+
+```{r include=TRUE}
+A<-K>0.5
+diag(A)<-0
+D<-diag(colSums(A))
+L<-D-A
+eigen(L)$values#最后两个几乎为0，两个主成分
+
+```
+###Perform Kernel PCA and then kmeans using the principal components.
+```{r include=TRUE}
+
+```
+
+```{r include=TRUE}
+
+```
+
+```{r include=TRUE}
+
+```

@@ -9,8 +9,8 @@ int main(int argc, char **argv)
 
     int ndims = 2;
     int mesh_size[2] = {100,100};
-    int nproc_per_dim[2] = {0, 0};
-    int periods_per_dim[2] = {0, 0};
+    int nproc_per_dim[2] = {0, 0};//秩谱图的长和宽
+    int periods_per_dim[2] = {0, 0};//是否周期性
     int rang,nproc;
 
     MPI_Comm_rank(MPI_COMM_WORLD, &(rang));
@@ -22,6 +22,10 @@ int main(int argc, char **argv)
 
     // DEBUT Zone-1-A
     // Créer la topologie cartesienne adaptée au nombre de processus à l'aide de MPI_Dims_create et MPI_Cart_create
+MPI_Comm GRID_COMM;
+MPI_Dims_create(100,ndims,nproc_per_dim);
+MPI_Cart_create(GRID_COMM,ndims,nproc_per_dim,periods_per_dim,false,&GRID_COMM);
+
 
     if (rang == 0)
     {
@@ -39,6 +43,7 @@ int main(int argc, char **argv)
     int proc_coords[2];
     // Récupérer les coordonnées du rang dans la topologie
     err=MPI_Cart_coords(GRID_COMM,rang,ndims,proc_coords);
+    //返回当前进程坐标
     
     int Q[2], R[2], nloc[0], ideb[0], ifin[0];
 
@@ -47,20 +52,23 @@ int main(int argc, char **argv)
     for (idim = 0; idim < ndims; idim++)
     {
     
-        Q[idim] = mesh_size[idim] / nproc_per_dim[idim];
-        R[idim] = mesh_size[idim] % nproc_per_dim[idim];
+        Q[idim] = mesh_size[idim] / nproc_per_dim[idim]; //100/length=4    100/rang=25 
+        R[idim] = mesh_size[idim] % nproc_per_dim[idim];//100%length=0    100%rang=0
+        //Q[0]有多少行              Q[1]有多少列
+        //R[0]最后一个在第几列        R[1]最后一个在第几行
 
-        if (proc_coords[idim] < R[idim]) 
+
+        if (proc_coords[idim] < R[idim]) //如果得到的坐标行小于R列数                       或列数
         {
-            nloc[idim] = Q[idim]+1;
-            ideb[idim] = proc_coords[idim] * (Q[idim]+1);
-            ifin[idim] = ideb[idim] + nloc[idim];
+            nloc[idim] = Q[idim]+1;       //nloc[0]=Q[0]+1（行数）5
+            ideb[idim] = proc_coords[idim] * (Q[idim]+1); //（行数*列） 0
+            ifin[idim] = ideb[idim] + nloc[idim]; // 行数*列 +行数 5
         } 
         else 
         {
-            nloc[idim] = Q[idim];
-            ideb[idim] = R[idim] * (Q[idim]+1) + (proc_coords[idim] - R[idim]) * Q[idim];
-            ifin[idim] = ideb[idim] + nloc[idim];
+            nloc[idim] = Q[idim];   //4
+            ideb[idim] = R[idim] * (Q[idim]+1) + (proc_coords[idim] - R[idim]) * Q[idim];//0
+            ifin[idim] = ideb[idim] + nloc[idim];//4
         }
 
     }
@@ -86,7 +94,16 @@ int main(int argc, char **argv)
 
     // DEBUT Zone-2-A
     // Faire un allgather pour récupérer le nombre de mailles dans tous les autres les autres processus
-
+    MPR_Request req;
+    MPI_Status sta;
+    int flag;
+    err=MPI_Iallgather(&ntot_per_proc,1,MPI_INT,nb_cells_by_proc,MPI_INT,MPI_COMM_WORLD,&req);
+    MPI_Test(&req,&flag,&sta);
+    While(!flag){
+        MPI_Test(&req,&flag,&sta);
+        k++;
+    }
+    MPI_Wait(&req,&sta);
     if (rang == 0)
     {
         int ir;

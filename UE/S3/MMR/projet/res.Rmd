@@ -1,0 +1,72 @@
+---
+title: "The Model Selection Methodology"
+author: "Group 9, CHEN XU"
+date: "19 novembre 2018"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Group:9
+
+Guangyue CHEN , Jiahui XU
+
+```{r , include=FALSE,echo=FALSE}
+require(corrplot)
+require(gdata)
+
+data = read.xls ("/Users/pingguo/WTF/UE/S3/MMR/projet/residential/Residential-Building-Data-Set.xlsx", sheet = 1, header = TRUE)
+
+```
+
+
+
+
+
+#RES
+```{r , include=TRUE,echo=FALSE}
+data_for_ASP<-data[-109]
+data_for_ACC<-data[-108]
+data_for_ASP<-as.matrix(data_for_ASP)
+for (i in 1:107){
+  data_for_ASP[,i]=(data_for_ASP[,i]-mean(data_for_ASP[,i]))/sd(data_for_ASP[,i])
+}
+
+```
+
+```{r , include=FALSE,echo=FALSE}
+require("caret")
+library(pROC)
+library(glmnet)
+library(MASS)
+modelASP<-cv.glmnet(data_for_ASP[,-108],data_for_ASP[,108], alpha=0.5)
+
+ modelACC<-lm.ridge(as.matrix(data_for_ACC[108])~.,data=data_for_ACC[-108],lambda=seq(0,10,0.01))
+lambda<- modelACC$lambda[which.min( modelACC$GCV)]
+ modelACC<-lm.ridge(as.matrix(data_for_ACC[108])~.,data=data_for_ACC[-108],lambda=lambda)
+
+ 
+ 
+ #coef2<-coef( modelACC)
+#un<-matrix(1,nrow=dim(as.vector(fold_test2))[1],ncol=1)
+#Y_esti2<-cbind(un,as.matrix(fold_test2[-108]))%*%as.vector(coef2)
+
+
+
+```
+
+```{r , include=TURE,echo=FALSE}
+#print(modelASP)
+coef(modelASP,s=0.1)
+predict(modelASP, newx = data_for_ASP[,-108], s = "lambda.min")->Y_esti
+RMSE(as.matrix(Y_esti),as.matrix(fold_test[,108]))
+```
+```{r , include=TURE,echo=FALSE}
+#print(modelASP)
+coef( modelACC)
+
+```
+

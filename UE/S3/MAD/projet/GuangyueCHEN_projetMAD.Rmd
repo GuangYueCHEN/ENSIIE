@@ -1,0 +1,299 @@
+---
+title: "projetMAD"
+output:
+  pdf_document:
+    latex_engine: xelatex
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Project of MAD
+
+owner: Guangyue CHEN
+
+#E1 Simulation
+
+###Q1  Simulate sample of 1000 vectors from a 2 dimensional mixture with 2 components
+```{r, include=TRUE}
+library(MASS)
+nks<-rmultinom(1,1000,prob=c(1/2,1/2))
+mu <- as.vector(c(1,2))
+Sigma1 <- matrix(c(1,0,0,1),2,2)
+Sigma2 <- 4*Sigma1
+
+samples<- rbind( mvrnorm(nks[1], mu, Sigma1), mvrnorm(nks[2], mu, Sigma2))
+```
+###Q2 Display the sample
+
+```{r , include=TRUE}
+plot(samples,xlim=c(-4,8),ylim=c(-4,8))
+```
+###Q3 Display the coutour plot of the two dimensional density.
+There are two ways to show it.
+```{r , include=TRUE}
+require("ggplot2")
+z<-kde2d(samples[,1],samples[,2])
+contour(z,col="red")
+#plot
+points(samples[,c(1,2)],col="blue",pch=20)
+
+ggplot(data.frame(samples), aes(samples[,1], samples[,2])) + geom_point() + stat_density2d()
+```
+#E2 Exercise 2 Mclust versus kmeans
+
+###Q1 Run Mclust on the simulated data from the first exercise and comment the result.
+```{r , include=TRUE}
+require("mclust")
+Mclust(samples, 2, modelNames = "VII") -> res
+summary(res)
+
+plot(res,"uncertainty")
+```
+
+$comment$ We find that the clustering is not exactly same as the real classification, and there are so many  points are uncertain.
+
+###Q2 Estimate the parameters of the simulated data from the first exercise using mclust.
+```{r , include=TRUE}
+print("pi")
+res$parameters$pro
+print("mu")
+res$parameters$mean
+print("Sigma")
+res$parameters$variance$sigma
+```
+
+###Q3 Find a partition of the simulated data into two classes using mclust
+```{r , include=TRUE}
+res$classification
+plot(res,"classification")
+```
+
+###Q4 Find a partition of the simulated data into two classes using kmeans
+```{r , include=TRUE}
+kmeans(samples, 2) -> res.kmean
+plot(samples, col = c("blue", "orange")[ res.kmean$cluster])
+```
+###Q5 Compare the two partitions (from kmeans and mclust). Comment your result.
+We can see that the results of kmeans and mclust are different. K-Means separate almostly the data by a straight line, but mclust separate the data by a circle. For our situation, mclust perform better.
+
+#E3
+###Q1 Detail the computation of the tqik = E[Zik] with respect to pθq(Z|X) where Zik = I(Zi=k).
+$$
+\begin{aligned}
+\mathbb{P}(x_i|Z_{ik}=1))=\mathbb{N}_p(x_i|\mu_k,\Sigma_k)&=\frac{1}{(2\pi)^{\frac{p}{2}}\times|\Sigma_k|^{\frac{1}{2}}}exp(-\frac{1}{2}(x_i-\mu_k)^T\Sigma_k^{-1}(x_i-\mu_k))
+\end{aligned}
+$$
+```{r , include=TRUE}
+
+
+mvpnorm<-function(x,mu,Sigma){
+
+  p<-length(x)
+   return( as.numeric(exp(-1/2*((x-mu)%*%solve(Sigma)%*%t(t(x-mu))))/det(Sigma)^(1/2)/(2*pi)^(p/2)))
+}
+mvpnorm(c(0,0), mu = c(0,0),Sigma = matrix(c(1,0,0,1),2,2))
+```
+
+
+$$
+\begin{aligned}
+t_{ik}&=\mathbb{E}_{Z_{ik}|x_i}[Z_{ik}=1]\\
+      &=\mathbb{P}(Z_{ik}=1|x_i)\\
+      &=\frac{\mathbb{P}(Z_{ik}=1,x_i)}{\mathbb{P}(x_i)}\\
+      &=\frac{\mathbb{P}(Z_{ik}=1)\times\mathbb{P}(x_i|Z_{ik}=1)}{\sum_{l=1}^K\mathbb{P}(Z_{il}=1)\times\mathbb{P}(x_i|Z_{il}=1)}\\
+      &=\frac{\pi_k\times\frac{1}{2\pi^{\frac{p}{2}}\times|\Sigma_k|^{\frac{1}{2}}}exp(-\frac{1}{2}(x_i-\mu_k)^T\Sigma_k^{-1}(x_i-\mu_k))}{\sum_{l=1}^K\pi_l\times\frac{1}{2\pi^{\frac{p}{2}}\times|\Sigma_l|^{\frac{1}{2}}}exp(-\frac{1}{2}(x_i-\mu_l)^T\Sigma_l^{-1}(x_i-\mu_l))}
+\end{aligned}
+$$
+
+
+###Q2 Express Q(θq|θ) the expectation of the complete log-likelihood with respect to pθq (Z|X).
+
+$$
+\begin{aligned}
+Q(\theta^q|\theta)&=\mathbb{E}_{Z|x}[log\mathbb{P}_\theta(x,Z)|x,\theta^q]\\
+                  &=\mathbb{E}_{Z|x}[\sum_{i=1}^nlog \Pi_{k=1}^{K}\mathbb{P}(x_i,Z_{ik})^{Z_{ik}}]\\
+                  &=\mathbb{E}_{Z|x}[\sum_{i=1}^n\sum_{k=1}^{K}Z_{ik}log(\pi_k\times\mathbb{P}(x_i|Z_{ik}=1))]\\
+                  &=\sum_{i=1}^n\sum_{k=1}^{K}\mathbb{E}_{Z|x}[Z_{ik}=1,\theta^q]\times log(\pi_k\mathbb{P}(x_i|Z_{ik}=1))\\
+                  &=\sum_{i=1}^n\sum_{k=1}^{K}t_{ik}^q\times log(\pi_k\mathbb{P}(x_i|Z_{ik}=1))\\
+                  &=\sum_{i=1}^n\sum_{k=1}^{K}t_{ik}^q\times[log(\pi_k)-\frac{1}{2}(x_i-\mu_k)^T\Sigma_k^{-1}(x_i-\mu_k)-\frac{p}{2}log(2\pi)-\frac{1}{2}log(|\Sigma_k|)]
+\end{aligned}
+$$
+
+###Q3 Detail the computation of θq+1 = argmaxθ Q(θq|θ)
+
+$$
+\pi^{q+1}=argmax_{\pi^q}Q(\theta^q|\theta)
+$$
+$$
+        =argmax_{\pi^q}\sum_{i=1}^n\sum_{k=1}^{K}t_{ik}^q\times log(\pi_k)
+$$
+$$
+\pi_j^{q+1}=\frac{1}{n}\sum_{i=1}^nt_{ij}^q
+$$
+          
+$$
+(\mu_j^{q+1},\Sigma_j^{q+1}) =argmax_{\mu_j^q,\Sigma_j^q}Q(\theta^q|\theta)   
+$$
+$$
+=argmax_{\mu_j^q,\Sigma_j^q}\sum_{i=1}^nt_{ij}^q\times[-\frac{1}{2}(x_i-\mu_j)^T\Sigma_j^{-1}(x_i-\mu_j)-\frac{1}{2}log(|\Sigma_j|)]
+$$
+$$
+\mu_j^{q+1}=\frac{ \sum_{i=1}^nt_{ij}^q \times x_i}{\sum_{i=1}^nt_{ij}^q}
+$$
+
+
+
+
+
+$$
+                    \Sigma_j^{q+1}=\frac{ \sum_{i=1}^nt_{ij}^q \times (x_i-\mu_j^{q+1})^T(x_i-\mu_j^{q+1}) }{\sum_{i=1}^nt_{ij}^q}
+$$
+
+###Q4  Write the pseudo-code of an EM algorithm for estimating θ.
+
+Init:Create the $\theta$ randomly;
+Repeat:(for iteration small than the max iteration)
+    Compute the matrix T, compute the number Q;
+    Compute the new $\theta$ by the matrix T;
+    if $\Delta$Q small than $\xi$: break;
+For each observation of data, compute the probability of their belongs to every classes;
+Chose the class with the max probability;
+
+
+###Q5  Write a E-step function that produces the tik from θ. Check the results by injecting the real parameters of your simulation and comparing the tik estimated against the latent variables Z in your simulation.
+```{r , include=TRUE}
+require("mvtnorm")
+Estep<-function(X,pi,mu,sigma,K){
+ 
+  n<-nrow(X)
+  p<-ncol(X)
+  T<-matrix(0,ncol=K,nrow=n)
+
+   
+  for(i in 1:n){
+     sum<-0
+  for(l in 1:K){
+    sum=sum+pi[l]*dmvnorm(X[i,], mean = mu[,l],sigma = sigma[,l*p-p+1:p])
+  }
+    
+    for(k in 1:K){
+      T[i,k]=pi[k]*dmvnorm(X[i,], mean = mu[,k],sigma = sigma[,k*p-p+1:p])/sum
+      
+    }
+     
+  }
+
+  
+  Q<-0
+   for(i in 1:n){
+       for(k in 1:K){
+         Q=Q+T[i,k]*log(pi[k]*dmvnorm(X[i,], mean = mu[,k],sigma = sigma[,k*p-p+1:p]))
+       }
+   }
+  
+   result <- list(T=T, Q=Q) 
+  return(result) 
+}
+```
+###Q6 Write a M-step function that produces θq+1 from the sample and the tqiks.
+```{r , include=TRUE}
+Mstep<-function(X,T,pi,mu,sigma,K){
+   p<-nrow(mu)
+  n<-nrow(T)
+  for(j in 1:K){
+    
+  sum<-0
+  for(i in 1:n){
+    sum=sum+T[i,j]
+  }
+    pi[j]=sum/n
+    
+    
+    sum1<-vector(length=ncol(X))
+     for(i in 1:n){
+    sum1=sum1+T[i,j]*X[i,]
+  }
+    mu[,j]=sum1/sum
+
+
+   sum2<-matrix(0,p,p)
+   for(i in 1:n){
+    sum2=sum2+T[i,j]*(t(X[i,]-t(mu[,j]))%*%(X[i,]-t(mu[,j])))
+   }
+   for(i in 1: p){
+     sigma[,j*p-p+i]=sum2[,i]/sum
+   }
+  }
+   result <- list(pi=pi, mu=mu,Sigma=sigma) 
+  return(result) 
+}
+```
+###Q7 Program the EM algorithm (you could check that each step increases the log-likelihood.)
+```{r , include=TRUE}
+data("iris")
+iris<-iris[,1:4]
+EM<-function(data,k){
+  X<-as.matrix(data)
+  p<-ncol(X)
+   n<-nrow(X)
+  pi<-vector(length=k)
+  mu<-matrix(runif(k*p),ncol=k,nrow=p)
+  Sigma<-diag(p)*abs(1*10)
+  for(i in 1:(k-1)){
+    Sigma=cbind(Sigma,diag(p)*abs(i+1)*10)
+  }
+  
+  for(i in 1:k){
+    pi[i]=1/k
+  }
+  
+  T<-matrix(0,ncol=k,nrow=n)
+  Q<-2
+  Q.new<-1
+  max_iteration<-10
+  for(i in 1:max_iteration){
+    Q=Q.new
+  Eres<-Estep(X,pi=pi,mu=mu,sigma=Sigma,K=k)
+  T<-Eres$T
+  Q.new<-Eres$Q
+  
+  #print(Q.new)
+  
+  Mres<-Mstep(X,T,pi=pi,mu=mu,sigma=Sigma,K=k)
+  mu<-Mres$mu
+  pi<-Mres$pi
+  Sigma<-Mres$Sigma
+  
+  
+  #print(Sigma)
+  
+  }
+  res<-vector(length=n)
+  
+  for(i in 1:n){
+    un<-c(0,0,0)
+    for(j in 1:k){
+      un[j]<- dmvnorm(X[i,], mean = mu[,j],sigma = Sigma[,j*p-p+1:p])
+    }
+    res[i]=which.max(un)
+  }
+  return(res)
+  
+  
+}
+EM(iris[,1:4],3)
+```
+
+#E4 Exercise 4 Data iris
+###Q1 Run your algorithm with the iris dataset and compare the results to the one obtained using the kmeans algorithm.
+```{r , include=TRUE}
+
+res<-kmeans(iris,3)
+res$cluster
+
+```
+###Q2 Comment
+We can see that, the result of my EM function is similar with the result of kmeans. So it's a good function. 

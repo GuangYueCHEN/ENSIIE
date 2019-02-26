@@ -1,0 +1,49 @@
+---
+title: "Kpca, Spectral Clustering"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+require("kernlab")
+data(spam)
+
+```
+```{r, include=TRUE}
+sample(1:dim(spam)[1],400)->train
+
+kpc<-kpca(~.,data=spam[train,-58],kernel="rbfdot",kpar=list(sigma=0.001),features=2)
+kpcv<-pcv(kpc)
+plot(rotated(kpc),col=as.integer(spam[train,58]),xlab="1st Principal Comp",ylab="2nd Principal Comp")
+```
+```{r, include=TRUE}
+kpc<-kpca(~.,data=spam[train,-58],kernel="polydot",kpar=list(degree=2),features=2)
+kpcv<-pcv(kpc)
+plot(rotated(kpc),col=as.integer(spam[train,58]),xlab="1st Principal Comp",ylab="2nd Principal Comp")
+
+
+
+```
+
+
+#E2
+```{r, include=TRUE}
+library("mlbench")
+set.seed(111)
+obj<-mlbench.spirals(100,1,0.025)
+my.data<-data.frame(4*obj$x)
+names(my.data)<-c("X1","X2")
+plot(my.data)
+
+```
+```{r, include=TRUE}
+plot(my.data,col=c('orange','blue')[obj$classes],main="original class")
+plot(my.data,col=c('orange','blue')[kmeans(as.matrix(my.data),2)$cluster],main="kmeans")
+```
+```{r, include=TRUE}
+plot(my.data,col=c('orange','blue')[obj$classes],main="original class")
+plot(my.data,col=c('orange','blue')[kmeans(as.matrix(my.data),2)$cluster],main="kmeans")
+```

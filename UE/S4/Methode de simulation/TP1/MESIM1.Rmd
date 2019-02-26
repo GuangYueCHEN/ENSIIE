@@ -1,0 +1,641 @@
+---
+title: "MESIM1"
+author: "Thomas BERATTO"
+date: "6 février 2019"
+output: pdf_document
+header-includes:
+  - \usepackage{dsfont}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+rm(list = ls())
+graphics.off()
+library(ggplot2)
+```
+
+#Exercice 1. Loi de Bernoulli
+
+##2. + 3.
+
+```{r}
+create_group <- function(N) {
+  c <- (1/N)
+  P <- rep(c, N)#repeat c for N times
+  C <- vector("numeric", N)
+  C[1] = c
+  for (i in 2:N) {
+    c = c + P[i]
+    C[i] = c
+  }
+  return(C)
+}
+```
+
+###Pour N = 100
+
+```{r}
+X1 <- as.numeric(1:100)
+P1 <- rep(1/100,100)
+C1 <- create_group(100) 
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*100)))
+}
+
+Simu1 <- simu(X1,C1,0.3)
+for(i in 1:99) {
+  Simu1 <- c(Simu1, simu(X1,C1,0.3))
+}
+
+Q1 <- sum(Simu1)/100
+Q1
+```
+
+###Pour N = 1000
+
+```{r}
+X2 <- as.numeric(1:1000)
+P2 <- rep(1/1000,1000)
+C2 <- create_group(1000)
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*1000)))
+}
+
+Simu2 <- simu(X2,C2,0.3)
+for(i in 1:999) {
+  Simu2 <- c(Simu2, simu(X2,C2,0.3))
+}
+
+Q2 <- sum(Simu2)/1000
+Q2
+```
+
+###Pour N = 10000
+
+```{r}
+X3 <- as.numeric(1:10000)
+P3 <- rep(1/10000,10000)
+C3 <- create_group(10000)
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*10000)))
+}
+
+Simu3 <- simu(X3,C3,0.3)
+for(i in 1:9999) {
+  Simu3 <- c(Simu3, simu(X3,C3,0.3))
+}
+
+Q3 <- sum(Simu3)/10000
+Q3
+```
+
+##4.
+
+```{r}
+X10 <- as.numeric(1:10)
+P10 <- rep(1/10,10)
+C10 <- create_group(10)
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*10)))
+}
+
+Simu10 <- simu(X10,C10,0.3)
+for(i in 1:9) {
+  Simu10 <- c(Simu10, simu(X10,C10,0.3))
+}
+
+X30 <- as.numeric(1:30)
+P30 <- rep(1/30,30)
+C30 <- create_group(30)
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*30)))
+}
+
+Simu30 <- simu(X30,C30,0.3)
+for(i in 1:29) {
+  Simu30 <- c(Simu30, simu(X30,C30,0.3))
+}
+
+X40 <- as.numeric(1:40)
+P40 <- rep(1/40,40)
+C40 <- create_group(40)
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*40)))
+}
+
+Simu40 <- simu(X40,C40,0.3)
+for(i in 1:39) {
+  Simu40 <- c(Simu40, simu(X40,C40,0.3))
+}
+```
+
+```{r}
+TCL <- function(n,simu,p) {
+  Xn <- sum(simu) / n
+  return((sqrt(n)*(Xn-p))/(sqrt(p*(1-p))))
+}
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*10)))
+}
+
+Z10 <- TCL(10,Simu10,0.3)
+for(i in 1:9) {
+  Simu10 <- simu(X10,C10,0.3)
+  for(i in 1:9) {
+    Simu10 <- c(Simu10, simu(X10,C10,0.3))
+  }
+  Z10 <- c(Z10,TCL(10,Simu10,0.3))
+}
+
+Z30 <- TCL(30,Simu30,0.3)
+for(i in 1:9) {
+  Simu30 <- simu(X30,C30,0.3)
+  for(i in 1:29) {
+    Simu30 <- c(Simu30, simu(X30,C30,0.3))
+  }
+  Z30 <- c(Z30,TCL(30,Simu30,0.3))
+}
+
+Z40 <- TCL(40,Simu40,0.3)
+for(i in 1:9) {
+  Simu40 <- simu(X40,C40,0.3)
+  for(i in 1:39) {
+    Simu40 <- c(Simu40, simu(X40,C40,0.3))
+  }
+  Z40 <- c(Z40,TCL(40,Simu40,0.3))
+}
+```
+
+```{r}
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*10)))
+}
+
+Z1 <- TCL(10,Simu10,0.3)
+for(i in 1:99999) {
+  Simu10 <- simu(X10,C10,0.3)
+  for(i in 1:9) {
+    Simu10 <- c(Simu10, simu(X10,C10,0.3))
+  }
+  Z1 <- c(Z1,TCL(10,Simu10,0.3))
+}
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*30)))
+}
+
+Z3 <- TCL(30,Simu30,0.3)
+for(i in 1:99999) {
+  Simu30 <- simu(X30,C30,0.3)
+  for(i in 1:29) {
+    Simu30 <- c(Simu30, simu(X30,C30,0.3))
+  }
+  Z3 <- c(Z3,TCL(30,Simu30,0.3))
+}
+
+simu <- function(X,C,p) {
+  k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return(as.numeric(k <= (p*40)))
+}
+
+Z4 <- TCL(40,Simu40,0.3)
+for(i in 1:99999) {
+  Simu40 <- simu(X40,C40,0.3)
+  for(i in 1:39) {
+    Simu40 <- c(Simu40, simu(X40,C40,0.3))
+  }
+  Z4 <- c(Z4,TCL(40,Simu40,0.3))
+}
+```
+
+```{r}
+ab <- -4
+current = ab + 1/10000
+for(i in 1:99999) {
+  ab <- c(ab, current)
+  current = current + 1/10000
+}
+```
+
+```{r}
+y <- vector("numeric", 100000)
+density <- function(x) {
+  return((exp((-x*x)/2))/(sqrt(2*3.14)))
+}
+for (i in 1:100000) {
+  y[i] = density(ab[i])
+}
+
+DF <- data.frame(cbind(Z1,Z3,Z4,y))
+plot1 <- ggplot(DF,aes(x=DF$Z1)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_10")
+plot1
+plot2 <- ggplot(DF,aes(x=DF$Z3)) + 
+  geom_histogram(aes(y=..density..),fill = "blue", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_30")
+plot2
+plot3 <- ggplot(DF,aes(x=DF$Z4)) + 
+  geom_histogram(aes(y=..density..),fill = "darkolivegreen", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_40")
+plot3
+```
+
+#Exercice 3.
+
+```{r}
+simul<-function(){
+  X=c(0.5,1,1.5,2)
+  P=c(1/4,2/8,1/8,3/8)
+  C<-c(P[1])
+  for (i in 2:4){
+    C<-c(C,C[i-1]+P[i])
+  }
+  k<-1
+  u<-runif(1,0,1)
+  while(u>C[k]){
+    k<-k+1
+  }
+  return (X[k])
+}
+N=10000
+echantillon=c()
+for (i in 1:1000){
+  echantillon<-c(echantillon,simul())
+}
+
+dat <- data.frame(echantillon)
+plot4 <- ggplot(dat,aes(x=dat$echantillon)) + geom_histogram(fill = "darkorchid", alpha = 0.2) + xlab("Echantillon")
+plot4
+
+dat2 <- data.frame(c(1/4,2/8,1/8,3/8))
+plot5 <- ggplot(dat2, aes(x=1:4,y=dat2$c.1.4..2.8..1.8..3.8.)) + geom_line() + xlab("") + ylab("")
+plot5
+```
+
+#Exercice 2.
+```{r}
+n=30
+p=0.1
+
+ex1<-function (p,n){
+  U<-runif(n,0,1)
+  X<-U<p
+  return (as.numeric(X))
+}
+
+
+N=10000
+
+binom<- function (k,n,p){
+  bi<-c()
+  for (i in 1:k){
+    bi<-c(bi,sum(ex1(p,n)))
+  }
+  return (bi)
+}
+
+Simu22 <- data.frame(binom(10000,30,0.1))
+plot6 <- ggplot(Simu22,aes(x=Simu22$binom.10000..30..0.1.)) + geom_histogram(fill = "darkorange4", alpha = 0.2) + xlab("Echantillon d'une loi binomiale")
+plot6
+```
+
+```{r, include=TRUE} 
+TCL2<- function(test,p,k,n){
+  return (sqrt(k)*((sum(test)/k)-(n*p))/sqrt(n*p*(1-p)))
+}
+
+Z2<- function(N,n,p,k){
+  z<-c()
+  for (i in 1:N){
+    z<-c(z,TCL2(binom(k,n,p),p,k,n))
+  }
+  return (z)
+}
+
+zbi1<-Z2(N,n,p,10)
+zbi2<-Z2(N,n,p,30)
+zbi3<-Z2(N,n,p,40)
+
+DF3 <- data.frame(cbind(zbi1,zbi2,zbi3,y))
+plot7 <- ggplot(DF3,aes(x=DF3$zbi1)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_10 Loi binomiale") 
+plot7
+plot8 <- ggplot(DF3,aes(x=DF3$zbi2)) + 
+  geom_histogram(aes(y=..density..),fill = "blue", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_30 Loi binomiale") 
+plot8
+plot9 <- ggplot(DF3,aes(x=DF3$zbi3)) + 
+  geom_histogram(aes(y=..density..),fill = "darkolivegreen", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_40 Loi binomiale")
+plot9
+```
+
+```{r, include=TRUE} 
+p <- 0.5
+TCL2<- function(test,p,k,n){
+  return (sqrt(k)*((sum(test)/k)-(n*p))/sqrt(n*p*(1-p)))
+}
+
+Z2<- function(N,n,p,k){
+  z<-c()
+  for (i in 1:N){
+    z<-c(z,TCL2(binom(k,n,p),p,k,n))
+  }
+  return (z)
+}
+
+zbi1<-Z2(N,n,p,10)
+zbi2<-Z2(N,n,p,30)
+zbi3<-Z2(N,n,p,40)
+
+DF3 <- data.frame(cbind(zbi1,zbi2,zbi3,y))
+plot10 <- ggplot(DF3,aes(x=DF3$zbi1)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_10 Loi binomiale")
+plot10
+plot11 <- ggplot(DF3,aes(x=DF3$zbi2)) + 
+  geom_histogram(aes(y=..density..),fill = "blue", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_30 Loi binomiale") 
+plot11
+plot12 <- ggplot(DF3,aes(x=DF3$zbi3)) + 
+  geom_histogram(aes(y=..density..),fill = "darkolivegreen", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_40 Loi binomiale")
+plot12
+```
+
+#Exercice 4.
+
+```{r, include=TRUE} 
+rm(list = ls())
+graphics.off()
+
+ex1<-function (p,n){
+  U<-runif(n,0,1)
+  X<-U<p
+  return (as.numeric(X))
+}
+
+TCL<- function(test,p){
+  l<-length(test)
+  return (sqrt(l)*((sum(test)/l)-p)/sqrt(p*(1-p)))
+}
+
+Z<- function(N,n,p){
+  z<-c()
+  for (i in 1:N){
+    z<-c(z,TCL(ex1(p,n),p))
+  }
+  return (z)
+}
+Fp <- function(k,lambda){
+  res=0
+  for (i in 0:k){
+    res=res+(exp(-lambda)*(lambda^i)/factorial(i))
+  }
+  return (res)
+}
+poisson<-function(lambda){
+  u<-runif(1,0,1)
+  K=1:(4*lambda)
+  if (u<=Fp(4*lambda,lambda)){
+    k<-0
+    while(u>Fp(k,lambda) & k<4*lambda){
+      k<-k+1
+    }
+  }
+  else{
+    k<-as.integer(4*lambda)
+    p<- exp(-lambda)*(lambda^k)/factorial(k)
+    f<- Fp(4*lambda,lambda)
+    while(u>f & k<4*lambda){
+      k<-k-1
+      p<-lambda*p/k
+      f<-f+p
+    }
+  }
+  return(k)
+}
+
+
+Fe<-function(x,lambda){
+  return(1-exp(-lambda*x))
+}
+
+exponential<-function(lambda){
+  u<-runif(1,0,1)
+  X<-seq(0,5/lambda,1/(50*lambda))
+  C<-c()
+  for (i in seq(0,5/lambda,1/(50*lambda))){
+    C<-c(C,Fe(i,lambda))
+  }
+  k<-1
+  while(u>C[k] & k<251){
+    k<-k+1
+  }
+  return (X[k])
+}
+
+Fw<-function(x,b,k){
+  return(1-exp(-(x/b)^k))
+}
+
+weibull<-function(k,b){
+  u<-runif(1,0,1)
+  mu<- b*gamma(1+(1/k))
+  X<-seq(0,5*mu,mu/50)
+  C<-c()
+  for (i in seq(0,5*mu,mu/50)){
+    C<-c(C,Fw(i,b,k))
+  }
+  k<-1
+  while(u>C[k] & k<250){
+    k<-k+1
+  }
+  return (X[k])
+}
+```
+
+
+```{r, include=TRUE} 
+binom<- function (k,n,p){
+  bi<-c()
+  for (i in 1:k){
+    bi<-c(bi,sum(ex1(p,n)))
+  }
+  return (bi)
+}
+
+TCL2<- function(test,p,k,n){
+  return (sqrt(k)*((sum(test)/k)-(n*p))/sqrt(n*p*(1-p)))
+}
+Z2<- function(N,n,p,k){
+  z<-c()
+  for (i in 1:N){
+    z<-c(z,TCL2(binom(k,n,p),p,k,n))
+  }
+  return (z)
+}
+
+ex3<-function (a,n){
+  res<-c()
+  for (i in 1:n){
+    res<-c(res,poisson(a))
+  }
+  return (res)
+}
+TCL3<- function(test,a,k){
+  return (sqrt(k)*((sum(test)/k)-(a))/sqrt(a))
+}
+Z3<- function(N,n,a){
+  z<-c()
+  for (i in 1:N){
+    z<-c(z,TCL3(ex3(a,n),a,n))
+  }
+  return (z)
+}
+
+ex4<-function (a,n){
+  res<-c()
+  for (i in 1:n){
+    res<-c(res,exponential(a))
+  }
+  return (res)
+}
+TCL4<- function(test,a,k){
+  return (sqrt(k)*((sum(test)/k)-(1/a))/(1/a))
+}
+Z4<- function(N,n,a){
+  z<-c()
+  for (i in 1:N){
+    z<-c(z,TCL4(ex4(a,n),a,n))
+  }
+  return (z)
+}
+
+ex5<-function (a,b,n){
+  res<-c()
+  for (i in 1:n){
+    res<-c(res,weibull(a,b))
+  }
+   return (res)
+}
+TCL5<- function(test,a,b,k){
+  mu=(b*gamma(1+(1/a)))
+  return (sqrt(k)*((sum(test)/k)-mu)/sqrt(b*b*gamma(1+(2/a))-mu*mu))
+}
+
+Z5<- function(N,n,a,b){
+  z<-c()
+  for (i in 1:N){
+    z<-c(z,TCL5(ex5(a,b,n),a,b,n))
+  }
+  return (z)
+}
+
+
+globalfunction<- function(choix,N,a,n,k=40,b=1){
+  if (choix==1){
+    return(Z(N,n,a))
+  }
+  if (choix==2){
+    return(Z2(N,n,a,k))
+  }
+  if (choix==3){
+    return(Z3(N,n,a))
+  }
+  if (choix==4){
+    return(Z4(N,n,a))
+  }
+  if (choix==5){
+    return(Z5(N,n,a,b))
+  }
+}
+
+Zf1 <- globalfunction(1,1000,0.5,30)
+Zf2 <- globalfunction(2,1000,0.5,30)
+Zf3 <- globalfunction(3,1000,0.5,30)
+Zf4 <- globalfunction(4,1000,0.5,30)
+Zf5 <- globalfunction(5,1000,0.5,30,40,2)
+```
+
+```{r}
+DF4 <- data.frame(cbind(Zf1,Zf2,Zf3,Zf4,Zf5))
+plot13 <- ggplot(DF4,aes(x=DF4$Zf1)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + xlab("Loi de Bernoulli centrée réduite")
+plot13
+plot14 <- ggplot(DF4,aes(x=DF4$Zf2)) + 
+  geom_histogram(aes(y=..density..),fill = "blue", alpha = 0.2) + xlab("Loi Binomiale centrée réduite")
+plot14
+plot15 <- ggplot(DF4,aes(x=DF4$Zf3)) + 
+  geom_histogram(aes(y=..density..),fill = "darkolivegreen", alpha = 0.2) + xlab("Loi de Poisson centrée réduite")
+plot15
+plot16 <- ggplot(DF4,aes(x=DF4$Zf4)) + 
+  geom_histogram(aes(y=..density..),fill = "blue", alpha = 0.2) + xlab("Loi exponentielle centrée réduite")
+plot16
+plot17 <- ggplot(DF4,aes(x=DF4$Zf5)) + 
+  geom_histogram(aes(y=..density..),fill = "darkolivegreen", alpha = 0.2) + xlab("Loi de Weibull centrée réduite")
+plot17
+```
+
+#Le groupe a décidé d'attribuer l'ensemble des points d'investissement à ses membres : Alexandre BRUNOUD (numéro 7), Thomas BERATTO (numéro 8) et Larbi EL AOUFIR (numéro 36).

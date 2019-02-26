@@ -1,0 +1,126 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#E1 Compute the partition matrix
+###compute the matrix C = (cik) where cik = 1 if i belong to K 
+```{r r include=TRUE}
+library("nnet")
+data(iris)
+X <- iris[, 1 : 4]
+cluster <-iris$Species
+C <- class.ind(cl=cluster)
+```
+###compute the gravity centers
+```{r r include=TRUE}
+#矩阵做法
+M <- matrix(data = 0, nrow = 3, ncol = 4)
+as.matrix(X) -> X
+
+solve((t(C)%*%C))%*%t(C)%*%X
+
+#循环算法
+M <- matrix(0, ncol(C), ncol(X))
+for(i in 1:nrow(X)) {
+  M[which.max(C[i,]),] <- M[which.max(C[i,]),] + X[i,]
+}
+
+M <- t(t(M) / colSums(C))
+M
+```
+
+
+
+
+
+
+
+
+
+
+
+
+#E4 Clustering of crabs
+###Q1 load crab data from MASS
+```{r r include=TRUE}
+rm(list = ls())
+library(MASS)
+data(crabs)
+```
+###Q2 represent all crabs with a color corresponding to the specy and a spmpol to the sex
+```{r r include=TRUE}
+C <- class.ind(cl=crabs$sp)
+plot(crabs)
+pairs(crabs)
+
+
+
+
+#前面只是用来比较，下面正确做法
+pairs(crabs, col = c("blue", "orange")[crabs$sp],pch = c(20, 21)[crabs$sex])
+#c("a", "b")[c(1, 1, 2, 1)] = aaba
+crabsquant = crabs[,4:8]
+pairs(crabsquant, col = c("blue", "orange")[crabs$sp],pch = c(20, 21)[crabs$sex])
+```
+###Q3 using kmeans
+```{r r include=TRUE}
+kmeans(crabsquant, 4) -> res
+res$cluster
+paste(crabs$sp, "-", crabs$sex) -> True_Class
+True_Class
+str(res)
+
+```
+###Q4 within sum of square 
+```{r r include=TRUE}
+#within sum of square 
+res$tot.withinss
+table(True_Class,res$cluster)
+pairs(crabsquant, col = c("blue", "orange","red","black")[res$cluster],pch = c(20, 21)[crabs$sex])
+```
+#未标准化出现较大误差 ， 取出总大小进行标准化
+```{r r include=TRUE} 
+crabsquant2<-crabsquant[,-3]/crabsquant$CL #pour enlever l'effet de la taille
+kmeans(crabsquant2, 4) -> res
+res$cluster
+paste(crabs$sp, crabs$sex, "-") -> True_Class
+table(True_Class,res$cluster)
+pairs(crabsquant, col = c("blue", "orange","red","black")[res$cluster],pch = c(20, 21)[crabs$sex])
+```
+#run the kmeans 1000 times and keep track of Iw  ,within sum of square 
+```{r r include=TRUE}
+hist(mapply(function(x){kmeans(crabsquant, 4, nstart = 1)$tot.withinss},1:1000))
+hist(mapply(function(x){kmeans(crabsquant2, 4, nstart = 1)$tot.withinss},1:1000))
+
+kmeans(crabsquant2, 4, nstart = 30)->res.kmeans2
+table(True_Class, res.kmeans2$cluster)
+
+
+```
+
+```{r r include=TRUE}
+
+#划分线
+z<-kde2d(crabsquant2[,2],crabsquant2[,4])
+contour(z)
+#plot
+points(crabsquant2[,c(2,4)],col=c("blue","orange")[crabs$sp],pch=c(20,21)[crabs$sex])
+#中心
+points(res.kmeans2$centers[,c(2,4)],cex=2,pch=21,bg="red")
+
+```
+#Q8 cluster to 1-20 clustering
+```{r r include=TRUE}
+plot(mapply(function(x){kmeans(crabsquant2,x,nstart = 20)$tot.withinss},1:20))
+#四类时下降速度变慢
+```
+
+
+
+
+

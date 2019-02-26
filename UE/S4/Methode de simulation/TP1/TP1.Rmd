@@ -1,0 +1,243 @@
+---
+title: "MESIM1"
+author: "Guangyue"
+date: "20 février 2019"
+output: pdf_document
+header-includes:
+  - \usepackage{dsfont}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE}
+rm(list = ls())
+graphics.off()
+library(ggplot2)
+```
+
+#Exercice 1. Loi de Bernoulli
+
+##2. + 3.
+
+```{r}
+simu<-function(p,N){
+  B<-vector("numeric",N)
+  
+  for(i in 1:N){
+    u<-runif(1,0,1)
+    if(u<1-p){
+      B[i]=0
+    }else{
+      B[i]=1
+    }
+  }
+  return(B)
+}
+B<-simu(0.3,100)
+sum(B)/100
+```
+
+```{r}
+
+B<-simu(0.3,1000)
+sum(B)/1000
+```
+
+```{r}
+
+B<-simu(0.3,10000)
+sum(B)/10000
+```
+
+```{r}
+TCL <- function(n,simu,p) {
+  Xn <- sum(simu) / n
+  return((sqrt(n)*(Xn-p))/(sqrt(p*(1-p))))
+}
+
+creat_echan<-function(N,n,p){
+  Z<-TCL(n,simu(p,n),p)
+  N=N-1
+  for(i in 1:N){
+  
+Z<-c(Z,TCL(n,simu(p,n),p))
+
+  }
+  return(Z)
+}
+
+creat_echan(10,10,0.3)
+creat_echan(10,30,0.3)
+creat_echan(10,40,0.3)
+```
+
+
+```{r}
+ab <- -4
+current = ab + 1/10000
+for(i in 1:99999) {
+  ab <- c(ab, current)
+  current = current + 1/10000
+}
+```
+
+```{r}
+
+Z1<-creat_echan(100000,10,0.3)
+Z3<-creat_echan(100000,30,0.3)
+Z4<-creat_echan(100000,40,0.3)
+
+```
+
+```{r}
+y <- vector("numeric", 100000)
+density <- function(x) {
+  return((exp((-x*x)/2))/(sqrt(2*3.14)))
+}
+for (i in 1:100000) {
+  y[i] = density(ab[i])
+}
+
+DF <- data.frame(cbind(Z1,Z3,Z4,y))
+plot1 <- ggplot(DF,aes(x=DF$Z1)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_10")
+plot1
+plot2 <- ggplot(DF,aes(x=DF$Z3)) + 
+  geom_histogram(aes(y=..density..),fill = "blue", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_30")
+plot2
+plot3 <- ggplot(DF,aes(x=DF$Z4)) + 
+  geom_histogram(aes(y=..density..),fill = "darkolivegreen", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF$y)) + xlab("Z_40")
+plot3
+```
+
+###E3
+```{r}
+simul<-function(){
+  X=c(0.5,1,1.5,2)
+  P=c(1/4,2/8,1/8,3/8)
+  C<-c(P[1])
+  for (i in 2:4){
+    C<-c(C,C[i-1]+P[i])
+  }
+  k<-1
+  u<-runif(1,0,1)
+  while(u>C[k]){
+    k<-k+1
+  }
+  return (X[k])
+}
+N=10000
+echantillon=c()
+for (i in 1:10000){
+  echantillon<-c(echantillon,simul())
+}
+```
+
+```{r}
+echan <- data.frame(echantillon)
+density <- data.frame(c(1/4,2/8,1/8,3/8))
+plot4 <- ggplot(echan,aes(x=echan$echantillon)) + geom_histogram(fill = "darkorchid", alpha = 0.2) + xlab("Echantillon")
+plot4
+
+
+dat2 <- data.frame(c(1/4,2/8,1/8,3/8))
+plot5 <- ggplot(dat2, aes(x=1:4,y=dat2$c.1.4..2.8..1.8..3.8.)) + geom_line() + xlab("") + ylab("")
+plot5
+```
+
+#Exercice 2.
+Q1
+```{r}
+n=30
+p=0.1
+
+binom<-function (p,n){
+  U<-runif(n,0,1)
+  X<-U<1-p
+  return (sum(1-as.numeric(X)))
+}
+```
+
+Q2
+```{r}
+creat_echan<-function(N,n,p){
+  echantillon<-c()
+  for(i in 1:N){
+   echantillon <-c(echantillon, binom(p,n))
+  }
+  return(echantillon)
+  
+}
+
+echan<-creat_echan(10000,n,p)
+
+```
+
+Q3
+```{r}
+Simu <- data.frame(echan)
+plot <- ggplot(Simu,aes(x=Simu$echan)) + geom_histogram(fill = "orange", alpha = 0.6) + xlab("Echantillon d'une loi binomiale")
+plot
+```
+Q4
+
+```{r}
+x <- seq(0,10,1)
+density<-c()
+for(i in x){
+density<-c(density,dbinom(i,n,prob=p))
+}
+
+
+
+Den <- data.frame(density)
+plot <- ggplot(Den, aes(x=0:10,y=Den$density)) + geom_line() 
+plot
+```
+Q5
+```{r, include=TRUE} 
+TCL2<- function(test,p,k,n){
+  return (sqrt(k)*((sum(test)/k)-(n*p))/sqrt(n*p*(1-p)))
+}
+
+create_echan2<- function(N,n,p,k){
+  z<-c()
+  for (i in 1:N){
+    z<-c(z,TCL2(creat_echan(k,n,p),p,k,n))
+  }
+  return (z)
+}
+
+zbi1<-create_echan2(100000,n,p,10)
+zbi2<-create_echan2(100000,n,p,30)
+zbi3<-create_echan2(100000,n,p,40)
+```
+
+```{r}
+y <- vector("numeric", 100000)
+densitys <- function(x) {
+  return((exp((-x*x)/2))/(sqrt(2*3.14)))
+}
+for (i in 1:100000) {
+  y[i] = densitys(ab[i])
+}
+DF3 <- data.frame(cbind(zbi1,zbi2,zbi3,y))
+plot7 <- ggplot(DF3,aes(x=DF3$zbi1)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF3$y)) + xlab("Z_10 Loi binomiale") 
+plot7
+plot8 <- ggplot(DF3,aes(x=DF3$zbi2)) + 
+  geom_histogram(aes(y=..density..),fill = "blue", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF3$y)) + xlab("Z_30 Loi binomiale") 
+plot8
+plot9 <- ggplot(DF3,aes(x=DF3$zbi3)) + 
+  geom_histogram(aes(y=..density..),fill = "darkolivegreen", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF3$y)) + xlab("Z_40 Loi binomiale")
+plot9
+```
+

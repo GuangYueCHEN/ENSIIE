@@ -1,0 +1,31 @@
+bonjour a tous,
+nous somme groupe 9, pour notre projet de MRR, notre donne est emsemble de donnees sur les batiments residantiale. Moi je vais vous presenter notre projet , notre donnees et la Méthodologie pour choisisr les modeles. Et mon camarade vous presentera les resultat.
+
+Et notre donnees, est Le dataset correspondant aux appartements résidentiels et immobiliers situés à Téhéran, en Iran
+
+
+qui compose le coût de construction, les prix de vente,
+
+ les variables de projet 
+par emsemple: la taille totale du bâtiment， la commencement de l'anne de construction 
+
+
+et les variables économiques 
+par example: le Prix de l'or par once, le Taux de change officiel。
+
+
+
+La dimension de data: 372 observations 109 variable
+Deux sorties: Le prix de vente réels et le coûts de construction réels
+
+
+Donc pour les deux objectives, on a decede d'entrainer deux modele. En considerant que les deux sorties et presque tous les variables sont continus , on a decide de utiliser la regression lineaire.
+
+
+
+
+Apres cest la Méthodologie pour choisir les modele. Ici on a utilise le mesure MSE, en anglais cest mesn quare error, et on a utilise la methode k-ford validation croise. Apres nous comparons les performances  des modèles sur les nouvelle donnees. nous choisissons la modèle ‘Elastic Net’ pour le objectif ‘Le prix de vente réels’, et la modèle ‘Ridge’ pour l’objectif ‘le coûts de construction réels’
+
+
+Apres la Méthodologie, on a teste aussi les deux modele choisit. Pour la prediction, il y a des erreur de bias.Pour"Prix de vente réels", la prédiction est égale à la valeur réelle ± 200 et pour "Coûts de construction réels", la prévision est égale à la valeur réelle ± 40.
+

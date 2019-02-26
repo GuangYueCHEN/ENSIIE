@@ -1,0 +1,96 @@
+---
+title: "E3 MAD"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+1 download data
+```{r include=TRUE}
+data<-read.table("/Users/xujiahui/S3/MAD/data/neighbor_globin.txt",header = FALSE)
+data[,1]->prot.names
+data<-data[,-1]
+#let us check thati it is a dissimilarity matrix
+#1) the diagonal is zeros $Delta_{ii} = 0, for all i
+#2) the matrix is symetrical $Delta = Delta^T
+colnames(data)<-prot.names
+```
+#let us check thati it is a dissimilarity matrix
+1) the diagonal is zeros $\Delta_{ii} = 0, \forall i$
+2) the matrix is symetrical $\Delta = \Delta^T$
+```{r include=TRUE}
+dim(data)
+row.names(data)<-prot.names
+heatmap(as.matrix(data))#?????
+```
+#let us check thati it is a dissimilarity matrix
+1) the diagonal is zeros $\Delta_{ii} = 0, \forall i$
+2) the matrix is symetrical $\Delta = \Delta^T$
+```{r include=TRUE}
+Delta = read.table("/Users/xujiahui/S3/MAD/data/neighbor_globin.txt",header = FALSE, row.names = 1)
+Delta <-as.matrix(Delta)
+diag(Delta)
+sum(Delta - t(Delta))
+```
+
+```{r include=TRUE}
+n <- ncol(Delta)
+J <- (diag(rep(1,n))-1/n*matrix(1,n,n))
+
+```
+Let us compute B
+```{r include=TRUE}
+B<- (-1/2 * J%*%Delta%*%J)
+```
+ let us perform the eigenvalue decomposition
+```{r include=TRUE}
+eigen(B) -> eigenB
+Lambda <- eigenB$values
+U <- eigenB$vectors
+
+library(ggplot2)
+barplot(Lambda)
+#ggplot(data = data.frame(Lambda), aes(x = Lambda)) + 
+#  geom_bar()
+```
+
+```{r include=TRUE}
+U13 <- U[,1:3]
+Lambda13 <- Lambda[1:3]
+X<-U13%*%diag(Lambda13)^(1/2)
+```
+let us display the two first planes
+```{r include=TRUE}
+library(tidyverse)
+as_tibble(X) ->X
+names(X)<-paste("PC", 1:3, sep ="")
+#rownames(X) <- row.names(Delta)
+ggplot(data = X, aes(x = PC1, y = PC2, label = rownames(Delta))) +
+  geom_point() +
+  geom_text(check_overlap = TRUE)
+```
+
+```{r include=TRUE}
+X <- cmdscale(Delta, k=3, x.ret = TRUE)$points
+X <- as.data.frame(X)
+as_tibble(X) -> X
+names(X)<-paste("PC", 1:3, sep ="")
+ggplot(data = X, aes(x = PC1, y = PC2, label = rownames(Delta))) +
+  geom_point() +
+  geom_text(check_overlap = TRUE)
+```
+
+```{r include=TRUE}
+library(kernlab)
+library(FactoMineR)
+library(tidyverse)
+data(spam)
+
+#spam %>% PCA(.,quanti.sup = ncol(spam))
+
+PCA(spam, quali.sup = 58) -> res.pca
+plot(res.pca, habillage = 58, choi="ind")
+```
