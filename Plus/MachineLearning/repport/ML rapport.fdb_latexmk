@@ -1,9 +1,9 @@
 # Fdb version 3
-["xdvipdfmx"] 1545262435 "ML rapport.xdv" "ML rapport.pdf" "ML rapport" 1545262436
-  "ML rapport.xdv" 1545262435 131228 917e5633ac2a4489b5ac6311ba5ae0c6 "xelatex"
+["xdvipdfmx"] 1545266605 "ML rapport.xdv" "ML rapport.pdf" "ML rapport" 1545266709
+  "ML rapport.xdv" 1545266605 143960 e29a0558990a41c3bc2ddda7d7edd8f3 "xelatex"
   (generated)
   "ML rapport.pdf"
-["xelatex"] 1545262433 "ML rapport.tex" "ML rapport.xdv" "ML rapport" 1545262436
+["xelatex"] 1545266604 "ML rapport.tex" "ML rapport.xdv" "ML rapport" 1545266709
   "/usr/local/texlive/2017/texmf-dist/fonts/map/fontname/texfonts.map" 1480098670 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2017/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1480098689 1528 f853c4d1b4e0550255e02831fdc8496f ""
   "/usr/local/texlive/2017/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
@@ -158,11 +158,12 @@
   "5.png" 1544721619 39741 d1bf47886f8f6ee447f370a896846c0f ""
   "9.png" 1544721603 41758 a5015c556f4a248fe09099bc39e1854e ""
   "Logo_ENSIIE.png" 1544707092 32912 043d5da3d2ee6eb71fa74c256c5a17ed ""
-  "ML rapport.aux" 1545262435 3015 c1f6a8feacfd97e5d1c3f4251a589f24 ""
-  "ML rapport.out" 1545262435 3734 208b756672600885a01d22617a8fa503 ""
-  "ML rapport.tex" 1545262426 12871 5db4e1a11b4c107d620a54454533258e ""
-  "ML rapport.toc" 1545262435 1864 12d587d7633d1430c693779dc684e533 ""
+  "ML rapport.aux" 1545266605 3139 6d4fb09c6676b293badd59d30ba3f24c ""
+  "ML rapport.out" 1545266605 3933 575699fd3483e26a6f48b3b7b8860642 ""
+  "ML rapport.tex" 1545266601 14325 db67ee5cdd7c7eec3546aeecaafc02c4 ""
+  "ML rapport.toc" 1545266605 1969 a523599fa99778c01b5bf4b8069c7fce ""
   "back.png" 1544720049 440357 ffee5d49a919c2b821333f11e1adac14 ""
+  "dt.png" 1545263216 89960 3d0d15575fd9ee2b65f37fbbe42bab54 ""
   "grad.png" 1544716063 50494 1bcc6de3a0c76b338fcd10e03bf53fa1 ""
   "kmean.png" 1545260032 129275 7a9c688d6fe3f5f67317de2ecad91a80 ""
   "linear.png" 1544715740 86834 94f6d4ec59b24f69cb5356c209b48016 ""
@@ -175,7 +176,7 @@
   "svm2.png" 1545257825 56981 7cf447caab0d19663585e1c6a1ad33ba ""
   (generated)
   "ML rapport.aux"
-  "ML rapport.toc"
-  "ML rapport.xdv"
-  "ML rapport.out"
   "ML rapport.log"
+  "ML rapport.toc"
+  "ML rapport.out"
+  "ML rapport.xdv"

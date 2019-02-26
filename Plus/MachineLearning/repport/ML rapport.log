@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017) (preloaded format=xelatex 2018.2.22)  20 DEC 2018 00:33
+This is XeTeX, Version 3.14159265-2.6-0.99998 (TeX Live 2017) (preloaded format=xelatex 2018.2.22)  20 DEC 2018 01:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1691,23 +1691,27 @@ Underfull \hbox (badness 10000) in paragraph at lines 62--63
  []
 
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 65--67
+Underfull \hbox (badness 10000) in paragraph at lines 65--66
 
  []
 
 File: linear.png Graphic file (type QTm)
 <use  "linear.png" >
 File: grad.png Graphic file (type QTm)
- <use  "grad.png" > [3]
-(/usr/local/texlive/2017/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2015/06/04 1.6 listings language file
-) [4]
-File: log.png Graphic file (type QTm)
+ <use  "grad.png" >
+Underfull \hbox (badness 10000) in paragraph at lines 72--74
 
-<use  "log.png" >
+ []
+
+[3] (/usr/local/texlive/2017/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2015/06/04 1.6 listings language file
+)
+[4]
+File: log.png Graphic file (type QTm)
+ <use  "log.png" >
 File: nn.png Graphic file (type QTm)
  <use  "nn.png" >
-Underfull \hbox (badness 10000) in paragraph at lines 106--107
+Underfull \hbox (badness 10000) in paragraph at lines 108--109
 
  []
 
@@ -1720,12 +1724,12 @@ File: 9.png Graphic file (type QTm)
  <use  "9.png" >
 File: 5.png Graphic file (type QTm)
  <use  "5.png" >
-Overfull \hbox (21.82863pt too wide) in paragraph at lines 115--116
+Overfull \hbox (21.82863pt too wide) in paragraph at lines 117--118
 [][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 119--120
+Underfull \hbox (badness 10000) in paragraph at lines 121--122
 
  []
 
@@ -1734,24 +1738,34 @@ File: svm2.png Graphic file (type QTm)
  <use  "svm2.png" >
 File: svm.png Graphic file (type QTm)
  <use  "svm.png" >
-Overfull \hbox (6.82864pt too wide) in paragraph at lines 126--130
+Overfull \hbox (6.82864pt too wide) in paragraph at lines 129--132
 [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 139--140
+Underfull \hbox (badness 10000) in paragraph at lines 141--142
 
  []
 
 [7]
 File: kmean.png Graphic file (type QTm)
  <use  "kmean.png" > [8]
-Underfull \hbox (badness 10000) in paragraph at lines 164--168
+Underfull \hbox (badness 10000) in paragraph at lines 163--165
 
  []
 
-[9] [10]
-Overfull \hbox (107.41484pt too wide) in paragraph at lines 187--189
+
+Underfull \hbox (badness 10000) in paragraph at lines 167--171
+
+ []
+
+[9]
+File: dt.png Graphic file (type QTm)
+ <use  "dt.png" >
+Missing character: There is no ε in font [lmroman12-regular]:mapping=tex-text;!
+Missing character: There is no ε in font [lmroman12-regular]:mapping=tex-text;!
+ [10] [11]
+Overfull \hbox (107.41484pt too wide) in paragraph at lines 200--202
 \TU/lmr/m/n/14.4 Github(all 7 projects):[][]https://github.com/GuangYueCHEN/ENS
 IIE/MachineLearning[][] 
  []
@@ -1761,22 +1775,22 @@ File: res1.png Graphic file (type QTm)
 File: res2.png Graphic file (type QTm)
  <use  "res2.png" >
 File: res3.png Graphic file (type QTm)
- <use  "res3.png" > [11] [12]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 197.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 197.
+ <use  "res3.png" > [12] [13]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 210.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 210.
 
 (./ML rapport.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 197.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 197.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 197.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 210.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 210.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 210.
  ) 
 Here is how much of TeX's memory you used:
- 36756 strings out of 493005
- 703197 string characters out of 6134596
- 794955 words of memory out of 5000000
- 40297 multiletter control sequences out of 15000+600000
+ 36758 strings out of 493005
+ 703209 string characters out of 6134596
+ 794956 words of memory out of 5000000
+ 40298 multiletter control sequences out of 15000+600000
  8741 words of font info for 42 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 62i,6n,74p,10509b,1742s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 62i,6n,74p,10509b,1740s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on ML rapport.xdv (13 pages, 131228 bytes).
+Output written on ML rapport.xdv (14 pages, 143960 bytes).
