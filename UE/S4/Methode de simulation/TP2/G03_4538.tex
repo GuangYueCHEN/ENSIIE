@@ -1,0 +1,949 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={TP2},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{TP2}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{}
+  \preauthor{}\postauthor{}
+  \date{}
+  \predate{}\postdate{}
+
+
+\begin{document}
+\maketitle
+
+\section{Exercice 1.}\label{exercice-1.}
+
+\subsubsection{Q1}\label{q1}
+
+\[
+\begin{aligned}
+E(Y)&=E(X)=\frac{1}{6}=\sum_{Y\subset{1,0,-1}}Y*P(Y)\\
+&=1*c+(-1)*(1-c-\frac{5}{6})+0*\frac{5}{6}=\frac{1}{6}\\
+c&=\frac{1}{6}
+\end{aligned}
+\] Donc on \(P(Y=1)=\frac{1}{6}\) et \(P(Y=-1)=0\)
+
+\subsubsection{Q2}\label{q2}
+
+\[
+\begin{aligned}
+E(Y^2)&=\sum_{Y\subset{1,0,-1}}Y^2*P(Y)\\
+&=1^2*\frac{1}{6}+(-1)^2*(0)+0*\frac{5}{6}=\frac{1}{6}\\
+Var(Y)&=E(Y^2)-(E(Y))^2\\
+&=\frac{1}{6}-(\frac{1}{6})^2\\
+&=\frac{5}{36}
+\end{aligned}
+\] \#pourquoi Var Y \textless{} Var X\# La probabilite que Y = -1 est
+nulle, on a donc moins de valeurs pour Y donc la variance est plus
+faible.
+
+\subsubsection{Q3}\label{q3}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{simuY<-}\ControlFlowTok{function}\NormalTok{()\{}
+\NormalTok{  X=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{  P=}\KeywordTok{c}\NormalTok{(}\DecValTok{5}\OperatorTok{/}\DecValTok{6}\NormalTok{,}\DecValTok{1}\OperatorTok{/}\DecValTok{6}\NormalTok{)}
+\NormalTok{  C<-}\KeywordTok{c}\NormalTok{(P[}\DecValTok{1}\NormalTok{])}
+\NormalTok{    C<-}\KeywordTok{c}\NormalTok{(C,C[}\DecValTok{1}\NormalTok{]}\OperatorTok{+}\NormalTok{P[}\DecValTok{2}\NormalTok{])}
+
+\NormalTok{  k<-}\DecValTok{1}
+\NormalTok{  u<-}\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+  \ControlFlowTok{while}\NormalTok{(u}\OperatorTok{>}\NormalTok{C[k])\{}
+\NormalTok{    k<-k}\OperatorTok{+}\DecValTok{1}
+\NormalTok{  \}}
+  \KeywordTok{return}\NormalTok{ (X[k])}
+\NormalTok{\}}
+\NormalTok{N=}\DecValTok{1000}
+\NormalTok{echantillonY=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+\NormalTok{  echantillonY<-}\KeywordTok{c}\NormalTok{(echantillonY,}\KeywordTok{simuY}\NormalTok{())}
+\NormalTok{\}}
+
+
+\NormalTok{dat <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(echantillonY)}
+\NormalTok{plot1 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(dat,}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{dat}\OperatorTok{$}\NormalTok{echantillonY)) }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{fill =} \StringTok{"darkorchid"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Echantillon"}\NormalTok{)}
+\NormalTok{plot1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{simuX<-}\ControlFlowTok{function}\NormalTok{()\{}
+\NormalTok{  X=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{  P=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{/}\DecValTok{3}\NormalTok{,}\DecValTok{1}\OperatorTok{/}\DecValTok{6}\NormalTok{,}\DecValTok{1}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
+\NormalTok{  C<-}\KeywordTok{c}\NormalTok{(P[}\DecValTok{1}\NormalTok{])}
+\NormalTok{    C<-}\KeywordTok{c}\NormalTok{(C,C[}\DecValTok{1}\NormalTok{]}\OperatorTok{+}\NormalTok{P[}\DecValTok{2}\NormalTok{])}
+\NormalTok{C<-}\KeywordTok{c}\NormalTok{(C,C[}\DecValTok{2}\NormalTok{]}\OperatorTok{+}\NormalTok{P[}\DecValTok{3}\NormalTok{])}
+
+\NormalTok{  k<-}\DecValTok{1}
+\NormalTok{  u<-}\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+  \ControlFlowTok{while}\NormalTok{(u}\OperatorTok{>}\NormalTok{C[k])\{}
+\NormalTok{    k<-k}\OperatorTok{+}\DecValTok{1}
+\NormalTok{  \}}
+  \KeywordTok{return}\NormalTok{ (X[k])}
+\NormalTok{\}}
+\NormalTok{N=}\DecValTok{1000}
+\NormalTok{echantillonX=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+\NormalTok{  echantillonX<-}\KeywordTok{c}\NormalTok{(echantillonX,}\KeywordTok{simuX}\NormalTok{())}
+\NormalTok{\}}
+
+
+\NormalTok{dat2 <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(echantillonX)}
+\NormalTok{plot2 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(dat2,}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{dat2}\OperatorTok{$}\NormalTok{echantillonX))}\OperatorTok{+}\StringTok{ }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{fill =} \StringTok{"darkorchid"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{xlab}\NormalTok{(}\StringTok{"Echantillon"}\NormalTok{)}
+\NormalTok{plot2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Z_x=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+\NormalTok{  Z_x=}\KeywordTok{c}\NormalTok{(Z_x,}\KeywordTok{mean}\NormalTok{(echantillonX[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+\NormalTok{Z_y=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+\NormalTok{  Z_y=}\KeywordTok{c}\NormalTok{(Z_y,}\KeywordTok{mean}\NormalTok{(echantillonY[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+
+\KeywordTok{plot}\NormalTok{(Z_y,}\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FloatTok{0.4}\NormalTok{),}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{new=}\OtherTok{TRUE}\NormalTok{) }
+\KeywordTok{plot}\NormalTok{(Z_x,}\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FloatTok{0.4}\NormalTok{),}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'blue'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+On remarque les deux graphes converge a 0.16, mais la deffirence est
+pour echatillon y , la graphe varie moins au debut.
+
+\subsubsection{Q4}\label{q4}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{alpha=}\FloatTok{0.05}
+\NormalTok{c_alpha=}\KeywordTok{qnorm}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{alpha}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{Sny=}\DecValTok{0}  
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+\NormalTok{  Sny=Sny}\OperatorTok{+}\NormalTok{echantillonY[i]}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\DecValTok{2}\OperatorTok{*}\NormalTok{echantillonY[i]}\OperatorTok{*}\NormalTok{Z_y[i]}\OperatorTok{+}\NormalTok{Z_y[i]}\OperatorTok{^}\DecValTok{2}
+\NormalTok{\}}
+\NormalTok{Sny=Sny}\OperatorTok{/}\DecValTok{999}
+\NormalTok{epsY=c_alpha}\OperatorTok{*}\NormalTok{Sny}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(N)}
+\KeywordTok{plot}\NormalTok{(Z_y,}\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FloatTok{0.4}\NormalTok{),}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{,}\DataTypeTok{main=}\StringTok{" la moyenne empirique de Y avec confiance"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{1}\OperatorTok{/}\DecValTok{6} \OperatorTok{+}\NormalTok{epsY)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{1}\OperatorTok{/}\DecValTok{6}\OperatorTok{-}\NormalTok{epsY)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{alpha=}\FloatTok{0.05}
+\NormalTok{c_alpha=}\KeywordTok{qnorm}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{alpha}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{Snx=}\DecValTok{0}  
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+\NormalTok{  Snx=Snx}\OperatorTok{+}\NormalTok{echantillonX[i]}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\DecValTok{2}\OperatorTok{*}\NormalTok{echantillonX[i]}\OperatorTok{*}\NormalTok{Z_x[i]}\OperatorTok{+}\NormalTok{Z_x[i]}\OperatorTok{^}\DecValTok{2}
+\NormalTok{\}}
+\NormalTok{Snx=Snx}\OperatorTok{/}\DecValTok{999}
+\NormalTok{epsX=c_alpha}\OperatorTok{*}\NormalTok{Snx}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(N)}
+\KeywordTok{plot}\NormalTok{(Z_x,}\DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\FloatTok{0.4}\NormalTok{),}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{,}\DataTypeTok{main=}\StringTok{" la moyenne empirique de X avec confiance"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{1}\OperatorTok{/}\DecValTok{6} \OperatorTok{+}\NormalTok{epsX)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{1}\OperatorTok{/}\DecValTok{6}\OperatorTok{-}\NormalTok{epsX)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-6-1.pdf} Pour
+les deux graphes, on remarque que les valeurs sont de plus en plus entre
+dans l'intervalle de confiance. On trouve pour l'echantillon Y , il
+converge rapidement. \#\#\#Q5
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1000}\OperatorTok{:-}\DecValTok{1}\OperatorTok{:}\DecValTok{1}\NormalTok{)\{}
+\NormalTok{  d=}\DecValTok{0}
+ 
+  \ControlFlowTok{if}\NormalTok{(Z_y[i]}\OperatorTok{<}\DecValTok{1}\OperatorTok{/}\DecValTok{6} \OperatorTok{-}\NormalTok{epsY)\{}
+   
+\NormalTok{    d=i}
+    \ControlFlowTok{break}
+\NormalTok{  \}}\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{(Z_y[i]}\OperatorTok{>}\DecValTok{1}\OperatorTok{/}\DecValTok{6} \OperatorTok{+}\NormalTok{epsY)\{}
+\NormalTok{    d=i}
+    \ControlFlowTok{break}
+\NormalTok{  \}}
+  
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in 1000:-1:1: numerical expression has 1002 elements: only the
+## first used
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{N0_y<-d}
+\KeywordTok{print}\NormalTok{(}\StringTok{"N0 d'echantillon y :"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "N0 d'echantillon y :"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{N0_y}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 988
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1000}\OperatorTok{:-}\DecValTok{1}\OperatorTok{:}\DecValTok{1}\NormalTok{)\{}
+\NormalTok{  d=}\DecValTok{0}
+ 
+  \ControlFlowTok{if}\NormalTok{(Z_x[i]}\OperatorTok{<}\DecValTok{1}\OperatorTok{/}\DecValTok{6} \OperatorTok{-}\NormalTok{epsX)\{}
+   
+\NormalTok{    d=i}
+    \ControlFlowTok{break}
+\NormalTok{  \}}\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{(Z_x[i]}\OperatorTok{>}\DecValTok{1}\OperatorTok{/}\DecValTok{6} \OperatorTok{+}\NormalTok{epsX)\{}
+\NormalTok{    d=i}
+    \ControlFlowTok{break}
+\NormalTok{  \}}
+  
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in 1000:-1:1: numerical expression has 1002 elements: only the
+## first used
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{N0_x<-d}
+\KeywordTok{print}\NormalTok{(}\StringTok{"N0 d'echantillon x:"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "N0 d'echantillon x:"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{N0_x}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 117
+\end{verbatim}
+
+On trouve que pour le valeur N0 , le N0 de y est plus petit. \#Exercice
+2. \#\#\#Q1 Donnez une estimation de \(E(g(x))\)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{)}
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+  \ControlFlowTok{if}\NormalTok{(x[i]}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{    sum<-sum}\OperatorTok{+}\NormalTok{x[i]}
+\NormalTok{  \}}
+\NormalTok{\}}
+\NormalTok{esti<-sum}\OperatorTok{/}\DecValTok{10000}
+\NormalTok{esti}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0003840351
+\end{verbatim}
+
+\subsubsection{Q2}\label{q2-1}
+
+Tracer sur le meme graphe N-\textgreater{}\(\overline{Xn}\)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{alpha=}\FloatTok{0.05}
+\NormalTok{c_alpha=}\KeywordTok{qnorm}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{alpha}\OperatorTok{/}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{Z_x=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Z_x=}\KeywordTok{c}\NormalTok{(Z_x,}\KeywordTok{mean}\NormalTok{(x[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+\NormalTok{Snx=}\DecValTok{0}  
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Snx=Snx}\OperatorTok{+}\NormalTok{x[i]}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\DecValTok{2}\OperatorTok{*}\NormalTok{x[i]}\OperatorTok{*}\NormalTok{Z_x[i]}\OperatorTok{+}\NormalTok{Z_x[i]}\OperatorTok{^}\DecValTok{2}
+\NormalTok{\}}
+\NormalTok{Snx=Snx}\OperatorTok{/}\DecValTok{9999}
+\NormalTok{epsX=c_alpha}\OperatorTok{*}\NormalTok{Snx}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(}\DecValTok{10000}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(Z_x,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{,}\DataTypeTok{main=}\StringTok{" la moyenne empirique de X avec confiance"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0} \OperatorTok{+}\NormalTok{epsX)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\DecValTok{0}\OperatorTok{-}\NormalTok{epsX)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\subsubsection{Q3}\label{q3-1}
+
+(a)Identifiez la fonction \(\psi\) tell que \(E(g(x))=E(\psi(Z^{\mu}))\)
+
+Parce que \(Z^{\mu}\sim N(\mu;1)\), \(\psi(y)=(y-\mu)1_{y\ge\mu+3.5}\)
+
+(b)On pose \(\mu=2.5\), pour N = 1000, puis pour N = 10000 par la
+méthode d'échantillonage préférentie
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p_x<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{,}\FloatTok{2.5}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+  \ControlFlowTok{if}\NormalTok{(p_x[i]}\OperatorTok{>}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{  p_x[i]=}\KeywordTok{exp}\NormalTok{(}\FloatTok{2.5}\OperatorTok{*}\NormalTok{(}\FloatTok{2.5}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+  
+\NormalTok{    sum<-sum}\OperatorTok{+}\NormalTok{p_x[i]}
+\NormalTok{  \}}
+\NormalTok{\}}
+\KeywordTok{print}\NormalTok{(}\StringTok{'for N=1000:'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "for N=1000:"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sum}\OperatorTok{/}\DecValTok{1000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0002417886
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p_x<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{,}\FloatTok{2.5}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+
+
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+  \ControlFlowTok{if}\NormalTok{(p_x[i]}\OperatorTok{>}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{  p_x[i]=}\KeywordTok{exp}\NormalTok{(}\FloatTok{2.5}\OperatorTok{*}\NormalTok{(}\FloatTok{2.5}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+
+\NormalTok{    sum<-sum}\OperatorTok{+}\NormalTok{p_x[i]}
+\NormalTok{  \}}
+\NormalTok{\}}
+\KeywordTok{print}\NormalTok{(}\StringTok{'for N=10000:'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "for N=10000:"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sum}\OperatorTok{/}\DecValTok{10000}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0002301429
+\end{verbatim}
+
+(c)Pour N = 1, . . . , 10000, tracez sur le même graphe les fonctions N
+→ \(\frac{g(X1 )+...g(XN )}{N}\) et N →
+\(\frac{\psi(Z1μ)+...\psi(ZNμ )}{N},\) pour μ = 2.5.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p_x<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{,}\FloatTok{2.5}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+  \ControlFlowTok{if}\NormalTok{(p_x[i]}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{    p_x[i]=}\KeywordTok{exp}\NormalTok{(}\FloatTok{2.5}\OperatorTok{*}\NormalTok{(}\FloatTok{2.5}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+  
+    
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    p_x[i]=}\DecValTok{0}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\NormalTok{Z_p=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Z_p=}\KeywordTok{c}\NormalTok{(Z_p,}\KeywordTok{mean}\NormalTok{(p_x[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+\NormalTok{Z_x=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+  \ControlFlowTok{if}\NormalTok{(x[i]}\OperatorTok{<}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{    x[i]=}\DecValTok{0}
+\NormalTok{  \}}
+\NormalTok{  Z_x=}\KeywordTok{c}\NormalTok{(Z_x,}\KeywordTok{mean}\NormalTok{(x[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+\KeywordTok{plot}\NormalTok{(Z_p,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'blue'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(Z_x,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-11-2.pdf} On
+trouve que la simulation d'importance converge plus rapidement, elle a
+la plus petite variance.
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  faire un zoom pour 1,..,1000
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p_x<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{,}\FloatTok{2.5}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+  \ControlFlowTok{if}\NormalTok{(p_x[i]}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{    p_x[i]=}\KeywordTok{exp}\NormalTok{(}\FloatTok{2.5}\OperatorTok{*}\NormalTok{(}\FloatTok{2.5}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+  
+    
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    p_x[i]=}\DecValTok{0}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\NormalTok{Z_p=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+\NormalTok{  Z_p=}\KeywordTok{c}\NormalTok{(Z_p,}\KeywordTok{mean}\NormalTok{(p_x[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+
+\NormalTok{x<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{)}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+  \ControlFlowTok{if}\NormalTok{(x[i]}\OperatorTok{<}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{    x[i]=}\DecValTok{0}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\NormalTok{Z_x=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{)\{}
+\NormalTok{  Z_x=}\KeywordTok{c}\NormalTok{(Z_x,}\KeywordTok{mean}\NormalTok{(x[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+
+
+
+
+\KeywordTok{plot}\NormalTok{(Z_p,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'blue'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(Z_x,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-12-2.pdf} On
+trouve que le graphe est plus valatile.
+
+(e)PourN=1,\ldots{},10000,tracez sur une nouvelle fenêtre graphique la
+fonction N -\textgreater{} ψ(Z1μ)+\ldots{}ψ(ZNμ) /N
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p_x<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{,}\FloatTok{2.5}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  mu<-}\DecValTok{6}\OperatorTok{*}\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{(p_x[i]}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{  p_x[i]=}\KeywordTok{exp}\NormalTok{(mu}\OperatorTok{*}\NormalTok{(mu}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    p_x[i]=}\DecValTok{0}
+\NormalTok{  \}}
+
+\NormalTok{\}}
+
+\NormalTok{Z_p=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Z_p=}\KeywordTok{c}\NormalTok{(Z_p,}\KeywordTok{mean}\NormalTok{(p_x[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+\NormalTok{Snx=}\DecValTok{0}  
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Snx=Snx}\OperatorTok{+}\NormalTok{p_x[i]}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x[i]}\OperatorTok{*}\NormalTok{Z_p[i]}\OperatorTok{+}\NormalTok{Z_p[i]}\OperatorTok{^}\DecValTok{2}
+\NormalTok{\}}
+\NormalTok{Snx=Snx}\OperatorTok{/}\DecValTok{9999}
+\NormalTok{epsX=c_alpha}\OperatorTok{*}\NormalTok{Snx}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(}\DecValTok{10000}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(Z_p,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'blue'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\NormalTok{Z_p[}\DecValTok{10000}\NormalTok{] }\OperatorTok{+}\NormalTok{epsX,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\NormalTok{Z_p[}\DecValTok{10000}\NormalTok{] }\OperatorTok{-}\NormalTok{epsX,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-13-1.pdf} Ici
+on trouve que, a la fin, le resultât est difficile d'etre dans
+l'interval de cofiance, c'est peut-etre les point (x\textgreater{}3.5)
+sont trop peu. Mais a la commencement, il est toujours dans les
+intervals.
+
+\section{4 On veut chercher le paramètre μ∗ qui minimise
+Eψ2(Zμ).}\label{on-veut-chercher-le-parametre--qui-minimise-e2z.}
+
+(a)Spécifiez la fonction K qui vérifie Eψ2(Zμ) = E(K(μ, ξ)), avec ξ ∼ N
+(0, 1) \[
+\begin{aligned}
+E(\psi^2(Z^{\mu}))&=E(\psi^2(\mu+\sigma\xi))) \\
+&= E(g^2(\mu+\sigma\xi)exp(\frac{2\mu(\mu-2(\mu+\sigma\xi))}{2\sigma^2}))\\
+&= \mathbb{E}K(\mu,\xi),\quad\xi\backsim N(0,1)\\
+K(\mu,\xi)&=g^2(\mu+\sigma\xi)exp(\frac{2\mu(\mu-2(\mu+\sigma\xi))}{2\sigma^2})\\
+&=g^2(\mu+\sigma\xi)exp(\frac{-2\mu^2-4\mu\sigma\xi}{2\sigma^2})\\
+\end{aligned}
+\] (b) Utilisez l'algorithme suivant pour donner une approximation de
+μ∗: \[
+\begin{aligned}
+K(\mu,\xi)&=g^2(\mu+\sigma\xi)exp(\frac{-2\mu^2-4\mu\sigma\xi}{2\sigma^2})\\
+K'(\mu,\xi)&=2*g(\mu+\sigma\xi)*g'(\mu+\sigma\xi)exp(\frac{-2\mu^2-4\mu\sigma\xi}{2\sigma^2})+\\
+ &  g^2(\mu+\sigma\xi)exp(\frac{-2\mu^2-4\mu\sigma\xi}{2\sigma^2})*(\frac{-4\mu-4\sigma\xi}{2\sigma^2})\\
+ K'(\mu,\xi)&=0 \quad if \quad \mu+\sigma\xi<3.5\\
+  K'(\mu,\xi)&=2*(\mu+\sigma\xi)exp(\frac{-2\mu^2-4\mu\sigma\xi}{2\sigma^2})+(\mu+\sigma\xi)^2exp(\frac{-2\mu^2-4\mu\sigma\xi}{2\sigma^2})*(\frac{-4\mu-4\sigma\xi}{2\sigma^2}) \quad if \quad \mu+\sigma\xi \ge 3.5
+\end{aligned}
+\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{K<-}\ControlFlowTok{function}\NormalTok{(mu,delta,xi)\{}
+  
+  \ControlFlowTok{if}\NormalTok{((mu}\OperatorTok{+}\NormalTok{delta}\OperatorTok{*}\NormalTok{xi)}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{  K=}\DecValTok{2}\OperatorTok{*}\NormalTok{(mu}\OperatorTok{+}\NormalTok{delta}\OperatorTok{*}\NormalTok{xi)}\OperatorTok{*}\KeywordTok{exp}\NormalTok{((}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{mu}\OperatorTok{^}\DecValTok{2}\OperatorTok{-}\DecValTok{4}\OperatorTok{*}\NormalTok{mu}\OperatorTok{*}\NormalTok{delta}\OperatorTok{*}\NormalTok{xi)}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\NormalTok{delta}\OperatorTok{^}\DecValTok{2}\NormalTok{)) }\OperatorTok{+}\NormalTok{(mu}\OperatorTok{+}\NormalTok{delta}\OperatorTok{*}\NormalTok{xi)}\OperatorTok{^}\DecValTok{2}\OperatorTok{*}\KeywordTok{exp}\NormalTok{((}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{mu}\OperatorTok{^}\DecValTok{2}\OperatorTok{-}\DecValTok{4}\OperatorTok{*}\NormalTok{mu}\OperatorTok{*}\NormalTok{delta}\OperatorTok{*}\NormalTok{xi)}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\NormalTok{delta}\OperatorTok{^}\DecValTok{2}\NormalTok{))}\OperatorTok{*}\NormalTok{(}\OperatorTok{-}\DecValTok{4}\OperatorTok{*}\NormalTok{mu}\OperatorTok{-}\DecValTok{4}\OperatorTok{*}\NormalTok{mu}\OperatorTok{*}\NormalTok{delta}\OperatorTok{*}\NormalTok{xi)}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\NormalTok{delta}\OperatorTok{^}\DecValTok{2}\NormalTok{)}
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    K=}\DecValTok{0}
+\NormalTok{  \}}
+  \KeywordTok{return}\NormalTok{(K)}
+  
+\NormalTok{\}}
+
+
+\NormalTok{mu_esti<-}\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}\OperatorTok{*}\DecValTok{6}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  xi=}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+  
+  
+\NormalTok{  mu_esti=mu_esti}\OperatorTok{-}\NormalTok{(}\DecValTok{1}\OperatorTok{/}\NormalTok{(i))}\OperatorTok{*}\KeywordTok{K}\NormalTok{(mu,}\DecValTok{1}\NormalTok{,xi)}
+  
+\NormalTok{\}}
+
+\NormalTok{mu_esti}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5.33372
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Pour N = 1, . . . , 10000, tracez la fonction N,Comparez avec les
+  résultats obtenus pour μ = 0 et μ = 2.5.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p_x3<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{,mu_esti,}\DecValTok{1}\NormalTok{)}
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  mu<-mu_esti}
+  \ControlFlowTok{if}\NormalTok{(p_x3[i]}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{  p_x3[i]=}\KeywordTok{exp}\NormalTok{(mu}\OperatorTok{*}\NormalTok{(mu}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x3[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    p_x3[i]=}\DecValTok{0}
+\NormalTok{  \}}
+
+\NormalTok{\}}
+
+\NormalTok{Z_p3=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Z_p3=}\KeywordTok{c}\NormalTok{(Z_p3,}\KeywordTok{mean}\NormalTok{(p_x3[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+\KeywordTok{plot}\NormalTok{(Z_p3,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'green'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{,}\DataTypeTok{main=}\StringTok{"avec mu =la résultat obtenu "}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-15-1.pdf} Je
+pense que la resultât est meilleure que la resultât avec mu = 0, et cest
+simular avec mu = 2.5
+
+\section{5 Pour chacun des cas μ = 0, μ = 2.5, μ = μ∗, déterminer
+numériquement l'entier approximatif N0 à partir duquel l'erreur
+d'estimation est d'ordre 10−2 (au niveau de confiance 95\%). On fera
+croître N par pas de 10 pour atteindre le critère d'erreur
+d'approximation (voir
+cours).}\label{pour-chacun-des-cas--0--2.5---determiner-numeriquement-lentier-approximatif-n0-a-partir-duquel-lerreur-destimation-est-dordre-102-au-niveau-de-confiance-95.-on-fera-croitre-n-par-pas-de-10-pour-atteindre-le-critere-derreur-dapproximation-voir-cours.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p_x<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{,}\FloatTok{2.5}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  mu<-}\FloatTok{2.5}
+  \ControlFlowTok{if}\NormalTok{(p_x[i]}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{  p_x[i]=}\KeywordTok{exp}\NormalTok{(mu}\OperatorTok{*}\NormalTok{(mu}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    p_x[i]=}\DecValTok{0}
+\NormalTok{  \}}
+
+\NormalTok{\}}
+
+\NormalTok{Z_p=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Z_p=}\KeywordTok{c}\NormalTok{(Z_p,}\KeywordTok{mean}\NormalTok{(p_x[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+
+\NormalTok{p_x2<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  mu<-}\DecValTok{0}
+  \ControlFlowTok{if}\NormalTok{(p_x2[i]}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{  p_x2[i]=}\KeywordTok{exp}\NormalTok{(mu}\OperatorTok{*}\NormalTok{(mu}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x2[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    p_x2[i]=}\DecValTok{0}
+\NormalTok{  \}}
+
+\NormalTok{\}}
+
+\NormalTok{Z_p2=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Z_p2=}\KeywordTok{c}\NormalTok{(Z_p2,}\KeywordTok{mean}\NormalTok{(p_x2[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+\NormalTok{p_x3<-}\KeywordTok{rnorm}\NormalTok{(}\DecValTok{10000}\NormalTok{,mu_esti,}\DecValTok{1}\NormalTok{)}
+\NormalTok{sum<-}\DecValTok{0}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  mu<-mu_esti}
+  \ControlFlowTok{if}\NormalTok{(p_x3[i]}\OperatorTok{>=}\FloatTok{3.5}\NormalTok{)\{}
+\NormalTok{  p_x3[i]=}\KeywordTok{exp}\NormalTok{(mu}\OperatorTok{*}\NormalTok{(mu}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x3[i])}\OperatorTok{/}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\DecValTok{1}\NormalTok{))}
+\NormalTok{  \}}\ControlFlowTok{else}\NormalTok{\{}
+\NormalTok{    p_x3[i]=}\DecValTok{0}
+\NormalTok{  \}}
+
+\NormalTok{\}}
+
+\NormalTok{Z_p3=}\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Z_p3=}\KeywordTok{c}\NormalTok{(Z_p3,}\KeywordTok{mean}\NormalTok{(p_x3[}\DecValTok{1}\OperatorTok{:}\NormalTok{i]))}
+\NormalTok{\}}
+
+
+
+
+
+
+
+
+
+\KeywordTok{plot}\NormalTok{(Z_p,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'blue'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{,}\DataTypeTok{main=}\StringTok{"avec mu =2.5"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Snx=}\DecValTok{0}  
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Snx=Snx}\OperatorTok{+}\NormalTok{p_x[i]}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x[i]}\OperatorTok{*}\NormalTok{Z_p[i]}\OperatorTok{+}\NormalTok{Z_p[i]}\OperatorTok{^}\DecValTok{2}
+\NormalTok{\}}
+\NormalTok{Snx=Snx}\OperatorTok{/}\DecValTok{9999}
+\NormalTok{epsX=c_alpha}\OperatorTok{*}\NormalTok{Snx}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(}\DecValTok{10000}\NormalTok{)}
+
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\NormalTok{Z_p[}\DecValTok{10000}\NormalTok{] }\OperatorTok{+}\NormalTok{epsX,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\NormalTok{Z_p[}\DecValTok{10000}\NormalTok{]}\OperatorTok{-}\NormalTok{epsX,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-16-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(Z_p2,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'red'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{,}\DataTypeTok{main=}\StringTok{"avec mu =0"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Snx2=}\DecValTok{0}  
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Snx2=Snx2}\OperatorTok{+}\NormalTok{p_x2[i]}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x2[i]}\OperatorTok{*}\NormalTok{Z_p2[i]}\OperatorTok{+}\NormalTok{Z_p2[i]}\OperatorTok{^}\DecValTok{2}
+\NormalTok{\}}
+\NormalTok{Snx=Snx}\OperatorTok{/}\DecValTok{9999}
+\NormalTok{epsX2=c_alpha}\OperatorTok{*}\NormalTok{Snx}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(}\DecValTok{10000}\NormalTok{)}
+
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\NormalTok{Z_p2[}\DecValTok{10000}\NormalTok{] }\OperatorTok{+}\NormalTok{epsX2,}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\NormalTok{Z_p2[}\DecValTok{10000}\NormalTok{]}\OperatorTok{-}\NormalTok{epsX2,}\DataTypeTok{col=}\StringTok{"blue"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-16-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(Z_p3,}\DataTypeTok{type=}\StringTok{'line'}\NormalTok{,}\DataTypeTok{col=}\StringTok{'green'}\NormalTok{,}\DataTypeTok{ylab=}\StringTok{""}\NormalTok{,}\DataTypeTok{main=}\StringTok{"avec mu =la résultat obtenu "}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): 绘图种类'line'被缩短成第一个字符
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Snx3=}\DecValTok{0}  
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10000}\NormalTok{)\{}
+\NormalTok{  Snx3=Snx3}\OperatorTok{+}\NormalTok{p_x3[i]}\OperatorTok{^}\DecValTok{2}\OperatorTok{+}\DecValTok{2}\OperatorTok{*}\NormalTok{p_x3[i]}\OperatorTok{*}\NormalTok{Z_p3[i]}\OperatorTok{+}\NormalTok{Z_p3[i]}\OperatorTok{^}\DecValTok{2}
+\NormalTok{\}}
+\NormalTok{Snx=Snx}\OperatorTok{/}\DecValTok{9999}
+\NormalTok{epsX3=c_alpha}\OperatorTok{*}\NormalTok{Snx}\OperatorTok{/}\KeywordTok{sqrt}\NormalTok{(}\DecValTok{10000}\NormalTok{)}
+
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\NormalTok{Z_p3[}\DecValTok{10000}\NormalTok{] }\OperatorTok{+}\NormalTok{epsX3,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{h=}\NormalTok{Z_p3[}\DecValTok{10000}\NormalTok{]}\OperatorTok{-}\NormalTok{epsX3,}\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{G03_4538_files/figure-latex/unnamed-chunk-16-3.pdf}
+
+
+\end{document}

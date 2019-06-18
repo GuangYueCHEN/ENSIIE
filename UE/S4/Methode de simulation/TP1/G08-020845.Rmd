@@ -378,4 +378,21 @@ plot14
 
 On constate bien que les densités empiriques simulées correspondent bien aux densités théoriques.
 
+```{r}
+ab <- -6
+current = ab + 1/1000
+for(i in 1:9999) {
+  ab <- c(ab, current)
+  current = current + 1.2/1000
+}
 
+y1 <- vector("numeric", 10000)
+for (i in 1:10000) {
+  y1[i] = mvdnorm(ab[i],mean=0,sd=1) 
+}
+
+DF9 <- data.frame(ab,y1)
+plot9 <- ggplot(DF9,aes(x = DF9$ab,y=DF9$y1)) + 
+  geom_point() + xlab("x") + ylab("f(x)")
+plot9
+```

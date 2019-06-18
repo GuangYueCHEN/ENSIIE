@@ -1,0 +1,493 @@
+
+```{r, include=TRUE}
+
+# H2O Random Forest Starter Script
+# Based on Ben Hamner script from Springleaf
+# https://www.kaggle.com/benhamner/springleaf-marketing-response/random-forest-example
+# Forked from Random Forest Example by Michael Pawlus
+
+# Use data.table and H2O to create random forest predictions for the entire
+#   training set.
+# This is a starter script so it mostly uses the provided fields, as is.
+# A log transform has been applied to the Sales, year and month are used,
+#  and the Store ID is used as a factor.
+# Vesion 18 does not remove the 0 readings, which does help, since we are not judged
+#  on those entries. The model found "Open" to be the most important feature,
+#  which makes sense, since Sales are 0 when the store is not open. However, 
+#  since observations with 0 Sales are discarded by Kaggle upon judging, it
+#  is a better strategy to remove them, as Michael's original script does.
+#   And version 19/20 started removing the 0 records for 0.004 improvement. 
+# To make the benchmark a little more competitive, this has more and deeper 
+#  trees than the original. If you want to see it run faster, you can lower those
+#  settings while you work through some other parts of the model, and increase them
+#  later.
+# Also, the h2o.gbm() has many shared parameters, so you can try that out as well,
+#  and these parameters will work (though you probably don't want depth 30 for GBM).
+# And to add variety, you can try out h2o.glm(), a regularized GLM, or 
+#  h2o.deeplearning(), for deep neural networks. This code will work for either with
+#  the exception of the ntrees, max_depth, and nbins_cats, which are decision tree
+#  parameters.
+# Good luck!
+
+library(data.table)  
+library(h2o)
+
+cat("reading the train and test data (with data.table) \n")
+train <- fread("./rossmann-store-sales/train.csv",stringsAsFactors = T)
+test  <- fread("./rossmann-store-sales/test.csv",stringsAsFactors = T)
+store <- fread("./rossmann-store-sales/store.csv",stringsAsFactors = T)
+train <- train[Sales > 0,]  ## We are not judged on 0 sales records in test set
+    ## See Scripts discussion from 10/8 for more explanation.
+train <- merge(train,store,by="Store",all.x=TRUE)
+test <- merge(test,store,by="Store",all.x=TRUE)
+
+cat("train data column names and details\n")
+summary(train)
+cat("test data column names and details\n")
+summary(test)
+
+## more care should be taken to ensure the dates of test can be projected from train
+## decision trees do not project well, so you will want to have some strategy here, if using the dates
+train[,Date:=as.Date(Date)]
+test[,Date:=as.Date(Date)]
+
+# seperating out the elements of the date column for the train set
+train[,month:=as.integer(format(Date, "%m"))]
+train[,year:=as.integer(format(Date, "%y"))]
+train[,Store:=as.factor(as.numeric(Store))]
+
+test[,month:=as.integer(format(Date, "%m"))]
+test[,year:=as.integer(format(Date, "%y"))]
+test[,Store:=as.factor(as.numeric(Store))]
+
+
+
+#is.na( DataSet$CompetitionOpenSinceMonth)&is.na( DataSet$CompetitionOpenSinceYear)&is.na( DataSet$CompetitionDistance)
+
+
+#For any store which doesn’t has competitor (competitor==1), we assign CompetitionDistance as a large number 100000. 
+train$CompetitionDistance[is.na( train$CompetitionOpenSinceMonth)&is.na( train$CompetitionOpenSinceYear)&is.na( train$CompetitionDistance)] <- 100000
+
+#Impute miss value for CompetitionOpenSinceMonth and CompetitionOpenSinceYear by "na.roughfix"
+train$CompetitionOpenSinceMonth<-na.roughfix(train$CompetitionOpenSinceMonth)
+train$CompetitionOpenSinceYear<-na.roughfix(train$CompetitionOpenSinceYear)
+
+condition1<-train$year<train$CompetitionOpenSinceYear
+condition2<-train$month<train$CompetitionOpenSinceMonth
+train$CompetitionDistance[condition1&condition2] <- 100000
+
+test$CompetitionDistance[is.na( test$CompetitionOpenSinceMonth)&is.na( test$CompetitionOpenSinceYear)&is.na( test$CompetitionDistance)] <- 100000
+
+#Impute miss value for CompetitionOpenSinceMonth and CompetitionOpenSinceYear by "na.roughfix"
+test$CompetitionOpenSinceMonth<-na.roughfix(test$CompetitionOpenSinceMonth)
+test$CompetitionOpenSinceYear<-na.roughfix(test$CompetitionOpenSinceYear)
+
+condition1<-test$year<test$CompetitionOpenSinceYear
+condition2<-test$month<test$CompetitionOpenSinceMonth
+test$CompetitionDistance[condition1&condition2] <- 100000
+
+
+
+
+
+
+
+## log transformation to not be as sensitive to high sales
+## decent rule of thumb: 
+##     if the data spans an order of magnitude, consider a log transform
+train[,logSales:=log1p(Sales)]
+
+## Use H2O's random forest
+## Start cluster with all available threads
+h2o.init(nthreads=-1,max_mem_size='7G')
+## Load data into cluster from R
+trainHex<-as.h2o(train)
+## Set up variable to use all features other than those specified here
+features<-colnames(train)[!(colnames(train) %in% c("Id","Date","Sales","logSales","Customers"))]
+## Train a random forest using all default parameters
+rfHex <- h2o.randomForest(x=features,
+                          y="logSales", 
+                          ntrees = 100,
+                          max_depth = 30,
+                          nbins_cats = 1115,
+                          training_frame=trainHex)
+
+summary(rfHex)
+cat("Predicting Sales\n")
+## Load test data into cluster from R
+testHex<-as.h2o(test)
+
+## Get predictions out; predicts in H2O, as.data.frame gets them into R
+predictions<-as.data.frame(h2o.predict(rfHex,testHex))
+## Return the predictions to the original scale of the Sales data
+pred <- expm1(predictions[,1])
+pred[which(test$Open!=1),] <- 0
+summary(pred)
+submission <- data.frame(Id=test$Id, Sales=pred)
+
+cat("saving the submission file\n")
+write.csv(submission, "h2o_rf.csv",row.names=F)
+```
+###SVM
+```{r}
+
+
+TrainSize <- dim(DataSet)[1]
+TrainIndex <- sample(1:n, size = TrainSize)
+
+NewDataset<- DataSet[TrainIndex,]
+
+n <- dim(NewDataset)[1]
+
+NewTrainSize <- round(n*.7)
+NewTrainIndex <- sample(1:n, size = NewTrainSize)
+NewTrain <-  NewDataset[NewTrainIndex,]
+NewTest <-  NewDataset[-NewTrainIndex,]
+NewTrain <-subset.data.frame(NewTrain,select = -c(week,Store,Open))
+NewTest <- subset.data.frame(NewTest,select = -c(week,Store,Open))
+NewTrain$StateHoliday <-as.numeric(NewTrain$StateHoliday) 
+NewTrain$Assortment <-as.numeric(NewTrain$Assortment) 
+NewTrain$StoreType <-as.numeric(NewTrain$StoreType) 
+NewTest$StateHoliday <-as.numeric(NewTest$StateHoliday) 
+NewTest$Assortment <-as.numeric(NewTest$Assortment) 
+NewTest$StoreType <-as.numeric(NewTest$StoreType) 
+```
+
+```{r}
+library(e1071)
+library(MLmetrics)
+
+svm_test <- function(x,y,z1,z2){
+   type <- c('eps-regression','nu-regression')
+   kernel <- c('linear','polynomial','radial','sigmoid')
+   pred <- array(0, dim=c(nrow(x),2,4))
+   rmspe <- matrix(0,2,4)
+   dimnames(rmspe) <- list(type, kernel)
+   for(i in 1:2){
+     for(j in 1:4){
+       pred <- predict(object = svm(x,z1, type = type[i], kernel = kernel[j]), newdata = y)
+       rmspe[i,j] <-  RMSPE(pred,z2)
+       }
+     }
+   return(rmspe)
+   }
+
+
+svm_test(NewTrain[,-4],NewTest[,-4],NewTrain$Sales,NewTest$Sales)
+
+#we can see that with Kernel of 'radial' and the type of 'eps-regression',the model permance better
+
+
+```
+```{r}
+#then chose the Arguments
+#the parameter nu is an upper bound on the fraction of margin errors and a lower bound of the fraction of support vectors relative to the total number of training examples. For example, if you set it to 0.05 you are guaranteed to find at most 5% of your training examples being misclassified (at the cost of a small margin, though) and at least 5% of your training examples being support vectors.
+tune.svm(Sales~ .,data= NewTest,kernel='radial',type='eps-regression',  gamma = seq(0.005,5,0.5),cost=seq(0.5,5,0.5))
+
+#gamma=0.01,C=3
+```
+
+```{r}
+
+svm_model <- svm(NewTrain[,-4], NewTrain$Sales ,type='eps-regression',kernel='radial',gamma=0.05,cost=2)
+
+pre_svm<-predict(svm_model,NewTrain[,-4])
+cat("RMPSE Train =", RMSPE(pre_svm,NewTrain$Sales))
+
+pre_svm<-predict(svm_model,NewTest[,-4])
+cat("\nRMPSE Test =", RMSPE(pre_svm,NewTest$Sales))
+```
+
+---
+title: "Test"
+author: "LI _Ziheng"
+date: "2019/3/5"
+output: html_document
+---
+
+```{r , include=TRUE}
+library(mltools)
+
+library(dplyr)#for left join
+
+library(randomForest)
+
+library(h2o)
+library(MLmetrics)
+```
+
+
+```{r, include=TRUE}
+train <- read.csv(file = './rossmann-store-sales/train.csv', header = TRUE)
+store <- read.csv(file = './rossmann-store-sales/store.csv', header = TRUE)
+```
+
+
+```{r, include=TRUE}
+
+#left join
+data <- left_join(train, store, by = c("Store" = "Store"))
+# remove the attributes: "Customers"
+data
+DataSet <- data[,-c(5)]
+```
+
+```{r}
+#先注释
+week<- lubridate::week(DataSet$Date)
+month<-lubridate::month(DataSet$Date)
+year<-lubridate::year(DataSet$Date)
+```
+
+```{r}
+#remove the colomn Date, and add year, month, week.
+DataSet
+DataSet<-cbind(DataSet[,1:2],year,month,week,DataSet[,4:ncol(DataSet)])
+```
+
+```{r}
+
+#is.na( DataSet$CompetitionOpenSinceMonth)&is.na( DataSet$CompetitionOpenSinceYear)&is.na( DataSet$CompetitionDistance)
+
+
+#For any store which doesn’t has competitor (competitor==1), we assign CompetitionDistance as a large number 100000. 
+DataSet$CompetitionDistance[is.na( DataSet$CompetitionOpenSinceMonth)&is.na( DataSet$CompetitionOpenSinceYear)&is.na( DataSet$CompetitionDistance)] <- 100000
+
+#Impute miss value for CompetitionOpenSinceMonth and CompetitionOpenSinceYear by "na.roughfix"
+DataSet$CompetitionOpenSinceMonth<-na.roughfix(DataSet$CompetitionOpenSinceMonth)
+DataSet$CompetitionOpenSinceYear<-na.roughfix(DataSet$CompetitionOpenSinceYear)
+
+condition1<-year<DataSet$CompetitionOpenSinceYear
+condition2<-month<DataSet$CompetitionOpenSinceMonth
+DataSet$CompetitionDistance[condition1&condition2] <- 100000
+
+
+#remove  CompetitionOpenSinceMonth and CompetitionOpenSinceYear
+ 
+DataSet <- subset.data.frame(DataSet,select =     -c(CompetitionOpenSinceMonth,CompetitionOpenSinceYear))
+
+```
+
+```{r}
+#(DataSet$Promo2==1)&is.na(DataSet$Promo2SinceWeek)&is.na(DataSet$Promo2SinceYear)
+#(DataSet$Promo2==1)&is.na(DataSet$PromoInterval)
+
+#Combine Promo2, Promo2SinceWeek, Promo2SinceYear and Promointerval to a promotion 2 indicator in historical sales data. The indicator indicates on a certain day whether a certain store is on promotion 2.
+
+condition3<-year<DataSet$Promo2SinceYear
+condition4<-week<DataSet$Promo2SinceWeek
+condition5<-DataSet$Promo2==1
+#将日期在promo2开始之前的设为0
+#for test sum( DataSet$Promo2[condition3&condition4&condition5])=190000
+DataSet$Promo2[condition3&condition4&condition5]<-0
+#for test sum( DataSet$Promo2[condition3&condition4&condition5])=0
+
+```
+
+
+```{r}
+#promoInterval 
+in_1_4_7_10<-DataSet$PromoInterval=='Jan,Apr,Jul,Oct'
+in_2_5_8_11<-DataSet$PromoInterval=='Feb,May,Aug,Nov'
+in_3_6_9_12<-DataSet$PromoInterval=='Mar,Jun,Sept,Dec'
+#promo2 is 1, and month in PromoInterval
+DataSet$Promo2[condition5&!(DataSet$month %in% c(1,4,7,10))&in_1_4_7_10]<-0
+DataSet$Promo2[condition5&!(DataSet$month %in% c(2,5,8,11))&in_2_5_8_11]<-0
+DataSet$Promo2[condition5&!(DataSet$month %in% c(3,6,9,12))&in_3_6_9_12]<-0
+DataSet
+```
+
+```{r, include=TRUE}
+
+#remove Store, week, Promo2Sinceweek   Promo2Since year   PromoInterval
+#DataSet <- DataSet[,-c(1,5,14,15,16)]
+
+
+#remove  Promo2Sinceweek   Promo2Since year   PromoInterval
+
+DataSet <- subset.data.frame(DataSet,select =-c(Promo2SinceWeek,Promo2SinceYear,PromoInterval))
+
+DataSet<-DataSet[DataSet$Sales>0,]
+#DataSet <- na.omit(DataSet)
+
+```
+
+
+
+
+```{r, include=TRUE}
+#library(data.table)
+#library(mltools)
+#We dont need to one hot cause it will decrease the performance of RandomF
+#DataSet$DayOfWeek <- as.factor(DataSet$DayOfWeek)
+#DataSet$year <- as.factor(DataSet$year)
+##DataSet$month <- as.factor(DataSet$month)
+#DataSet <- one_hot(as.data.table(DataSet))
+```
+
+```{r}
+n <- dim(DataSet)[1]
+TrainSize <- round(1*n)
+TrainIndex <- sample(1:n, size = TrainSize)
+
+NewDataset<- DataSet[TrainIndex,]
+
+NewDataset$Store<-as.factor(NewDataset$Store)
+NewDataset$year<-as.factor(NewDataset$year)
+NewDataset$month<-as.factor(NewDataset$month)
+
+
+
+n <- dim(NewDataset)[1]
+
+NewTrainSize <- round(n*.7)
+NewTrainIndex <- sample(1:n, size = NewTrainSize)
+NewTrain <-  NewDataset[NewTrainIndex,]
+NewTest <-  NewDataset[-NewTrainIndex,]
+
+```
+
+```{r, include=TRUE}
+
+
+
+h2o.init(nthreads = -1,min_mem_size = "20G")
+NewTrain$Sales = log1p(NewTrain$Sales)
+#把R的数据框转化为H2O.ai可识别的数据格式
+NewTrainHex <- as.h2o(NewTrain)
+
+f <- colnames(subset.data.frame(NewTrain,select = -c(week)))
+
+RF33 <- h2o.randomForest(x=f,y="Sales",
+                           training_frame = NewTrainHex,
+                           ntrees = 120,
+                           max_depth = 30,
+                           min_rows = 2)
+```
+```{r}
+DataSet_test_Test = NewTest
+
+DataSet_test_Test <- subset.data.frame(DataSet_test_Test,select = -c(week))
+
+DataSet_test_TestHex <- as.h2o(DataSet_test_Test)
+pred<-as.data.frame(h2o.predict(RF33,DataSet_test_TestHex)) 
+
+pred[which(NewTest$Open!=1),] <- 0
+
+pred <- expm1(pred[,1])
+cat("\nRMPSE Test =", RMSPE(pred,NewTest$Sales))
+```
+
+
+###test data
+```{r}
+test <- read.csv(file = './rossmann-store-sales/test.csv', header = TRUE)
+data_test <- left_join(test, store, by = c("Store" = "Store"))
+
+#delete Id 
+DataSet_test <- data_test[,-c(1)]
+DataSet_test
+```
+
+```{r}
+#先注释
+
+year_Test<-lubridate::year(DataSet_test$Date)
+week_Test<-lubridate::week(DataSet_test$Date)
+month_Test<-lubridate::month(DataSet_test$Date)
+
+#remove the colomn Date, and we add year, month, week
+
+DataSet_test<-cbind(DataSet_test[,1:2],year_Test,month_Test,week_Test,DataSet_test[,4:ncol(DataSet_test)])
+
+
+#is.na( DataSet$CompetitionOpenSinceMonth)&is.na( DataSet$CompetitionOpenSinceYear)&is.na( DataSet$CompetitionDistance)
+
+#For any store which doesn’t has competitor (competitor==1), we assign CompetitionDistance as a large number 100000. 
+DataSet_test$CompetitionDistance[is.na(DataSet_test$CompetitionOpenSinceMonth)&is.na(DataSet_test$CompetitionOpenSinceYear)&is.na( DataSet_test$CompetitionDistance)] <- 100000
+
+#Impute miss value for CompetitionOpenSinceMonth and CompetitionOpenSinceYear by "na.roughfix"
+DataSet_test$CompetitionOpenSinceMonth<-na.roughfix(DataSet_test$CompetitionOpenSinceMonth)
+DataSet_test$CompetitionOpenSinceYear<-na.roughfix(DataSet_test$CompetitionOpenSinceYear)
+
+condition1<-year_Test<DataSet_test$CompetitionOpenSinceYear
+condition2<-month_Test<DataSet_test$CompetitionOpenSinceMonth
+DataSet_test$CompetitionDistance[condition1&condition2] <- 100000
+
+
+#remove  CompetitionOpenSinceMonth and CompetitionOpenSinceYear
+
+
+DataSet_test <- subset.data.frame(DataSet_test,select =     -c(CompetitionOpenSinceMonth,CompetitionOpenSinceYear))
+
+
+#(DataSet$Promo2==1)&is.na(DataSet$Promo2SinceWeek)&is.na(DataSet$Promo2SinceYear)
+#(DataSet$Promo2==1)&is.na(DataSet$PromoInterval)
+
+#Combine Promo2, Promo2SinceWeek, Promo2SinceYear and Promointerval to a promotion 2 indicator in historical sales data. The indicator indicates on a certain day whether a certain store is on promotion 2.
+
+condition3<-year_Test<DataSet_test$Promo2SinceYear
+condition4<-week_Test<DataSet_test$Promo2SinceWeek
+condition5<-DataSet_test$Promo2==1
+#将日期在promo2开始之前的设为0
+#for test sum( DataSet$Promo2[condition3&condition4&condition5])=190000
+DataSet_test$Promo2[condition3&condition4&condition5]<-0
+#for test sum( DataSet$Promo2[condition3&condition4&condition5])=0
+
+
+#promoInterval 
+in_1_4_7_10<-DataSet_test$PromoInterval=='Jan,Apr,Jul,Oct'
+in_2_5_8_11<-DataSet_test$PromoInterval=='Feb,May,Aug,Nov'
+in_3_6_9_12<-DataSet_test$PromoInterval=='Mar,Jun,Sept,Dec'
+#promo2 is 1, and month in PromoInterval
+DataSet_test$Promo2[condition5&!(DataSet_test$month_Test %in% c(1,4,7,10))&in_1_4_7_10]<-0
+DataSet_test$Promo2[condition5&!(DataSet_test$month_Test %in% c(2,5,8,11))&in_2_5_8_11]<-0
+DataSet_test$Promo2[condition5&!(DataSet_test$month_Test %in% c(3,6,9,12))&in_3_6_9_12]<-0
+
+
+#remove  Promo2Sinceweek   Promo2Since year   PromoInterval
+
+
+DataSet_test <- subset.data.frame(DataSet_test,select =     -c(Promo2SinceWeek,Promo2SinceYear,PromoInterval))
+
+
+
+names(DataSet_test)[3] <- "year"
+names(DataSet_test)[4] <- "month"
+names(DataSet_test)[5] <- "week"
+
+
+DataSet
+DataSet_test
+```
+
+
+
+```{r, include=TRUE}
+
+DataSet_test_Test = DataSet_test
+
+DataSet_test_Test <- subset.data.frame(DataSet_test_Test,select = -c(Assortment,StoreType,week,Promo2))
+
+DataSet_test_TestHex <- as.h2o(DataSet_test_Test)
+pred<-as.data.frame(h2o.predict(RF33,DataSet_test_TestHex)) 
+
+pred[which(data_test$Open!=1),] <- 0
+
+pred <- expm1(pred[,1])
+pred<-na.roughfix(pred)
+#pred<-as.data.frame(cbind(seq(1,length(pred),1),pred))
+
+pred <- data.frame(Id=data_test$Id,Sales=pred)
+
+
+write.csv(pred,file = "res.csv")
+
+```
+
+
+
+```{r, include=TRUE}
+lubridate::year(DataSet_test$Date)
+
+```

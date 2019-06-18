@@ -1,0 +1,15 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}\textbf {Methodology}}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Linear Model}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}\textbf {SVM}}{2}{subsection.1.2}
+\contentsline {subsubsection}{\numberline {1.2.1}Kernels and Type selection:}{2}{subsubsection.1.2.1}
+\contentsline {subsubsection}{\numberline {1.2.2}Parameter Choosing:}{2}{subsubsection.1.2.2}
+\contentsline {subsubsection}{\numberline {1.2.3}Result:}{2}{subsubsection.1.2.3}
+\contentsline {subsection}{\numberline {1.3}Random Forest and H2o}{3}{subsection.1.3}
+\contentsline {subsubsection}{\numberline {1.3.1}Random Forest:}{3}{subsubsection.1.3.1}
+\contentsline {subsubsection}{\numberline {1.3.2}H2o Random Forest:}{3}{subsubsection.1.3.2}
+\contentsline {subsubsection}{\numberline {1.3.3}Parameter Choosing:}{3}{subsubsection.1.3.3}
+\contentsline {subsubsection}{\numberline {1.3.4}Feature Selection:}{3}{subsubsection.1.3.4}
+\contentsline {subsubsection}{\numberline {1.3.5}Result:}{4}{subsubsection.1.3.5}
+\contentsline {section}{\numberline {2}\textbf {Conclusion}}{5}{section.2}
+\contentsline {section}{\numberline {3}\textbf {Reference}}{5}{section.3}

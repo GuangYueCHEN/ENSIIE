@@ -1,0 +1,582 @@
+---
+title: "Examen methode simulation"
+author: "Guangyue"
+output:
+  html_document:
+    df_print: paged
+header-includes: \usepackage{dsfont}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(mvtnorm)
+```
+
+#Exerccise 1
+###Q1
+la simulation de X
+```{r}
+#simuler un seal valeur de X
+simul<-function(){
+  X=c(-0.5,-1,1.5,2)
+  P=c(1/4,1/4,1/8,3/8)
+  C<-c(P[1])
+  for (i in 2:4){
+    C<-c(C,C[i-1]+P[i])
+  }
+  k<-1
+  u<-runif(1,0,1)
+  while(u>C[k]){
+    k<-k+1
+  }
+  return (X[k])
+}
+
+
+#simuler n valeurs de X
+create_echantillon<-function(n){
+
+echantillon=c()
+for (i in 1:n){
+  echantillon<-c(echantillon,simul())
+}
+  
+return(echantillon)
+}
+```
+
+```{r}
+TCL <- function(n,simu) {
+  mu<- (-0.5)*1/4-1*1/4+1.5*1/8+2*3/8
+  ex2<-  0.5^2*1/4+1*1/4+1.5^2*1/8+2^2*3/8
+  sigma<-ex2-mu^2
+  Xn <- sum(simu) / n
+  return((sqrt(n)*(Xn-mu))/(sigma))
+}
+```
+
+
+
+```{r}
+echan_Zn<-function(n,N){
+  Z<-TCL(n,create_echantillon(n))
+  N=N-1
+  for(i in 1:N){
+  
+Z<-c(Z,TCL(n,create_echantillon(n)))
+
+  }
+  return(Z)
+
+  
+}
+```
+for Zn n=10 N=10
+```{r}
+Z1<-echan_Zn(n=10,N=10)
+Z1
+```
+for Zn n=30 N=10
+```{r}
+Z2<-echan_Zn(n=30,N=10)
+Z2
+```
+for Zn n=40 N=10
+```{r}
+Z3<-echan_Zn(n=40,N=10)
+Z3
+```
+
+###Q2N= 10000
+for Zn n=10 N=10000
+```{r}
+Z1<-echan_Zn(n=10,N=100000)
+
+```
+for Zn n=30 N=10000
+```{r}
+Z2<-echan_Zn(n=30,N=100000)
+
+```
+for Zn n=40 N=10000
+```{r}
+Z3<-echan_Zn(n=40,N=100000)
+
+```
+
+density
+```{r}
+ab <- -4
+current = ab + 1/10000
+for(i in 1:99999) {
+  ab <- c(ab, current)
+  current = current + 1/10000
+}
+
+y <- vector("numeric", 100000)
+density <- function(x) {
+  return((exp((-x*x)/2))/(sqrt(2*3.14)))
+}
+for (i in 1:100000) {
+  y[i] = density(ab[i])
+}
+```
+
+graph pour n=10 
+```{r}
+DF1 <- data.frame(Z1,y)
+plot1 <- ggplot(DF1,aes(x=DF1$Z1)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF1$y)) + xlab("Variable Zn simulée") 
+plot1
+```
+
+
+graph pour n=30 
+```{r}
+DF2 <- data.frame(Z2,y)
+plot2 <- ggplot(DF2,aes(x=DF2$Z2)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF2$y)) + xlab("Variable Zn simulée") 
+plot2
+```
+
+graph pour n=40 
+```{r}
+DF3 <- data.frame(Z3,y)
+plot3 <- ggplot(DF3,aes(x=DF3$Z3)) + 
+  geom_histogram(aes(y=..density..),fill = "red", alpha = 0.2) + 
+  geom_line(aes(x=ab, y=DF3$y)) + xlab("Variable Zn simulée") 
+plot3
+```
+
+
+###Q3 commenter les graphic
+We find that, with the bigger value 'n', the graph which we get is more simular with the density of normal distribution.
+
+
+
+#Exercise 2
+###Q1
+choisir les sigma_ij
+
+for p=0.05,$\sigma_{11}=0$,$\sigma_{12}=20$,$\sigma_{21}=20$,$\sigma_{22}=1$
+
+
+Pour p=0.5,$\sigma_{11}=1$,$\sigma_{12}=3$,$\sigma_{21}=5$,$\sigma_{22}=1$
+
+
+Pour p=0.95,$\sigma_{11}=1$,$\sigma_{12}=1/0.225$,$\sigma_{21}=0.6$,$\sigma_{22}=1$
+
+
+###Q2 representer le graph
+
+Pour p=0.05
+
+```{r}
+sigma11 <- 0
+sigma12 <- 20
+sigma21 <- 20
+sigma22 <- 1
+
+sigma1 <- sqrt(sigma11*sigma11 + sigma12*sigma12)
+sigma2 <- sqrt(sigma21*sigma21 + sigma22*sigma22)
+
+Z1 <- sigma11*y + sigma12 *y
+Z2 <- sigma21 * y + sigma22 * y
+
+z=Z1^2/sigma1^2-2*0.05*Z2*Z1/sigma1/sigma2+Z2^2/sigma2^2
+
+f<-1/(2*pi*sigma1*sigma2*sqrt(1-0.05^2))*exp(-z/2/(1-0.05^2))
+plot(f,type='l')
+
+```
+
+
+
+###Q3
+En déduire une simulation de N = 10 réalisations indépendantes de la loi gaussienne Z = (X1,X2) 
+
+```{r}
+R <- rexp(1,rate=0.5)
+THETA <- runif(1,0,2*3.14)
+
+for (i in 1:9) {
+  R <- c(R,rexp(1,rate=0.5))
+  THETA <- c(THETA,runif(1,0,2*3.14))
+}
+
+X1 = vector("numeric",10)
+X2 = vector("numeric",10)
+
+for (i in 1:10) {
+  X1[i] = R[i] * cos(THETA[i])
+  X2[i] = R[i] * sin(THETA[i])
+}
+
+
+```
+
+
+Pour p=0.05
+
+```{r}
+sigma11 <- 0
+sigma12 <- 20
+sigma21 <- 20
+sigma22 <- 1
+
+sigma1 <- sqrt(sigma11*sigma11 + sigma12*sigma12)
+sigma2 <- sqrt(sigma21*sigma21 + sigma22*sigma22)
+
+Z1 <- sigma11*X1 + sigma12 * X2
+Z2 <- sigma21 * X1 + sigma22 * X2
+
+data.frame(Z1,Z2)
+
+```
+
+Pour p=0.5
+
+```{r}
+sigma11 <- 1
+sigma12 <- 3
+sigma21 <- 5
+sigma22 <- 1
+
+sigma1 <- sqrt(sigma11*sigma11 + sigma12*sigma12)
+sigma2 <- sqrt(sigma21*sigma21 + sigma22*sigma22)
+
+Z1 <- sigma11*X1 + sigma12 * X2
+Z2 <- sigma21 * X1 + sigma22 * X2
+
+data.frame(Z1,Z2)
+
+```
+
+Pour p=0.95
+
+```{r}
+sigma11 <- 1
+sigma12 <- 1/0.225
+sigma21 <- 0.6
+sigma22 <- 1
+
+sigma1 <- sqrt(sigma11*sigma11 + sigma12*sigma12)
+sigma2 <- sqrt(sigma21*sigma21 + sigma22*sigma22)
+
+Z1 <- sigma11*X1 + sigma12 * X2
+Z2 <- sigma21 * X1 + sigma22 * X2
+
+data.frame(Z1,Z2)
+
+```
+
+###Q4
+En déduire une simulation de N = 1000 réalisations indépendantes de la loi gaussienne Z = (X1,X2) et représenter les points générés sur R2
+```{r}
+R <- rexp(1,rate=0.5)
+THETA <- runif(1,0,2*3.14)
+
+for (i in 1:999) {
+  R <- c(R,rexp(1,rate=0.5))
+  THETA <- c(THETA,runif(1,0,2*3.14))
+}
+
+X1 = vector("numeric",1000)
+X2 = vector("numeric",1000)
+
+for (i in 1:1000) {
+  X1[i] = R[i] * cos(THETA[i])
+  X2[i] = R[i] * sin(THETA[i])
+}
+
+DF4 <- data.frame(X1,X2)
+plot4 <- ggplot(DF4,aes(x = DF4$X1,y=DF4$X2)) + geom_point() + xlab("X1") + ylab("X2")
+plot4
+```
+
+
+Pour p=0.05
+
+```{r}
+sigma11 <- 0
+sigma12 <- 20
+sigma21 <- 20
+sigma22 <- 1
+
+sigma1 <- sqrt(sigma11*sigma11 + sigma12*sigma12)
+sigma2 <- sqrt(sigma21*sigma21 + sigma22*sigma22)
+
+Z1 <- sigma11*X1 + sigma12 * X2
+Z2 <- sigma21 * X1 + sigma22 * X2
+
+DF5 <- data.frame(Z1,Z2)
+plot5 <- ggplot(DF5,aes(x = DF5$Z1,y=DF5$Z2)) + geom_point() + xlab("Z1") + ylab("Z2")
+plot5
+```
+
+Pour p=0.5
+
+```{r}
+sigma11 <- 1
+sigma12 <- 3
+sigma21 <- 5
+sigma22 <- 1
+
+
+sigma1 <- sqrt(sigma11*sigma11 + sigma12*sigma12)
+sigma2 <- sqrt(sigma21*sigma21 + sigma22*sigma22)
+
+Z1 <- sigma11*X1 + sigma12 * X2
+Z2 <- sigma21 * X1 + sigma22 * X2
+
+DF6 <- data.frame(Z1,Z2)
+plot6 <- ggplot(DF6,aes(x = DF6$Z1,y=DF6$Z2)) + geom_point() + xlab("Z1") + ylab("Z2")
+plot6
+```
+
+
+Pour p=0.95
+
+```{r}
+sigma11 <- 1
+sigma12 <- 1/0.225
+sigma21 <- 0.6
+sigma22 <- 1
+
+sigma1 <- sqrt(sigma11*sigma11 + sigma12*sigma12)
+sigma2 <- sqrt(sigma21*sigma21 + sigma22*sigma22)
+
+Z1 <- sigma11*X1 + sigma12 * X2
+Z2 <- sigma21 * X1 + sigma22 * X2
+
+DF7 <- data.frame(Z1,Z2)
+plot7 <- ggplot(DF7,aes(x = DF7$Z1,y=DF7$Z2)) + geom_point() + xlab("Z1") + ylab("Z2")
+plot7
+```
+we find that with the biggervalue 'p', the gragh is more inclining to one side.
+
+###Q5
+```{r}
+Sigma <- matrix(c(1,1/0.225,0.5,1),2,2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Exercise 3
+###Q1
+$$
+\begin{aligned}
+E(Y)&=E(X)=1=\sum_{Y\subset{1,0,-1}}Y*P(Y)\\
+&=6*c+(-6)*(1-c-\frac{1}{3})+0*\frac{1}{3}=1\\
+c&=\frac{5}{12}
+\end{aligned}
+$$
+Donc on $P(Y=6)=\frac{5}{12}$ et $P(Y=-6)=\frac{1}{4}$
+
+###Q2
+$$
+\begin{aligned}
+E(Y^2)&=\sum_{Y\subset{1,0,-1}}Y^2*P(Y)\\
+&=6^2*\frac{5}{12}+(-6)^2*\frac{1}{4}+0*\frac{1}{3}=24\\
+Var(Y)&=E(Y^2)-(E(Y))^2\\
+&=24-1^2\\
+&=23
+\end{aligned}
+$$
+
+
+###Q3
+
+```{r}
+simuY<-function(){
+  Y=c(-6,0,6)
+  P=c(1/4,1/3,5/12)
+  C<-c(P[1])
+ C<-c(C,C[1]+P[2])
+  C<-c(C,1)
+  k<-1
+  u<-runif(1,0,1)
+  while(u>C[k]){
+    k<-k+1
+  }
+  return (Y[k])
+}
+
+N=1000
+echantillonY=c()
+for (i in 1:1000){
+  echantillonY<-c(echantillonY,simuY())
+}
+
+
+dat <- data.frame(echantillonY)
+plot8 <- ggplot(dat,aes(x=dat$echantillonY)) + geom_histogram(fill = "darkorchid", alpha = 0.2) + xlab("Echantillon")
+plot8
+```
+```{r}
+simuX<-function(){
+  X=c(-6,0,6)
+  P=c(1/3,1/6,1/2)
+  C<-c(P[1])
+    C<-c(C,C[1]+P[2])
+C<-c(C,C[2]+P[3])
+
+  k<-1
+  u<-runif(1,0,1)
+  while(u>C[k]){
+    k<-k+1
+  }
+  return (X[k])
+}
+N=1000
+echantillonX=c()
+for (i in 1:1000){
+  echantillonX<-c(echantillonX,simuX())
+}
+
+
+dat2 <- data.frame(echantillonX)
+plot8 <- ggplot(dat2,aes(x=dat2$echantillonX))+ geom_histogram(fill = "darkorchid", alpha = 0.2) + xlab("Echantillon")
+plot8
+```
+```{r,warning=FALSE}
+Z_x=c()
+for(i in 1:1000){
+  Z_x=c(Z_x,mean(echantillonX[1:i]))
+}
+Z_y=c()
+for(i in 1:1000){
+  Z_y=c(Z_y,mean(echantillonY[1:i]))
+}
+
+
+plot(Z_y,type='line',col='red',ylab="")
+par(new=TRUE) 
+plot(Z_x,type='line',col='blue',ylab="")
+```
+On trouve que les deux graphe converge a 1
+###Q4
+```{r,warning=FALSE}
+alpha=0.05
+c_alpha=qnorm(1-alpha/2)
+
+Sny=0  
+for(i in 1:1000){
+    si=0
+  for(j in 1:i){
+  si=si+echantillonY[j]^2-2*echantillonY[j]*Z_y[i]+Z_y[i]^2
+  
+}
+  si=si/999
+  Sny=Sny+si
+}
+Sny=Sny/999
+epsY=c_alpha*Sny/sqrt(N)
+plot(Z_y,ylim=c(-6,6),type='line',col='blue',ylab="",main=" la moyenne empirique de Y avec confiance")
+
+abline(h=1 +epsY)
+abline(h=1-epsY)
+```
+
+```{r,warning=FALSE}
+alpha=0.05
+c_alpha=qnorm(1-alpha/2)
+
+Snx=0  
+
+for(i in 1:1000){
+  si=0
+  for(j in 1:i){
+  si=si+echantillonX[j]^2-2*echantillonX[j]*Z_x[i]+Z_x[i]^2
+  }
+  si=si/999
+  Snx=Snx+si
+}
+Snx=Snx/999
+epsX=c_alpha*Snx/sqrt(N)
+plot(Z_x,ylim=c(-6,6),type='line',col='red',ylab="",main=" la moyenne empirique de X avec confiance")
+
+abline(h=1 +epsX)
+abline(h=1-epsX)
+```
+From the two graph ,we find that they converge well.
+
+
+#Exercise 4
+
+
+```{r}
+transfer_matrix = t(matrix(c(0.2,0.1,0.5,0.2,
+                           0.1,0.6,0.1,0.2,
+                           0.3,0.1,0.2,0.4,
+                           0.1,0.1,0.1,0.7),4,4))
+
+simu_chain<-function(){
+  X=c(1,2,3,4)
+  P=c(1/4,1/4,1/4)
+  C<-c(P[1])
+    C<-c(C,C[1]+P[2])
+C<-c(C,C[2]+P[3])
+C<-c(C,1)
+  k<-1
+  u<-runif(1,0,1)
+  while(u>C[k]){
+    k<-k+1
+  }
+  return (X[k])
+}
+
+
+chain_initial<-function(n){
+  chain=c()
+for (i in 1:n){
+  chain<-c(chain,simu_chain())
+}
+  return(chain)
+}
+
+
+
+mcmove<-function(Q, n,chain){
+   
+ for(i in 1:n){
+   chain[i]
+ }
+      
+  return (chain)
+}
+chain<-chain_initial(1000)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -56,7 +56,7 @@ for(i in 1:99) {
   Simu1 <- c(Simu1, simu(X1,C1,0.3))
 }
 
-Q1 <- sum(Simu1)/100
+Q1 <- Simu1
 Q1
 ```
 

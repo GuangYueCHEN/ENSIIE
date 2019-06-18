@@ -20,7 +20,7 @@ library(ggplot2)
 #Exercice 1. Loi de Bernoulli
 
 ##2. + 3.
-
+simulation of Loi de Bernoulli
 ```{r}
 simu<-function(p,N){
   B<-vector("numeric",N)
@@ -50,6 +50,7 @@ sum(B)/1000
 B<-simu(0.3,10000)
 sum(B)/10000
 ```
+###Q4
 
 ```{r}
 TCL <- function(n,simu,p) {

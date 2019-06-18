@@ -1,0 +1,114 @@
+\documentclass[a4paper]{article}
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xeCJK} 
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{fontspec, xunicode, xltxtra}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{listings}
+\lstset{numbers=left, numberstyle=\tiny,basicstyle=\small, keywordstyle=\color{blue!70}, commentstyle=\color{red!50!green!50!blue!50}, frame=shadowbox, rulesepcolor=\color{red!20!green!20!blue!20},escapeinside=``, xleftmargin=2em,xrightmargin=2em, aboveskip=1em}
+
+\begin{document}
+% Titlepage & ToC
+\hypersetup{pageanchor=false,
+             bookmarksnumbered=true,
+             pdfencoding=unicode
+            }
+\pagenumbering{roman}
+\begin{titlepage}
+\begin{center}
+Modele AUTO-REGRESSIF 
+\end{center}
+Modele AUTO-REGRESSIF 
+
+\end{titlepage}
+\tableofcontents{\LARGE}
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
+
+
+\newpage
+
+AR(p):
+
+$$ 
+X_t=\alpha_1X_{t-1}+...+\alpha_pX_{t-p}+\epsilon_t 
+$$
+ou
+$\epsilon_t  \sim N(0,\sigma^2)$
+
+
+AR(1):
+$$ 
+X_t=\alpha_1X_{t-1}+\epsilon_t 
+$$
+ou
+$t=1,2,3,....,T$,$X_1=\epsilon_1$,$X2=\alpha_1X_1+\epsilon_2 $...
+$$X_t=\sum_{k=1}^t \alpha^{t-k}_1\epsilon_k $$
+$$E[X_t]=\sum_{k=1}^t \alpha^{t-k}_1 E[\epsilon_k] =0$$
+$$Var[X_t]=Var[\sum_{k=1}^t \alpha^{t-k}_1\epsilon_k] \\
+=\sum_{k=1}^t \alpha^{2t-2k}_1 Var[ \epsilon_k] \\
+=\sigma^2 \sum_{k=1}^t \alpha^{2t-2k}_1$$
+
+Estimation de $\alpha_1$, maximum de Vraisemblance.
+$$X_t=\alpha_1X_{t-1}+\epsilon_t \\
+\epsilon_t=X_t-\alpha_1X_{t-1}$$
+
+$$L(\alpha_1)=\Pi_{t=1}^T \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2\sigma^2}(x_t-\alpha_1x_t-1)^2} \\
+=\frac{1}{\sigma^T (\sqrt{2\pi})^T} e^{-\frac{1}{2\sigma^2} \sum_{t=x}^T(x_t-\alpha_1x_t-1)^2} 
+$$
+$l(\alpha_1)=log(L)$,et $\frac{\partial l}{\partial x}=0$
+
+on obtenir
+$$\hat{\alpha_1}=\frac{\sum_{t=2}^Tx_{t-1}x_t}{\sum_{t=2}^Tx_{t-1}^2}$$
+$$\hat{\sigma}^2=\frac{1}{T}\sum_{t=2}^T(x_t-\hat{\alpha_1}x_{t-1})^2$$
+
+erreur a estimer
+$$\frac{1}{T-1+1}\sum_{t=2}^T(x_t-\hat{\alpha_1}x_{t-1})^2$$
+
+
+
+
+
+
+
+
+
+
+
+
+AR(p):
+$$X_t=\sum_{k=1}^T\alpha_kX_{t-k}+\epsilon_t$$
+$$\epsilon_t=X_t-\sum_{k=1}^T\alpha_kX_{t-k}$$,$\forall k=1,....,p,||$
+
+Parametre du modele
+$\alpha=(\alpha_1,...,\alpha_p)$,
+$$L(\alpha)=\Pi_{t=1}^T\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{1}{2\sigma^2}\epsilon_t^2}=...$$
+$$l(\alpha)=log(l)=-\frac{T}{2}log(\sigma^2)-Tlog(\sqrt{2\pi})-\frac{1}{2\sigma^2}\sum_{t=1}^T(x_t-\sum_{k=1}^p\alpha_kx_{t-k})^2$$
+$\frac{\partial l}{\partial \alpha_1}=0$,$\frac{\partial l}{\partial \alpha_2}=0$,
+donc on a (pour p = 2 )
+$$\sum^{T}_{t=3}x_{t-1}x_t=\alpha_1\sum^{T}_{t=3}x_{t-1}^2+\alpha_2\sum^{T}_{t=3}x_{t-1}x_{t-2}$$
+$$\sum^{T}_{t=3}x_{t-2}x_t=\alpha_1\sum^{T}_{t=3}x_{t-1}x_{t-2}+\alpha_2\sum^{T}_{t=3}x_{t-2}^2$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

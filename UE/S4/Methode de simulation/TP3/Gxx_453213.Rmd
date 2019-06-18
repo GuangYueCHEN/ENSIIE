@@ -1,0 +1,218 @@
+---
+title: "TP3"
+output: html_notebook
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+```{r,include=FALSE}
+rm(list = ls())
+library(ggplot2)
+library(plot3D)
+```
+#Exercice 1
+
+###Q1 Implémentez l’algorithme précédent pour une configuration initiale S fixée.
+
+```{r}
+simu_init<-function(){
+  X=c(-1,1)
+  P=c(0.5,0.5)
+  C<-c(P[1])
+    C<-c(C,C[1]+P[2])
+
+  k<-1
+  u<-runif(1,0,1)
+  while(u>C[k]){
+    k<-k+1
+  }
+  return (X[k])
+}
+
+simu_runif<-function(N){
+  c <- (1/N)
+  P <- rep(c, N)#repeat c for N times
+  C <- vector("numeric", N)
+  C[1] = c
+  for (i in 2:N) {
+    c = c + P[i]
+    C[i] = c
+  }
+  X <- as.numeric(1:N)
+    k <- 1
+  u <- runif(1,0,1)
+  while(u>C[k]) {
+    k <- k+1
+  }
+  return (X[k])
+}
+
+
+
+
+initialstate<-function(N){
+  X<-c()
+  for(i in 1:N^2){
+    X<-c(X,simu_init())
+  }
+  state<-matrix(X,N,N)
+return(state)
+}
+
+
+
+mcmove<-function(S, N,beta){
+   
+                a = simu_runif(N)
+                b =  simu_runif(N)
+                s_x <-  S[a, b]
+                
+                
+                if(a==1){
+                  s1=S[(a+1),b]
+                  s3 =0
+                  
+                }else if(a==60){
+                   s1=0
+                   s3= S[(a-1),b]
+                }else{
+                  s1=S[(a+1),b]
+                  s3= S[(a-1),b]
+                }
+                
+                
+                if(b==1){
+                  s2=S[a,(b+1)] 
+                  s4 =0
+                }else if(b==60){
+                  s2=0
+                  s4= S[a,(b-1)]
+                }else{
+                  s2=S[a,(b+1)] 
+                  s4= S[a,(b-1)]
+                }
+                
+                delta_H = 2*s_x*(s1+s2+s3+s4)
+                u=runif(1,0,1)
+
+               
+                 if( u <= exp(-delta_H*beta) ){
+                   s_x =s_x*(-1)
+                }
+               
+                S[a, b] = s_x
+      
+  return (S)
+}
+
+
+Simulation<-function(S_init,N,beta,times){
+  
+S<-S_init
+
+for(i in 1:times){
+  S<-mcmove(S,N,beta)
+}
+return(S)
+}
+
+```
+
+```{r}
+S_init<-initialstate(60)
+S1=Simulation(S_init,60,0.1,times=1000000)
+S2=Simulation(S_init,60,0.1,times=1000000)
+S3=Simulation(S_init,60,0.1,times=1000000)
+image(S1,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+image(S2,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+image(S3,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+```
+###Q2
+```{r}
+S4=Simulation(S_init,60,10,times=1000000)
+S5=Simulation(S_init,60,10,times=1000000)
+S6=Simulation(S_init,60,10,times=1000000)
+
+image(S4,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+image(S5,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+image(S6,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+```
+###Q3
+
+
+
+###Q4
+
+```{r}
+S_init2<-initialstate(60)
+S7=Simulation(S_init2,60,10,times=1000000)
+S8=Simulation(S_init2,60,10,times=1000000)
+S9=Simulation(S_init2,60,10,times=1000000)
+image(S7,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+image(S8,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+image(S9,useRaster=TRUE,axes=FALSE,col=grey(seq(0,1)))
+```
+
+#Exercice 2.
+```{r}
+#lire le fichier 
+sigma_0<-read.csv("Coordonnees-Villes.csv")
+
+H<-function(sigma){
+  sum=0
+  N<-dim(sigma)[1]
+  for(i in 2:N){
+    sum=sum+sqrt((sigma[i,2]-sigma[i-1,2])^2+(sigma[i,3]-sigma[i-1,3])^2)
+  }
+   sum=sum+sqrt((sigma[N,2]-sigma[1,2])^2+(sigma[N,3]-sigma[1,3])^2)
+  return(sum)
+}
+
+H(sigma_0)
+```
+```{r}
+
+simu_omega<-function(sigma){
+  N<-dim(sigma)[1]
+  i<-simu_runif(N)
+  k<-simu_runif(N)
+  if(i==k){
+    
+  }else{
+    couple=sigma[i,]
+    sigma[i,]=sigma[k,]
+    sigma[k,]=couple
+  }
+  return(sigma)
+}
+
+e2move<-function(sigma,omega,c,time){
+  u<-runif(1,0,1)
+  beta<-c*log(time+1)
+  if(u<=exp(-beta*(H(omega)-H(sigma)))){
+    sigma=omega
+  }
+  return(sigma)
+}
+
+
+Simulation2<-function(sigma,c,times){
+ 
+for(i in 1:times){
+  omega<-simu_omega(sigma)
+  sigma<-e2move(sigma,omega,c,i)
+}
+return(sigma)
+}
+
+
+```
+```{r}
+res<-Simulation2(sigma_0,10,100000)
+res
+H(res)
+```
+
