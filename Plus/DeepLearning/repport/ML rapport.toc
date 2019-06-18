@@ -1,0 +1,20 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Deep Learning - Coursera}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Course content}{2}{subsection.1.2}
+\contentsline {section}{\numberline {2}Neural Networks and Deep Learning}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}\textbf {Neural Networks Basics and Logistic Regression}}{4}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}\textbf {Vectorization}}{4}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}\textbf {Logistic Regression As A Neural Network}}{4}{subsubsection.2.1.2}
+\contentsline {subsection}{\numberline {2.2}\textbf {Shallow Neural Network}}{6}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}\textbf {Forward and Backpropagation}}{6}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}\textbf {activation functions}}{6}{subsubsection.2.2.2}
+\contentsline {subsubsection}{\numberline {2.2.3}\textbf {Planar data classification}}{7}{subsubsection.2.2.3}
+\contentsline {subsection}{\numberline {2.3}\textbf {Deep Neural Networks}}{7}{subsection.2.3}
+\contentsline {section}{\numberline {3}Improving Deep Neural Networks}{10}{section.3}
+\contentsline {subsection}{\numberline {3.1}Initialization}{10}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Regularization}{10}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Optimization}{11}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Tool and Language}{12}{subsection.3.4}
+\contentsline {section}{\numberline {4}Conclusion}{13}{section.4}
+\contentsline {section}{\numberline {5}Appendix}{13}{section.5}

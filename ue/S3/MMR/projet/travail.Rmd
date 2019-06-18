@@ -1,8 +1,10 @@
 ---
-title: "projet"
+title: "The Model Selection Methodology"
 author: "Group 9, CHEN XU"
 date: "19 novembre 2018"
-output: pdf_document
+output: 
+  pdf_document: 
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
@@ -22,33 +24,33 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 Group:9
-CHEN , XU
 
-#Read The Data
+Guangyue CHEN , Jiahui XU
+
 ```{r , include=FALSE,echo=FALSE}
 require(corrplot)
 require(gdata)
 
-data = read.xls ("/home/guangyue.chen/S3/MRR/projet/residential/Residential-Building-Data-Set.xlsx", sheet = 1, header = TRUE)
+data = read.xls ("/Users/pingguo/WTF/UE/S3/MMR/projet/residential/Residential-Building-Data-Set.xlsx", sheet = 1, header = TRUE)
 ```
 
-The dimension of the data: 
-"observation" "variable"
-```{r , include=TRUE,echo=FALSE}
-dim(data)
-```
+###Methodology.
 
-###The Model Selection Methodology
+Our data has two target variables to project(ASP:"Actual sales prices" and ACC:"Actual construction costs"), so we will train two models for them.
 
-For choose the model, we can compute the BICs of the models, so we can choose the model with the lower BIC(Bayesien Information Criteria).
+At first, we chose some models as candidates: linear regression, LASSO, RIDGE, ElasticNet. To consider the case that our dataset has a high dimension, it's better to use LASSO, RIDGE or ElasticNet regression. Because regression with  regularization suit the dataset, which has high dimension and multicollinearity, very well.
 
-The reason why we use BIC to choose the model is that BIC has a higher penalty. It's better for this situation that the number of variavles is big.
+To choose the model, we can compute the mean square errors of the new data, so we can choose the model with the lowest mean square error.
 
-And also, we will use cross validation, its a good way to compare the models.
+And also, we will use K-fold cross validation, it's a good way to compare the models.
 
-At first, we choose some models as candidates: baseline regression, Stepwise Regression, LASSO, RIDGE, ElasticNet. To consider the case that our dataset has a hign dimension, so it's better to use LASSO, RIDGE or ElasticNet regression. Because regression with  regularization suit the dataset, which has high dimension and multicollonearity, very well.
+###Select the model.
 
-```{r , include=TRUE,echo=FALSE}
+We separate the data into 10 folds, and we will choose one of them as the test data. And for the rest, we will use them as the training data. So we write a for loop to get 10 models for each regression to use different folds. So that we can get the averages of 10 mean square errors for each regression. We will compare the averages to choose the regression. 
+
+Except the linear regression, we should choose the parameter($\lambda$) for Lasso, Ridge and ElasticNet regression.
+
+```{r , include=FALSE,echo=FALSE}
 #for cross validation, we compute the RMSE
 RMSE<-function(y_esti,y){
   
@@ -56,67 +58,281 @@ RMSE<-function(y_esti,y){
   
 }
 
+```
+
+
+
+```{r , include=FALSE,echo=FALSE}
+#K-ford cross validation for linear for ASP
+
+require("caret")
+library(pROC)
+library(glmnet)
+data_for_ASP<-data[-109]
+folds <- createFolds(y=data_for_ASP[,108],k=10)
+max=0
+num=0
+auc_value<-as.numeric()
+for(i in 1:10){
+fold_test <- data_for_ASP[folds[[i]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ASP[-folds[[i]],] # 剩下的数据作为训练集
+ reg1<-lm(as.matrix(fold_train[108])~.,fold_train[-108])
+ Y_esti<-predict.lm(reg1,new=fold_test[-108],level=0.95)
+auc_value<- append(auc_value,as.matrix(RMSE(as.matrix(Y_esti),as.matrix(fold_test[,108]))))
+}
+numasp<-which.min(auc_value)
+mseasp<-mean(auc_value)
 
 ```
 
-```{r , include=TRUE,echo=FALSE}
-#for cross validation, we compute the RMSE
-X<-data[c(seq(1,107,1))]
-ASP<-data[108]
-ACC<-data[109]
+```{r , include=FALSE,echo=FALSE}
+#K-ford cross validation for linear for ACC
+require("caret")
+library(pROC)
+library(glmnet)
+data_for_ACC<-data[-108]
+max=0
+num=0
+auc_value<-as.numeric()
+for(i in 1:10){
+fold_test <- data_for_ACC[folds[[i]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ACC[-folds[[i]],] # 剩下的数据作为训练集
+ reg2<-lm(as.matrix(fold_train[108])~.,fold_train[-108])
+ Y_esti<-predict.lm(reg2,new=fold_test[-108],level=0.95)
+auc_value<- append(auc_value,as.matrix(RMSE(as.matrix(Y_esti),as.matrix(fold_test[,108]))))
+}
+numacc<-which.min(auc_value)
+mseacc<-mean(auc_value)
+
 
 ```
 
-```{r , include=TRUE,echo=FALSE}
-reg1<-lm(ASP~X)
-summary(reg1)
-reg2<-lm(ACC~X)
-summary(reg2)
+
+
+
+For ElasticNet regression, we use the function "cv.glmnet" 10 times with different training folds, so we get 10 models, and for each model we predict the estimators with the $\lambda$ who gives minimum mean cross-validated error(for one model). Then we compute the mean square errors of these 10 models with the test data. At last, we get the average of the errors.
+```{r , include=FALSE,echo=FALSE}
+#K-ford cross validation for Elastic Net for ASP
+
+require("caret")
+library(pROC)
+library(glmnet)
+max=0
+num=0
+auc_value<-as.numeric()
+for(i in 1:10){
+fold_test <- data_for_ASP[folds[[i]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ASP[-folds[[i]],] # 剩下的数据作为训练集
+
+ 
+cvfit5<-cv.glmnet(as.matrix(fold_train[-108]), as.matrix(fold_train[108]), alpha=0.5)
+predict(cvfit5, newx = as.matrix(fold_test[-108]), s = "lambda.min")->Y_esti
+
+auc_value<- append(auc_value,as.matrix(RMSE(as.matrix(Y_esti),as.matrix(fold_test[,108]))))
+}
+numel<-which.min(auc_value)
+mesel2<- mean(auc_value)
+
+
 ```
 
-```{r , include=TRUE,echo=FALSE}
-y_esti<-predict.lm(reg1,data=X,level =1)
-RMSE(y_esti,ASP)
-y_esti<-predict.lm(reg2,data=X,level =1)
-RMSE(y_esti,ACC)
-regbic = step(reg1, direction = 'both', k = log(nrow(X)))
-regbic2 = step(reg2, direction = 'both', k = log(nrow(X)))
-BIC(reg1)
-BIC(reg2)
-BIC(regbic)
-BIC(regbic2)
+```{r , include=FALSE,echo=FALSE}
+#K-ford cross validation for Elastic Net for ACC
+
+require("caret")
+library(pROC)
+library(glmnet)
+
+max=0
+num=0
+auc_value<-as.numeric()
+for(i in 1:10){
+fold_test <- data_for_ACC[folds[[i]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ACC[-folds[[i]],] # 剩下的数据作为训练集
+
+ 
+cvfit5<-cv.glmnet(as.matrix(fold_train[-108]), as.matrix(fold_train[108]), alpha=0.5)
+predict(cvfit5, newx = as.matrix(fold_test[-108]), s = "lambda.min")->Y_esti
+
+auc_value<- append(auc_value,as.matrix(RMSE(as.matrix(Y_esti),as.matrix(fold_test[,108]))))
+}
+num<-which.min(auc_value)
+mesel<-mean(auc_value)
+
+
+
 ```
-```{r , include=TRUE,echo=FALSE}
+
+For Lasso regression, we use the function "lars" 10 times to get the models. For each time we predict the estimators with the $\lambda$ who gives the minimum RSS. Then we compute the mean square errors of these 10 models with the test data. Finally we can compute the average of the errors.
+
+```{r , include=FALSE,echo=FALSE}
+#K-ford for Lasso
+require("caret")
+library(pROC)
+library(glmnet)
 library(MASS)
 library(lars)
-modlasso = lars(x=X,y=ASP,type="lasso")
-Y_esti<-predict.lars(modlasso,X,type="fit",mode="lambda",s=modlasso$lambda[which.min(modlasso$RSS)-1])
-RMSE(as.matrix(Y_esti$fit),ASP)
+max=0
+num=0
+auc_value<-as.numeric()
+for(i in 1:10){
+fold_test <- data_for_ASP[folds[[i]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ASP[-folds[[i]],] # 剩下的数据作为训练集
+
+ modlasso = lars(x=as.matrix(fold_train[-108]),y=as.matrix(fold_train[108]),type="lasso")
+Y_esti<-predict.lars(modlasso,as.matrix(fold_test[-108]),type="fit",mode="lambda",s=modlasso$lambda[which.min(modlasso$RSS)-1])
+auc_value<- append(auc_value,as.matrix(RMSE(as.matrix(Y_esti$fit),as.matrix(fold_test[,108]))))
+}
+num<-which.min(auc_value)
+meslasso2<-mean(auc_value)
 
 
-modridge<-lm.ridge(ASP~.,data=data[c(seq(1,108,1))],lambda=seq(0,10,0.01))
+```
+
+```{r , include=FALSE,echo=FALSE}
+#K-ford for LASSO
+require("caret")
+library(pROC)
+library(glmnet)
+library(MASS)
+library(lars)
+max=0
+num=0
+auc_value<-as.numeric()
+for(i in 1:10){
+fold_test <- data_for_ACC[folds[[i]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ACC[-folds[[i]],] # 剩下的数据作为训练集
+
+ modlasso = lars(x=as.matrix(fold_train[-108]),y=as.matrix(fold_train[108]),type="lasso")
+Y_esti<-predict.lars(modlasso,as.matrix(fold_test[-108]),type="fit",mode="lambda",s=modlasso$lambda[which.min(modlasso$RSS)-1])
+auc_value<- append(auc_value,as.matrix(RMSE(as.matrix(Y_esti$fit),as.matrix(fold_test[,108]))))
+}
+num<-which.min(auc_value)
+meslasso<-mean(auc_value)
+
+
+```
+For Ridge regression, we use the function "lm.ridge" 10 times to get the models and choose the $\lambda$. Then we do the same things.
+```{r , include=FALSE,echo=FALSE}
+#K-ford cross validation for Ridge for ASP
+
+require("caret")
+library(pROC)
+library(glmnet)
+max=0
+num=0
+auc_value<-as.numeric()
+for(i in 1:10){
+fold_test <- data_for_ASP[folds[[i]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ASP[-folds[[i]],] # 剩下的数据作为训练集
+
+ modridge<-lm.ridge(as.matrix(fold_train[108])~.,data=fold_train[-108],lambda=seq(0,10,0.01))
 lambda<-modridge$lambda[which.min(modridge$GCV)]
-modridge<-lm.ridge(ASP~.,data=data[c(seq(1,108,1))],lambda=lambda)
+modridge<-lm.ridge(as.matrix(fold_train[108])~.,data=fold_train[-108],lambda=lambda)
 coef<-coef(modridge)
-un<-matrix(1,nrow=length(ASP),ncol=1)
-Y_esti<-cbind(un,X)%*%as.vector(coef)
-RMSE(as.matrix(Y_esti),ASP)
+un<-matrix(1,nrow=dim(as.vector(fold_test))[1],ncol=1)
+Y_esti<-cbind(un,as.matrix(fold_test[-108]))%*%as.vector(coef)
+auc_value<- append(auc_value,as.matrix(RMSE(as.matrix(Y_esti),as.matrix(fold_test[,108]))))
+}
+numridge<-which.min(auc_value)
+mesridg1<-mean(auc_value)
+```
+
+
+
+```{r , include=FALSE,echo=FALSE}
+#K-ford cross validation for Ridge for ACC
+
+require("caret")
+library(pROC)
+library(glmnet)
+max=0
+num=0
+auc_value<-as.numeric()
+for(i in 1:10){
+fold_test <- data_for_ACC[folds[[i]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ACC[-folds[[i]],] # 剩下的数据作为训练集
+
+ modridge<-lm.ridge(as.matrix(fold_train[108])~.,data=fold_train[-108],lambda=seq(0,10,0.01))
+lambda<-modridge$lambda[which.min(modridge$GCV)]
+modridge<-lm.ridge(as.matrix(fold_train[108])~.,data=fold_train[-108],lambda=lambda)
+coef<-coef(modridge)
+un<-matrix(1,nrow=dim(as.vector(fold_test))[1],ncol=1)
+Y_esti<-cbind(un,as.matrix(fold_test[-108]))%*%as.vector(coef)
+auc_value<- append(auc_value,as.matrix(RMSE(as.matrix(Y_esti),as.matrix(fold_test[,108]))))
+}
+numridge2<-which.min(auc_value)
+mesridge<- mean(auc_value)
+
+
 
 ```
 
+###Compare all of these regression
 ```{r , include=TRUE,echo=FALSE}
-#for cross validation, slice the data into three parts, train , cross, test
-library(DAAG)
-data1<-data[c(seq(1,108,1))]
-X<-data[c(seq(1,107,1))]
-ASP<-data[108]
+print(paste("MSE for ASP[linear]", mseasp, sep=":"))
+#print(paste("MSE for ASP[Stepwise]", mes, sep=":"))
+print(paste("MSE for ASP[RIDGE]", mesridg1, sep=":"))
+print(paste("MSE for ASP[LASSO]", meslasso2, sep=":"))
+print(paste("MSE for ASP[Elastic Net]", mesel2, sep=":"))
 
-cvResults <- suppressWarnings(
-    CVlm(data =data1, form.lm = formula(ASP ~ .), m=10, dots =FALSE, seed=29, plotit=TRUE, printit=TRUE)
-); 
-# performs the CV
-attr(cvResults, 'ms')
-which.min(cvResults$Predicted)
+
+print(paste("MSE for ACC[linear]", mseacc, sep=":"))
+#print(paste("MSE for ACC[Stepwise]", mes2, sep=":"))
+print(paste("MSE for ACC[RIDGE]", mesridge, sep=":"))
+print(paste("MSE for ACC[LASSO]", meslasso, sep=":"))
+print(paste("MSE for ACC[Elastic Net]", mesel, sep=":"))
+
+```
+We can see that for "Actual sales prices", Elastic Net regression has a small average of errors. And for "Actual construction costs", RIDGE regression is better.
+
+So we will choose the one , which has the lowest mean square error, of the 10 Elastic Net model to predict "Actual sales prices". And RIDGE regression for predicting "Actual construction costs".
+```{r , include=TRUE,echo=FALSE}
+#asp
+fold_test <- data_for_ASP[folds[[numel]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ASP[-folds[[numel]],] # 剩下的数据作为训练集
+
+ 
+cvfit5<-cv.glmnet(as.matrix(fold_train[-108]), as.matrix(fold_train[108]), alpha=0.5)
+predict(cvfit5, newx = as.matrix(fold_test[-108]), s = "lambda.min")->Y_esti
+
 ```
 
-###
+```{r , include=FALSE,echo=FALSE}
+fold_test2 <- data_for_ACC[folds[[numridge2]],] #取folds[[i]]作为测试集
+fold_train <- data_for_ACC[-folds[[numridge2]],] # 剩下的数据作为训练集
+
+ modridge<-lm.ridge(as.matrix(fold_train[108])~.,data=fold_train[-108],lambda=seq(0,10,0.01))
+lambda<-modridge$lambda[which.min(modridge$GCV)]
+modridge<-lm.ridge(as.matrix(fold_train[108])~.,data=fold_train[-108],lambda=lambda)
+coef2<-coef(modridge)
+un<-matrix(1,nrow=dim(as.vector(fold_test2))[1],ncol=1)
+Y_esti2<-cbind(un,as.matrix(fold_test2[-108]))%*%as.vector(coef2)
+
+```
+
+###Test the Final Model
+
+```{r , include=TRUE,echo=FALSE,out.width='50%'}
+plot(as.matrix(Y_esti)-as.matrix(fold_test[,108]),xlab = "index of asp",ylab="bias error of asp" ,ylim=c(-400,400))
+abline(h=0)
+abline(h=200)
+abline(h=-200)
+plot(as.matrix(Y_esti2)-as.matrix(fold_test2[,108]),xlab = "index of acc",ylab="bias error of acc",ylim=c(-80,80) )
+abline(h=0)
+abline(h=40)
+abline(h=-40)
+```
+The resaults of the model will have the bias errors, for the colomn "Actual sales prices", the prediction equals the real value $\pm200$, and for the colomn "Actual construction costs", the prediction equals the real value $\pm40$.
+
+Then we test it with QQ plot.
+```{r , include=TRUE,echo=FALSE,out.width='50%'}
+qqnorm(as.matrix(Y_esti)-as.matrix(fold_test[,108]),main="Normal QQ plot for Actual sales prices")
+qqline(as.matrix(Y_esti)-as.matrix(fold_test[,108]),col='blue')
+
+
+qqnorm(as.matrix(Y_esti2)-as.matrix(fold_test2[,108]),main="Normal QQ plot for Actual construction costs")
+qqline(as.matrix(Y_esti2)-as.matrix(fold_test2[,108]),col='blue')
+```
+
+So we see that the Normal Q-Q Plot is almost a straight line , although there are some differences on the two sides of the blue line, that’s the result we mostly expect to see.  So we can summarize that they are good models.
