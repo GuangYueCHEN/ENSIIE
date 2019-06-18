@@ -1,0 +1,19 @@
+数值分析  Analyse Numeric
+
+1、误差：指测量结果偏离真值的程度。
+	绝对误差（Absolute error）= 测量值-真值。
+	相对误差（Relative Error）= 绝对误差÷真值。更能反映可信度。
+
+	根据来源可以分为：
+	系统误差(System error)：仪器误差（instrumental errors）、方法误差(method errors)、个人误差(personal errors)
+	随机误差(Random error)，无法控制的变因，会使得测量值产生随机分布的误差，服从高斯分布。
+	毛误差(Gross error)，毛误差主要是由于测量者的疏忽犯下不应有的错误造成的。
+
+ 残差（residual）在数理统计中是指实际观察值与估计值（拟合值）之间的差。我们可以将残差看作误差的观测值。the difference between the observed value and the estimated value
+
+
+
+ 2、范数：
+ 	a. 范数首先是一个函数。 a norm is a function.
+ 	b. 范数表征了距离这个物理量，可以用于比较不同的向量。It assigns a strictly positive length or size to each vector in a vector space.
+ 	
